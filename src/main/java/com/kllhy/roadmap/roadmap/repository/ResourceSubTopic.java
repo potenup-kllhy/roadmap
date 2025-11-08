@@ -20,7 +20,7 @@ public class ResourceSubTopic {
     private String name;
 
     @Column(nullable = false)
-    private Integer order;
+    private Integer sortOrder;
 
     @Enumerated(value = EnumType.STRING)
     private ResourceType type;
