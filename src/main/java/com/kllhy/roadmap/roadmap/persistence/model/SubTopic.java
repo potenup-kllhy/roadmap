@@ -48,11 +48,7 @@ public class SubTopic {
     @Column(name = "is_delete", nullable = false)
     private Boolean isDelete;
 
-    @OneToMany(
-        cascade = CascadeType.ALL,
-        orphanRemoval = true,
-        fetch = FetchType.LAZY
-    )
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JoinColumn(name = "subtopic_id", nullable = false)
     @OrderBy("order ASC")
     private List<ResourceSubTopic> resources = new ArrayList<>();

@@ -1,5 +1,8 @@
 package com.kllhy.roadmap.roadmap.persistence.model;
 
 public enum ResourceType {
-    VIDEO, OFFICIAL, POST, ROADMAP
+    VIDEO,
+    OFFICIAL,
+    POST,
+    ROADMAP
 }
