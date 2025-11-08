@@ -1,4 +1,4 @@
-package com.kllhy.roadmap.roadmap.repository;
+package com.kllhy.roadmap.roadmap.persistence.model;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;

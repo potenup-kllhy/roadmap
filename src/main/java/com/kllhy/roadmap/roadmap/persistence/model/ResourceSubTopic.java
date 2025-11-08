@@ -1,4 +1,4 @@
-package com.kllhy.roadmap.roadmap.repository;
+package com.kllhy.roadmap.roadmap.persistence.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -19,8 +19,8 @@ public class ResourceSubTopic {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
-    private Integer sortOrder;
+    @Column(name = "sort_order", nullable = false)
+    private Integer order;
 
     @Enumerated(value = EnumType.STRING)
     private ResourceType type;
