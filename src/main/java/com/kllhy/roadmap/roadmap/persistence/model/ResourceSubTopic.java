@@ -27,5 +27,4 @@ public class ResourceSubTopic {
 
     @Column(nullable = false)
     private String link;
-
 }
