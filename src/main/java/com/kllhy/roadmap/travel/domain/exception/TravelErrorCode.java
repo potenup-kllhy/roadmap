@@ -3,7 +3,6 @@ package com.kllhy.roadmap.travel.domain.exception;
 import com.kllhy.roadmap.common.exception.IErrorCode;
 
 public enum TravelErrorCode implements IErrorCode {
-
     TRAVEL_NOT_FOUND(404, "NOT_FOUND", "not found travel"),
     ;
 

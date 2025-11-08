@@ -17,7 +17,8 @@ public class TravelQueryServiceAdapter implements TravelQueryService {
 
     @Override
     public TravelView getById(Long travelId) {
-        return travelRepository.findById(travelId)
+        return travelRepository
+                .findById(travelId)
                 .map(this::toView)
                 .orElseThrow(() -> new DomainException(TravelErrorCode.TRAVEL_NOT_FOUND));
     }

@@ -4,25 +4,20 @@ import com.kllhy.roadmap.common.event.DomainEvent;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.Transient;
 import jakarta.persistence.Version;
-import lombok.Getter;
-import org.springframework.data.domain.AfterDomainEventPublication;
-import org.springframework.data.domain.DomainEvents;
-
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import lombok.Getter;
+import org.springframework.data.domain.AfterDomainEventPublication;
+import org.springframework.data.domain.DomainEvents;
 
 @MappedSuperclass
 public abstract class AggregateRoot extends IdAuditEntity {
 
-    @Getter
-    @Version
-    protected Long version;
+    @Getter @Version protected Long version;
 
-    @Transient
-    protected final List<DomainEvent> domainEvents = new ArrayList<>();
+    @Transient protected final List<DomainEvent> domainEvents = new ArrayList<>();
 
     protected AggregateRoot() {
         super();
@@ -46,5 +41,4 @@ public abstract class AggregateRoot extends IdAuditEntity {
     protected void clearDomainEvents() {
         this.domainEvents.clear();
     }
-
 }

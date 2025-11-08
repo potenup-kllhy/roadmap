@@ -5,5 +5,4 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
-public class TravelServiceAdapter {
-}
+public class TravelServiceAdapter {}

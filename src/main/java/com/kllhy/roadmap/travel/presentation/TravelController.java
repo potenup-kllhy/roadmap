@@ -5,5 +5,4 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api-v1/travel")
-public class TravelController {
-}
+public class TravelController {}

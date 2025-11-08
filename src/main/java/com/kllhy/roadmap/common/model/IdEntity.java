@@ -1,10 +1,8 @@
 package com.kllhy.roadmap.common.model;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
 import java.util.Objects;
+import lombok.Getter;
 
 @MappedSuperclass
 public abstract class IdEntity {

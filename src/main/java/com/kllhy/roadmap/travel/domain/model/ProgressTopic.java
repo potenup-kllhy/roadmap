@@ -3,8 +3,6 @@ package com.kllhy.roadmap.travel.domain.model;
 import com.kllhy.roadmap.common.model.IdAuditEntity;
 import com.kllhy.roadmap.travel.domain.model.enums.ProgressStatus;
 import jakarta.persistence.*;
-import lombok.Getter;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,14 +18,12 @@ public class ProgressTopic extends IdAuditEntity {
     @Enumerated(EnumType.STRING)
     private ProgressStatus status = ProgressStatus.TODO;
 
-
     @OneToMany(
             mappedBy = "topic",
             cascade = CascadeType.ALL,
             orphanRemoval = true,
-            fetch = FetchType.LAZY
-    )
+            fetch = FetchType.LAZY)
     private List<ProgressSubTopic> subTopics = new ArrayList<>();
 
-    protected  ProgressTopic() {}
+    protected ProgressTopic() {}
 }

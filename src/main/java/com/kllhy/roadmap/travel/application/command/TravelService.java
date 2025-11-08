@@ -1,4 +1,3 @@
 package com.kllhy.roadmap.travel.application.command;
 
-public interface TravelService {
-}
+public interface TravelService {}

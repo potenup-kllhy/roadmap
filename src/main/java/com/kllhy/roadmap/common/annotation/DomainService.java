@@ -1,13 +1,9 @@
 package com.kllhy.roadmap.common.annotation;
 
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
-
 import java.lang.annotation.*;
-
+import org.springframework.stereotype.Service;
 
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Service
-public @interface DomainService {
-}
+public @interface DomainService {}
