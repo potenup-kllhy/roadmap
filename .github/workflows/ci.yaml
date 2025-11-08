@@ -33,36 +33,21 @@ jobs:
       - name: Apply Spotless Formatting
         run: ./gradlew spotlessApply
 
+
       - name: Commit and Push changes if any
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           
-          # 1. Spotless에 의해 변경된 파일이 있는지 확인
           if [[ -n $(git status --porcelain) ]]; then
             echo "Spotless applied changes. Committing..."
             git add .
             git commit -m "style: apply spotless format automatically"
             git push
-            # 변경사항이 푸시되었으므로, 이번 빌드는 실패 처리하고 다음 빌드를 기다리게 합니다.
-            echo "::error::Spotless formatting was applied and pushed. Waiting for the next CI run."
+            echo "::error::Spotless formatting applied. A new CI build will start automatically."
             exit 1
-          
-          # 2. 변경사항이 없다면, 혹시 이전 커밋이 봇이 올린 커밋인지 확인
-          # (봇 커밋은 기본적으로 CI를 트리거하지 않으므로, 수동으로 트리거가 필요할 수 있음)
-          elif [[ "$(git log -1 --pretty=%s)" == "style: apply spotless format automatically" ]]; then
-            echo "Previous commit was by bot. Pushing an empty commit to trigger CI..."
-            # 무한 루프 방지를 위해, 이미 빈 커밋이 올라와 있는지 확인하는 로직을 추가할 수도 있습니다.
-            # 여기서는 간단하게 바로 빈 커밋을 푸시합니다.
-            git commit --allow-empty -m "chore: trigger ci re-run"
-            git push
-            echo "::notice::Triggered CI re-run with an empty commit."
-            # 빈 커밋을 푸시했으므로 이번 빌드는 종료합니다. (새 빌드가 돌 것이므로)
-            exit 0
-          
-          else
-            echo "No spotless changes needed and no bot commit detected."
           fi
+          echo "No spotless changes needed."
 
       - name: Run Test and Build
         if: success()
