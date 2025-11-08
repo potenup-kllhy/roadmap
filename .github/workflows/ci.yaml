@@ -29,10 +29,8 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
 
-
       - name: Apply Spotless Formatting
         run: ./gradlew spotlessApply
-
 
       - name: Commit and Push changes if any
         run: |
