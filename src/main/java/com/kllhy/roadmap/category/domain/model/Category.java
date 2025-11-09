@@ -1,7 +1,6 @@
 package com.kllhy.roadmap.category.domain.model;
 
 import com.kllhy.roadmap.category.domain.enums.Type;
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -24,5 +23,5 @@ public class Category {
     @Enumerated(EnumType.STRING)
     private Type type;
 
-    @Column private String name;
+    private String name;
 }
