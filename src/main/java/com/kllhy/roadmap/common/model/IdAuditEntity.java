@@ -11,6 +11,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
 public abstract class IdAuditEntity extends IdEntity {
+
     @CreatedDate
     @Column(updatable = false)
     protected LocalDateTime createdAt;
