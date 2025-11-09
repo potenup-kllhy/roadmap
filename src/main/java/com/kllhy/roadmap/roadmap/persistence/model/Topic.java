@@ -28,7 +28,6 @@ public class Topic {
     @Column(name = "content")
     private String content;
 
-    // To Do: 효진님 PR(#3) 머지 후 rebase 해서 ResourceType 열거형 가져와야 함, 그 전까지 커밋하지 말 것
     @Column(name = "importance_level", nullable = false)
     @Enumerated(EnumType.STRING)
     private ImportanceLevel importanceLevel;

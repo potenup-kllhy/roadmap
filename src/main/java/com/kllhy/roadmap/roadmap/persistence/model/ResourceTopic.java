@@ -16,7 +16,6 @@ public class ResourceTopic {
     @Column(name = "name")
     private String name;
 
-    // To Do: 효진님 PR(#3) 머지 후 rebase 해서 ResourceType 열거형 가져와야 함, 그 전까지 커밋하지 말 것
     @Column(name = "type", nullable = false)
     @Enumerated(EnumType.STRING)
     private ResourceType resourceType;
