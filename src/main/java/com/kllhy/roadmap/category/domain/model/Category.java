@@ -24,6 +24,5 @@ public class Category {
     @Enumerated(EnumType.STRING)
     private Type type;
 
-    @Column
-    private String name;
+    @Column private String name;
 }
