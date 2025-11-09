@@ -16,11 +16,11 @@ public abstract class IdAuditEntity extends IdEntity {
     @Column(updatable = false)
     protected Timestamp createdAt;
 
-    @LastModifiedDate protected Timestamp updatedAt;
+    @LastModifiedDate protected Timestamp modifiedAt;
 
-    protected IdAuditEntity(Timestamp createdAt, Timestamp updatedAt) {
+    protected IdAuditEntity(Timestamp createdAt, Timestamp modifiedAt) {
         this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
+        this.modifiedAt = modifiedAt;
     }
 
     protected IdAuditEntity() {
