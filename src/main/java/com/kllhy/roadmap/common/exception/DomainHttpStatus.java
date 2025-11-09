@@ -3,7 +3,6 @@ package com.kllhy.roadmap.common.exception;
 import lombok.Getter;
 
 public enum DomainHttpStatus {
-
     SUCCESS(200),
     CREATED(201),
     NO_CONTENT(204),
@@ -14,8 +13,7 @@ public enum DomainHttpStatus {
     CONFLICT(409),
     INTERNAL_SERVER_ERROR(500);
 
-    @Getter
-    private final int value;
+    @Getter private final int value;
 
     DomainHttpStatus(int value) {
         this.value = value;
