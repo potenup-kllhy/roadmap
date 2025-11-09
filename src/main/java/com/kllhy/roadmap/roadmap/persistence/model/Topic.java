@@ -1,5 +1,6 @@
 package com.kllhy.roadmap.roadmap.persistence.model;
 
+import com.kllhy.roadmap.roadmap.persistence.model.enums.ImportanceLevel;
 import jakarta.persistence.*;
 
 import java.sql.Timestamp;
