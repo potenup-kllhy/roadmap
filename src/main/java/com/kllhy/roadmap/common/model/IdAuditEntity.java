@@ -3,7 +3,8 @@ package com.kllhy.roadmap.common.model;
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
-import java.time.LocalDateTime;
+
+import java.sql.Timestamp;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -14,11 +15,11 @@ public abstract class IdAuditEntity extends IdEntity {
 
     @CreatedDate
     @Column(updatable = false)
-    protected LocalDateTime createdAt;
+    protected Timestamp createdAt;
 
-    @LastModifiedDate protected LocalDateTime updatedAt;
+    @LastModifiedDate protected Timestamp updatedAt;
 
-    protected IdAuditEntity(LocalDateTime createdAt, LocalDateTime updatedAt) {
+    protected IdAuditEntity(Timestamp createdAt, Timestamp updatedAt) {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }

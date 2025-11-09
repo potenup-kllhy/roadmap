@@ -1,7 +1,7 @@
 package com.kllhy.roadmap.common.exception;
 
 public interface IErrorCode {
-    int getHttpStatus();
+    DomainHttpStatus getHttpStatus();
 
     String getCode();
 

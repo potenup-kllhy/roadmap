@@ -12,14 +12,21 @@ public abstract class IdEntity {
     @Getter
     protected Long id;
 
+
     @Override
     public boolean equals(Object o) {
+        if (this == o) return true;
         if (!(o instanceof IdEntity that)) return false;
-        return Objects.equals(id, that.id);
+
+        if (this.id == null || that.id == null) {
+            return false;
+        }
+
+        return Objects.equals(this.id, that.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id);
+        return id != null ? Objects.hash(id) : 0;
     }
 }
