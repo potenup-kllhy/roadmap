@@ -2,7 +2,6 @@ package com.kllhy.roadmap.roadmap.persistence.model;
 
 import com.kllhy.roadmap.roadmap.persistence.model.enums.ImportanceLevel;
 import jakarta.persistence.*;
-
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,11 +16,7 @@ public class Topic {
     private Long id;
 
     // To Do: N+1 문제 주의!
-    @OneToMany(
-            cascade = CascadeType.ALL,
-            orphanRemoval = true,
-            fetch = FetchType.LAZY
-    )
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JoinColumn(name = "topic_id", nullable = false)
     private List<ResourceTopic> resources = new ArrayList<>();
 
