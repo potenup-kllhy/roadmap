@@ -49,8 +49,6 @@ public class ProgressTopic extends IdAuditEntity {
     void addSubTopics(List<ProgressSubTopicCommand> commands) {
         if (commands == null || commands.isEmpty()) return;
 
-        var ids = commands.stream().map(ProgressSubTopicCommand::subTopicId).toList();
-
         for (var command : commands) {
             addSubTopic(ProgressSubTopic.create(this, command.subTopicId()));
         }
