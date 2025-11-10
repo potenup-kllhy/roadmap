@@ -12,7 +12,7 @@ public interface CategoryRepository {
 
     boolean existsById(Long id);
 
-    Optional<Category> findByType(Type type);
+    List<Category> findAllByType(Type type);
 
     Optional<Category> findByName(String name);
 }
