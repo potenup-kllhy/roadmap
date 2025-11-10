@@ -7,6 +7,7 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
@@ -15,7 +16,9 @@ import lombok.NoArgsConstructor;
 public class Category extends IdEntity {
 
     @Enumerated(EnumType.STRING)
+    @Getter
     private Type type;
 
+    @Getter
     private String name;
 }
