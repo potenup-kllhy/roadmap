@@ -15,8 +15,8 @@ public class CategoryJpaRepositoryAdapter implements CategoryRepository {
     private final CategoryJpaRepository categoryJpaRepository;
 
     @Override
-    public List<Category> findAll() {
-        return categoryJpaRepository.findAll();
+    public List<Category> findAllByOrderByTypeAscNameAsc() {
+        return categoryJpaRepository.findAllByOrderByTypeAscNameAsc();
     }
 
     @Override
