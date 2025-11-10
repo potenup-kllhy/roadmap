@@ -20,6 +20,10 @@ public class Topic {
     @JoinColumn(name = "topic_id", nullable = false)
     private List<ResourceTopic> resources = new ArrayList<>();
 
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @JoinColumn(name = "topic_id")
+    private List<SubTopic> subTopics = new ArrayList<>();
+
     // To Do: Topic.title 제약 사항 결정(ex. 길이)
     @Column(name = "title", nullable = false)
     private String title;
