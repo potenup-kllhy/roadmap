@@ -34,7 +34,7 @@ public class UserController {
 
     @PostMapping("/signup")
     public ResponseEntity<Void> signup(@RequestBody RegisterUserCommand command) {
-        log.info("Signup request received for username: {}", command.getLoginId());
+        log.info("Signup request received for loginId: {}", command.getLoginId());
         Long userId = userCommandService.registerUser(command);
         log.info("Signup successful for user id: {}", userId);
         return ResponseEntity.created(URI.create("/api/v1/users/" + userId)).build();
@@ -42,19 +42,17 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDTO> login(@RequestBody LoginDTO loginDTO) {
-        log.info("Login attempt for username: {}", loginDTO.getLoginId());
-        
+        log.info("Login attempt for loginId: {}", loginDTO.getLoginId());
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginDTO.getLoginId(), loginDTO.getPassword())
         );
-
         User user = (User) authentication.getPrincipal();
-        String token = jwtUtil.generateToken(user.getUsername());
+        String token = jwtUtil.generateToken(user.getLoginId());
         
-        log.info("Login successful for username: {}", loginDTO.getLoginId());
+        log.info("Login successful for loginId: {}", loginDTO.getLoginId());
 
         return ResponseEntity.ok(new LoginResponseDTO(
-                token, user.getUsername(), user.getEmail(), user.getAccountStatus()
+                token, user.getLoginId(), user.getEmail(), user.getAccountStatus()
         ));
     }
 
