@@ -1,19 +1,27 @@
 package com.kllhy.roadmap.travel.domain.model;
 
+import com.kllhy.roadmap.common.exception.DomainException;
 import com.kllhy.roadmap.common.model.IdAuditEntity;
+import com.kllhy.roadmap.travel.domain.exception.TravelErrorCode;
+import com.kllhy.roadmap.travel.domain.model.command.ProgressSubTopicCommand;
 import com.kllhy.roadmap.travel.domain.model.enums.ProgressStatus;
 import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ProgressTopic extends IdAuditEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "travel_id", nullable = false)
     private Travel travel;
 
-    private Long topicId;
+    @Getter private Long topicId;
 
     @Enumerated(EnumType.STRING)
     private ProgressStatus status = ProgressStatus.TODO;
@@ -23,7 +31,59 @@ public class ProgressTopic extends IdAuditEntity {
             cascade = CascadeType.ALL,
             orphanRemoval = true,
             fetch = FetchType.LAZY)
-    private List<ProgressSubTopic> subTopics = new ArrayList<>();
+    private final List<ProgressSubTopic> subTopics = new ArrayList<>();
 
-    protected ProgressTopic() {}
+    private ProgressTopic(Travel travel, Long topicId) {
+        this.travel = Objects.requireNonNull(travel, "travel must not be null");
+        this.topicId = Objects.requireNonNull(topicId, "topicId must not be null");
+    }
+
+    static ProgressTopic create(Travel travel, Long topicId) {
+        return new ProgressTopic(travel, topicId);
+    }
+
+    List<ProgressSubTopic> getSubTopics() {
+        return List.copyOf(subTopics);
+    }
+
+    void addSubTopics(List<ProgressSubTopicCommand> commands) {
+        if (commands == null || commands.isEmpty()) return;
+
+        var ids = commands.stream().map(ProgressSubTopicCommand::subTopicId).toList();
+
+        for (var command : commands) {
+            addSubTopic(ProgressSubTopic.create(this, command.subTopicId()));
+        }
+    }
+
+    private void addSubTopic(ProgressSubTopic sub) {
+        boolean exists =
+                subTopics.stream()
+                        .anyMatch(s -> Objects.equals(s.getSubTopicId(), sub.getSubTopicId()));
+        if (exists) throw new DomainException(TravelErrorCode.TRAVEL_SUB_TOPICS_DUPLICATED);
+
+        sub.setTopic(this);
+        subTopics.add(sub);
+    }
+
+    void setTravel(Travel travel) {
+        this.travel = Objects.requireNonNull(travel, "travel must not be null");
+    }
+
+    void changeStatus(ProgressStatus status) {
+        this.status = status;
+    }
+
+    void markSubTopic(Long subTopicId, ProgressStatus status) {
+        ProgressSubTopic subTopic = getSubTopicOrThrow(topicId);
+        subTopic.changeStatus(status);
+    }
+
+    private ProgressSubTopic getSubTopicOrThrow(Long subTopicId) {
+        return subTopics.stream()
+                .filter(st -> st.getSubTopicId().equals(subTopicId))
+                .findFirst()
+                .orElseThrow(
+                        () -> new DomainException(TravelErrorCode.TRAVEL_SUB_TOPICS_NOT_FOUND));
+    }
 }

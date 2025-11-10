@@ -5,12 +5,12 @@ import com.kllhy.roadmap.travel.application.query.dto.TravelView;
 import com.kllhy.roadmap.travel.domain.exception.TravelErrorCode;
 import com.kllhy.roadmap.travel.domain.model.Travel;
 import com.kllhy.roadmap.travel.domain.repository.TravelRepository;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class TravelQueryServiceAdapter implements TravelQueryService {
     private final TravelRepository travelRepository;
