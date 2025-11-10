@@ -32,8 +32,8 @@ public class Topic {
     @Enumerated(EnumType.STRING)
     private ImportanceLevel importanceLevel;
 
-    // To Do: Topic.orderInRoadMap 제약 사항 결정(ex. 0이상? 아니면 1이상?)
-    @Column(name = "order_in_roadmap", nullable = false)
+    // To Do: Topic.order 제약 사항 결정(ex. 0이상? 아니면 1이상?)
+    @Column(name = "sort_order", nullable = false)
     private Integer order;
 
     // To Do: 시간 순서 제약 사항 createdAt(nn) -> modifiedAt(nullable) -> deletedAt(nullable)
