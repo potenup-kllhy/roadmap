@@ -22,7 +22,8 @@ public class CategoryService {
     }
 
     public Category getCategoryById(Long id) {
-        return categoryRepository.findById(id)
+        return categoryRepository
+                .findById(id)
                 .orElseThrow(() -> new DomainException(CategoryErrorCode.CATEGORY_NOT_FOUND));
     }
 
@@ -35,7 +36,8 @@ public class CategoryService {
     }
 
     public Category getCategoryByName(String name) {
-        return categoryRepository.findByName(name)
+        return categoryRepository
+                .findByName(name)
                 .orElseThrow(() -> new DomainException(CategoryErrorCode.CATEGORY_NOT_FOUND));
     }
 }

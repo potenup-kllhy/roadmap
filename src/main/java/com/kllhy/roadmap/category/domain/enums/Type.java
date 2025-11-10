@@ -16,4 +16,3 @@ public enum Type {
         throw new DomainException(CategoryErrorCode.CATEGORY_TYPE_INVALID);
     }
 }
-
