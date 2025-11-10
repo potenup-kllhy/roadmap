@@ -27,8 +27,7 @@ public class ResourceSubTopic extends IdEntity {
     @JoinColumn(name = "sub_topic_id", nullable = false)
     private SubTopic subTopic;
 
-    protected ResourceSubTopic() {
-    }
+    protected ResourceSubTopic() {}
 
     private ResourceSubTopic(String name, Integer order, ResourceType resourceType, String link) {
         this.name = name;
@@ -45,8 +44,7 @@ public class ResourceSubTopic extends IdEntity {
                 creationSpec.name(),
                 creationSpec.order(),
                 creationSpec.resourceType(),
-                creationSpec.link()
-        );
+                creationSpec.link());
     }
 
     void setSubTopic(SubTopic subTopic) {

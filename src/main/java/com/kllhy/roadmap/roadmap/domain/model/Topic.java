@@ -40,17 +40,31 @@ public class Topic extends IdAuditEntity {
     @JoinColumn(name = "road_map_id", nullable = false)
     private RoadMap roadMap;
 
-    @OneToMany(mappedBy = "topic", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(
+            mappedBy = "topic",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.LAZY)
     @OrderBy("order ASC")
     private List<ResourceTopic> resources = new ArrayList<>();
 
-    @OneToMany(mappedBy = "topic", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(
+            mappedBy = "topic",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.LAZY)
     private List<SubTopic> subTopics = new ArrayList<>();
 
-    protected Topic() {
-    }
+    protected Topic() {}
 
-    private Topic(String title, String content, ImportanceLevel importanceLevel, Integer order, boolean isDraft, List<ResourceTopic> resources, List<SubTopic> subTopics) {
+    private Topic(
+            String title,
+            String content,
+            ImportanceLevel importanceLevel,
+            Integer order,
+            boolean isDraft,
+            List<ResourceTopic> resources,
+            List<SubTopic> subTopics) {
         this.title = title;
         this.content = content;
         this.importanceLevel = importanceLevel;
@@ -67,15 +81,15 @@ public class Topic extends IdAuditEntity {
     public static Topic create(CreationTopic creationSpec) {
         // To Do: Topic 생성자 불변식 검증
 
-        Topic created = new Topic(
-                creationSpec.title(),
-                creationSpec.content(),
-                creationSpec.importanceLevel(),
-                creationSpec.order(),
-                creationSpec.isDraft(),
-                creationSpec.resources(),
-                creationSpec.subTopics()
-        );
+        Topic created =
+                new Topic(
+                        creationSpec.title(),
+                        creationSpec.content(),
+                        creationSpec.importanceLevel(),
+                        creationSpec.order(),
+                        creationSpec.isDraft(),
+                        creationSpec.resources(),
+                        creationSpec.subTopics());
 
         // 양방향 연결
         created.resources.forEach(resource -> resource.setTopic(created));

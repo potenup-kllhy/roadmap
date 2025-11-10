@@ -29,8 +29,7 @@ public class ResourceTopic extends IdEntity {
     @JoinColumn(name = "topic_id", nullable = false)
     private Topic topic;
 
-    public ResourceTopic() {
-    }
+    public ResourceTopic() {}
 
     private ResourceTopic(String name, ResourceType resourceType, Integer order, String link) {
         this.name = name;
@@ -48,8 +47,7 @@ public class ResourceTopic extends IdEntity {
                 creationSpec.name(),
                 creationSpec.resourceType(),
                 creationSpec.order(),
-                creationSpec.link()
-        );
+                creationSpec.link());
     }
 
     void setTopic(Topic topic) {

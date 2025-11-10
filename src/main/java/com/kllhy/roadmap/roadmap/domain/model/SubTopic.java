@@ -5,7 +5,6 @@ import com.kllhy.roadmap.common.model.IdAuditEntity;
 import com.kllhy.roadmap.roadmap.domain.model.creation_spec.CreationSubTopic;
 import com.kllhy.roadmap.roadmap.domain.model.enums.ImportanceLevel;
 import jakarta.persistence.*;
-
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,14 +37,22 @@ public class SubTopic extends IdAuditEntity {
     @JoinColumn(name = "topic_id", nullable = false)
     private Topic topic;
 
-    @OneToMany(mappedBy = "subTopic", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(
+            mappedBy = "subTopic",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.LAZY)
     @OrderBy("order ASC")
     private List<ResourceSubTopic> resources = new ArrayList<>();
 
-    protected SubTopic() {
-    }
+    protected SubTopic() {}
 
-    public SubTopic(String title, String content, ImportanceLevel importanceLevel, Boolean isDraft, List<ResourceSubTopic> resources) {
+    public SubTopic(
+            String title,
+            String content,
+            ImportanceLevel importanceLevel,
+            Boolean isDraft,
+            List<ResourceSubTopic> resources) {
         this.title = title;
         this.content = content;
         this.importanceLevel = importanceLevel;
@@ -60,13 +67,13 @@ public class SubTopic extends IdAuditEntity {
     public static SubTopic create(CreationSubTopic creationSpec) {
         // To Do: SubTopic 생성자 불변식 검증
 
-        SubTopic created = new SubTopic(
-                creationSpec.title(),
-                creationSpec.content(),
-                creationSpec.importanceLevel(),
-                creationSpec.isDraft(),
-                creationSpec.resources()
-        );
+        SubTopic created =
+                new SubTopic(
+                        creationSpec.title(),
+                        creationSpec.content(),
+                        creationSpec.importanceLevel(),
+                        creationSpec.isDraft(),
+                        creationSpec.resources());
 
         // 양방향 연결
         created.resources.forEach(resource -> resource.setSubTopic(created));
