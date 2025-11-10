@@ -1,18 +1,15 @@
 package com.kllhy.roadmap.roadmap.domain.model;
 
-import com.kllhy.roadmap.roadmap.persistence.model.enums.ResourceType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.kllhy.roadmap.common.model.IdEntity;
+import com.kllhy.roadmap.roadmap.domain.model.creation_spec.CreationResourceTopic;
+import com.kllhy.roadmap.roadmap.domain.model.enums.ResourceType;
 import jakarta.persistence.*;
 
 @Entity
 @Table(name = "resource_topic")
-public class ResourceTopic {
+public class ResourceTopic extends IdEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
-
-    // To Do: ResourceTopic.name 제약 사항 결정(ex. 길이, not null?)
     @Column(name = "name")
     private String name;
 
@@ -20,11 +17,46 @@ public class ResourceTopic {
     @Enumerated(EnumType.STRING)
     private ResourceType resourceType;
 
-    // To Do: sort_order 제약 사항 결정(ex. 0이상? 아니면 1이상?, ...)
     @Column(name = "sort_order", nullable = false)
     private Integer order;
 
     // To Do: 안전한 링크인지 확인하는 기능도 있으면 괜찮을 것 같음
     @Column(name = "link", nullable = false)
     private String link;
+
+    @JsonIgnore
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "topic_id", nullable = false)
+    private Topic topic;
+
+    public ResourceTopic() {
+    }
+
+    private ResourceTopic(String name, ResourceType resourceType, Integer order, String link) {
+        this.name = name;
+        this.resourceType = resourceType;
+        this.order = order;
+        this.link = link;
+
+        this.topic = null;
+    }
+
+    public static ResourceTopic create(CreationResourceTopic creationSpec) {
+        // To Do: ResourceTopic 생성자 불변식 검증
+
+        return new ResourceTopic(
+                creationSpec.name(),
+                creationSpec.resourceType(),
+                creationSpec.order(),
+                creationSpec.link()
+        );
+    }
+
+    void setTopic(Topic topic) {
+        if (topic == null) {
+            // To Do: 나중에 도메인 예외 발생시키도록 변경
+            throw new RuntimeException("ResourceTopic.setTopic: 파라미터 topic 이 null 입니다");
+        }
+        this.topic = topic;
+    }
 }

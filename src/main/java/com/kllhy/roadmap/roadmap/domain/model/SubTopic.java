@@ -1,33 +1,23 @@
 package com.kllhy.roadmap.roadmap.domain.model;
 
-import com.kllhy.roadmap.roadmap.persistence.model.enums.ImportanceLevel;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OrderBy;
-import jakarta.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.kllhy.roadmap.common.model.IdAuditEntity;
+import com.kllhy.roadmap.roadmap.domain.model.creation_spec.CreationSubTopic;
+import com.kllhy.roadmap.roadmap.domain.model.enums.ImportanceLevel;
+import jakarta.persistence.*;
+
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name = "sub_topic")
-public class SubTopic {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class SubTopic extends IdAuditEntity {
 
     @Column(nullable = false)
     private String title;
 
+    @Column(name = "content", nullable = true)
     private String content;
 
     @Enumerated(EnumType.STRING)
@@ -35,22 +25,60 @@ public class SubTopic {
     private ImportanceLevel importanceLevel;
 
     @Column(nullable = false)
-    private Timestamp createdAt;
-
-    @Column(nullable = false)
-    private Timestamp modifiedAt;
-
-    @Column(nullable = false)
     private Timestamp deletedAt;
 
     @Column(name = "is_draft", nullable = false)
     private Boolean isDraft;
 
-    @Column(name = "is_delete", nullable = false)
-    private Boolean isDelete;
+    @Column(name = "is_deleted", nullable = false)
+    private Boolean isDeleted;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @JoinColumn(name = "subtopic_id", nullable = false)
+    @JsonIgnore
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "topic_id", nullable = false)
+    private Topic topic;
+
+    @OneToMany(mappedBy = "subTopic", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @OrderBy("order ASC")
     private List<ResourceSubTopic> resources = new ArrayList<>();
+
+    protected SubTopic() {
+    }
+
+    public SubTopic(String title, String content, ImportanceLevel importanceLevel, Boolean isDraft, List<ResourceSubTopic> resources) {
+        this.title = title;
+        this.content = content;
+        this.importanceLevel = importanceLevel;
+        this.isDraft = isDraft;
+        this.resources = resources;
+
+        this.deletedAt = null;
+        this.isDeleted = false;
+        this.topic = null;
+    }
+
+    public static SubTopic create(CreationSubTopic creationSpec) {
+        // To Do: SubTopic 생성자 불변식 검증
+
+        SubTopic created = new SubTopic(
+                creationSpec.title(),
+                creationSpec.content(),
+                creationSpec.importanceLevel(),
+                creationSpec.isDraft(),
+                creationSpec.resources()
+        );
+
+        // 양방향 연결
+        created.resources.forEach(resource -> resource.setSubTopic(created));
+
+        return created;
+    }
+
+    void setTopic(Topic topic) {
+        if (topic == null) {
+            // To Do: 나중에 도메인 예외 발생시키도록 변경
+            throw new RuntimeException("SubTopic.setTopic: 파라미터 topic 이 null 입니다");
+        }
+        this.topic = topic;
+    }
 }

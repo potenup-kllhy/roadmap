@@ -1,6 +1,9 @@
 package com.kllhy.roadmap.roadmap.domain.model;
 
-import com.kllhy.roadmap.roadmap.persistence.model.enums.ImportanceLevel;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.kllhy.roadmap.common.model.IdAuditEntity;
+import com.kllhy.roadmap.roadmap.domain.model.creation_spec.CreationTopic;
+import com.kllhy.roadmap.roadmap.domain.model.enums.ImportanceLevel;
 import jakarta.persistence.*;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -8,27 +11,11 @@ import java.util.List;
 
 @Entity
 @Table(name = "topic")
-public class Topic {
+public class Topic extends IdAuditEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
-
-    // To Do: N+1 문제 주의!
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @JoinColumn(name = "topic_id", nullable = false)
-    private List<ResourceTopic> resources = new ArrayList<>();
-
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    @JoinColumn(name = "topic_id")
-    private List<SubTopic> subTopics = new ArrayList<>();
-
-    // To Do: Topic.title 제약 사항 결정(ex. 길이)
     @Column(name = "title", nullable = false)
     private String title;
 
-    // To Do: Topic.content 제약 사항 결정(ex. 길이)
     @Column(name = "content")
     private String content;
 
@@ -36,16 +23,8 @@ public class Topic {
     @Enumerated(EnumType.STRING)
     private ImportanceLevel importanceLevel;
 
-    // To Do: Topic.order 제약 사항 결정(ex. 0이상? 아니면 1이상?)
     @Column(name = "sort_order", nullable = false)
     private Integer order;
-
-    // To Do: 시간 순서 제약 사항 createdAt(nn) -> modifiedAt(nullable) -> deletedAt(nullable)
-    @Column(name = "created_at", nullable = false)
-    private Timestamp createdAt;
-
-    @Column(name = "modified_at", nullable = false)
-    private Timestamp modifiedAt;
 
     @Column(name = "deleted_at", nullable = false)
     private Timestamp deletedAt;
@@ -55,4 +34,61 @@ public class Topic {
 
     @Column(name = "is_deleted", nullable = false)
     private boolean isDeleted;
+
+    @JsonIgnore
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "road_map_id", nullable = false)
+    private RoadMap roadMap;
+
+    @OneToMany(mappedBy = "topic", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OrderBy("order ASC")
+    private List<ResourceTopic> resources = new ArrayList<>();
+
+    @OneToMany(mappedBy = "topic", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<SubTopic> subTopics = new ArrayList<>();
+
+    protected Topic() {
+    }
+
+    private Topic(String title, String content, ImportanceLevel importanceLevel, Integer order, boolean isDraft, List<ResourceTopic> resources, List<SubTopic> subTopics) {
+        this.title = title;
+        this.content = content;
+        this.importanceLevel = importanceLevel;
+        this.order = order;
+        this.isDraft = isDraft;
+        this.resources = resources;
+        this.subTopics = subTopics;
+
+        this.deletedAt = null;
+        this.isDeleted = false;
+        this.roadMap = null;
+    }
+
+    public static Topic create(CreationTopic creationSpec) {
+        // To Do: Topic 생성자 불변식 검증
+
+        Topic created = new Topic(
+                creationSpec.title(),
+                creationSpec.content(),
+                creationSpec.importanceLevel(),
+                creationSpec.order(),
+                creationSpec.isDraft(),
+                creationSpec.resources(),
+                creationSpec.subTopics()
+        );
+
+        // 양방향 연결
+        created.resources.forEach(resource -> resource.setTopic(created));
+        created.subTopics.forEach(subTopic -> subTopic.setTopic(created));
+
+        return created;
+    }
+
+    void setRoadMap(RoadMap roadMap) {
+        if (roadMap == null) {
+            // To Do: 나중에 도메인 예외 발생시키도록 변경
+            throw new RuntimeException("Topic.setRoadMap: 파라미터 roadMap 이 null 입니다");
+        }
+        this.roadMap = roadMap;
+    }
 }
