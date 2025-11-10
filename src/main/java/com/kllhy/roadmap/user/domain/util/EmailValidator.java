@@ -1,11 +1,6 @@
 package com.kllhy.roadmap.user.domain.util;
 
-<<<<<<< HEAD
-import com.ohgiraffers.loadmapuser.domain.exception.InvalidEmailException;
-=======
 import com.kllhy.roadmap.user.domain.exception.InvalidEmailException;
-
->>>>>>> 51513f5 (fix(user):typo)
 import java.util.regex.Pattern;
 
 public class EmailValidator {
