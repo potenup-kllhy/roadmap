@@ -5,4 +5,3 @@ public class UserAlreadyDeletedException extends RuntimeException {
         super(message);
     }
 }
-
