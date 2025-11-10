@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface CategoryJpaRepository extends JpaRepository<Category, Long> {
     List<Category> findAllByOrderByTypeAscNameAsc();
 
-    List<Category> findAllByType(Type type);
+    List<Category> findAllByTypeOrderByNameAsc(Type type);
 
     Optional<Category> findByName(String name);
 }

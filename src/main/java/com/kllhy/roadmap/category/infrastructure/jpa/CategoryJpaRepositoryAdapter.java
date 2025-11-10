@@ -30,8 +30,8 @@ public class CategoryJpaRepositoryAdapter implements CategoryRepository {
     }
 
     @Override
-    public List<Category> findAllByType(Type type) {
-        return categoryJpaRepository.findAllByType(type);
+    public List<Category> findAllByTypeOrderByNameAsc(Type type) {
+        return categoryJpaRepository.findAllByTypeOrderByNameAsc(type);
     }
 
     @Override
