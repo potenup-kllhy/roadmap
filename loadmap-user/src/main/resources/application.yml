@@ -1,0 +1,21 @@
+
+spring:
+  application:
+    name: roadmap
+  datasource:
+    url: jdbc:mysql://localhost:3306/roadmap
+    username: root
+    password: 1234
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQL8Dialect
+
+jwt:
+  secret: your-secret-key-must-be-at-least-256-bits-long-for-hs256-algorithm-please-change-this-in-production
+  expiration: 43200000
