@@ -5,16 +5,29 @@ import com.kllhy.roadmap.common.model.AggregateRoot;
 import com.kllhy.roadmap.travel.domain.exception.TravelErrorCode;
 import com.kllhy.roadmap.travel.domain.model.command.ProgressTopicCommand;
 import com.kllhy.roadmap.travel.domain.model.enums.ProgressStatus;
+import com.kllhy.roadmap.travel.domain.model.enums.TravelProgressStatus;
+import com.kllhy.roadmap.travel.domain.model.read.TravelSnapshot;
 import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NamedEntityGraph(name = "travel.withTopics", attributeNodes = @NamedAttributeNode("topics"))
+@Table(
+        name = "travel",
+        uniqueConstraints = {
+            @UniqueConstraint(
+                    name = "uk_travel_user_roadmap",
+                    columnNames = {"user_id", "road_map_id"})
+        })
 public class Travel extends AggregateRoot {
 
     @Column(nullable = false, updatable = false)
@@ -82,5 +95,33 @@ public class Travel extends AggregateRoot {
                 .filter(t -> t.getTopicId().equals(topicId))
                 .findFirst()
                 .orElseThrow(() -> new DomainException(TravelErrorCode.TRAVEL_TOPICS_NOT_FOUND));
+    }
+
+    public TravelSnapshot toSnapshot() {
+        List<TravelSnapshot.ProgressTopicSnapshot> topicSnaps =
+                topics.stream().map(ProgressTopic::toSnapshot).toList();
+        return new TravelSnapshot(
+                this.getId(), this.userId, this.roadMapId, calculateStatus(), topicSnaps);
+    }
+
+    private TravelProgressStatus calculateStatus() {
+        Set<ProgressStatus> allStatuses =
+                topics.stream()
+                        .flatMap(
+                                topic ->
+                                        Stream.concat(
+                                                Stream.of(topic.getStatus()),
+                                                topic.getSubTopics().stream()
+                                                        .map(ProgressSubTopic::getStatus)))
+                        .collect(Collectors.toSet());
+
+        if (allStatuses.contains(ProgressStatus.TODO)
+                || allStatuses.contains(ProgressStatus.IN_PROGRESS)) {
+            return TravelProgressStatus.IN_PROGRESS;
+        }
+
+        return allStatuses.contains(ProgressStatus.DONE)
+                ? TravelProgressStatus.DONE
+                : TravelProgressStatus.IN_PROGRESS;
     }
 }

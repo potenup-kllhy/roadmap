@@ -5,6 +5,7 @@ import com.kllhy.roadmap.common.model.IdAuditEntity;
 import com.kllhy.roadmap.travel.domain.exception.TravelErrorCode;
 import com.kllhy.roadmap.travel.domain.model.command.ProgressSubTopicCommand;
 import com.kllhy.roadmap.travel.domain.model.enums.ProgressStatus;
+import com.kllhy.roadmap.travel.domain.model.read.TravelSnapshot;
 import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +13,7 @@ import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.BatchSize;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -23,6 +25,7 @@ public class ProgressTopic extends IdAuditEntity {
 
     @Getter private Long topicId;
 
+    @Getter
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private ProgressStatus status = ProgressStatus.TODO;
@@ -32,6 +35,7 @@ public class ProgressTopic extends IdAuditEntity {
             cascade = CascadeType.ALL,
             orphanRemoval = true,
             fetch = FetchType.LAZY)
+    @BatchSize(size = 100)
     private final List<ProgressSubTopic> subTopics = new ArrayList<>();
 
     private ProgressTopic(Travel travel, Long topicId) {
@@ -84,5 +88,11 @@ public class ProgressTopic extends IdAuditEntity {
                 .findFirst()
                 .orElseThrow(
                         () -> new DomainException(TravelErrorCode.TRAVEL_SUB_TOPICS_NOT_FOUND));
+    }
+
+    TravelSnapshot.ProgressTopicSnapshot toSnapshot() {
+        List<TravelSnapshot.ProgressSubTopicSnapshot> subs =
+                subTopics.stream().map(ProgressSubTopic::toSnapshot).toList();
+        return new TravelSnapshot.ProgressTopicSnapshot(id, topicId, status, subs);
     }
 }

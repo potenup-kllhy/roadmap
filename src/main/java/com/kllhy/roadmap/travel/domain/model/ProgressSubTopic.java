@@ -2,6 +2,7 @@ package com.kllhy.roadmap.travel.domain.model;
 
 import com.kllhy.roadmap.common.model.IdAuditEntity;
 import com.kllhy.roadmap.travel.domain.model.enums.ProgressStatus;
+import com.kllhy.roadmap.travel.domain.model.read.TravelSnapshot;
 import jakarta.persistence.*;
 import java.util.Objects;
 import lombok.AccessLevel;
@@ -14,6 +15,7 @@ public class ProgressSubTopic extends IdAuditEntity {
 
     @Getter private Long subTopicId;
 
+    @Getter
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private ProgressStatus status = ProgressStatus.TODO;
@@ -37,5 +39,9 @@ public class ProgressSubTopic extends IdAuditEntity {
 
     void changeStatus(ProgressStatus status) {
         this.status = status;
+    }
+
+    TravelSnapshot.ProgressSubTopicSnapshot toSnapshot() {
+        return new TravelSnapshot.ProgressSubTopicSnapshot(id, subTopicId, status);
     }
 }
