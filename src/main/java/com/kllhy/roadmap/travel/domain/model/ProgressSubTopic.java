@@ -15,6 +15,7 @@ public class ProgressSubTopic extends IdAuditEntity {
     @Getter private Long subTopicId;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private ProgressStatus status = ProgressStatus.TODO;
 
     @ManyToOne(fetch = FetchType.LAZY)

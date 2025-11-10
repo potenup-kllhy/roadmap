@@ -24,6 +24,7 @@ public class ProgressTopic extends IdAuditEntity {
     @Getter private Long topicId;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private ProgressStatus status = ProgressStatus.TODO;
 
     @OneToMany(
