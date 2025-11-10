@@ -19,7 +19,8 @@ public class CategoryController {
     private final CategoryQueryService categoryQueryService;
 
     @GetMapping
-    public ResponseEntity<List<CategoryView>> getCategories(@RequestParam(required = false) String type) {
+    public ResponseEntity<List<CategoryView>> getCategories(
+            @RequestParam(required = false) String type) {
         if (type != null) {
             return ResponseEntity.ok().body(categoryQueryService.getCategoriesByType(type));
         }

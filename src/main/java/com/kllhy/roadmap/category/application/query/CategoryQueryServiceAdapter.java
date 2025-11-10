@@ -27,15 +27,21 @@ public class CategoryQueryServiceAdapter implements CategoryQueryService {
 
     @Override
     public CategoryView getCategoryById(Long id) {
-        Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new DomainException(CategoryErrorCode.CATEGORY_NOT_FOUND));
+        Category category =
+                categoryRepository
+                        .findById(id)
+                        .orElseThrow(
+                                () -> new DomainException(CategoryErrorCode.CATEGORY_NOT_FOUND));
         return toView(category);
     }
 
     @Override
     public CategoryView getCategoryByName(String name) {
-        Category category = categoryRepository.findByName(name)
-                .orElseThrow(() -> new DomainException(CategoryErrorCode.CATEGORY_NOT_FOUND));
+        Category category =
+                categoryRepository
+                        .findByName(name)
+                        .orElseThrow(
+                                () -> new DomainException(CategoryErrorCode.CATEGORY_NOT_FOUND));
         return toView(category);
     }
 
@@ -52,7 +58,6 @@ public class CategoryQueryServiceAdapter implements CategoryQueryService {
     }
 
     private CategoryView toView(Category category) {
-        return new CategoryView(
-                category.getId(), category.getType().name(), category.getName());
+        return new CategoryView(category.getId(), category.getType().name(), category.getName());
     }
 }

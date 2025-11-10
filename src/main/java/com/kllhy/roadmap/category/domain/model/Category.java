@@ -19,6 +19,5 @@ public class Category extends IdEntity {
     @Getter
     private Type type;
 
-    @Getter
-    private String name;
+    @Getter private String name;
 }

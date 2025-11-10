@@ -1,7 +1,6 @@
 package com.kllhy.roadmap.category.application.query;
 
 import com.kllhy.roadmap.category.application.query.dto.CategoryView;
-
 import java.util.List;
 
 public interface CategoryQueryService {
