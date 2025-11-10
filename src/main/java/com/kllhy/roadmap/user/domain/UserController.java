@@ -1,10 +1,19 @@
 package com.kllhy.roadmap.user.domain;
 
+<<<<<<< HEAD
 import com.ohgiraffers.loadmapuser.config.JwtUtil;
 import com.ohgiraffers.loadmapuser.domain.command.dto.RegisterUserCommand;
 import com.ohgiraffers.loadmapuser.domain.command.dto.UpdateUserCommand;
 import com.ohgiraffers.loadmapuser.domain.command.service.UserCommandService;
 import com.ohgiraffers.loadmapuser.domain.query.dto.UserQueryResult;
+import java.net.URI;
+=======
+import com.kllhy.roadmap.common.config.JwtUtil;
+import com.kllhy.roadmap.user.domain.command.dto.RegisterUserCommand;
+import com.kllhy.roadmap.user.domain.command.dto.UpdateUserCommand;
+import com.kllhy.roadmap.user.domain.command.service.UserCommandService;
+import com.kllhy.roadmap.user.domain.query.dto.UserQueryResult;
+>>>>>>> 51513f5 (fix(user):typo)
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,8 +23,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.URI;
-
 @RestController
 @RequestMapping("/api/v1/users")
 @Slf4j
@@ -24,9 +31,10 @@ public class UserController {
     private final JwtUtil jwtUtil;
     private final AuthenticationManager authenticationManager;
 
-    public UserController(UserCommandService userCommandService, 
-                         JwtUtil jwtUtil,
-                         AuthenticationManager authenticationManager) {
+    public UserController(
+            UserCommandService userCommandService,
+            JwtUtil jwtUtil,
+            AuthenticationManager authenticationManager) {
         this.userCommandService = userCommandService;
         this.jwtUtil = jwtUtil;
         this.authenticationManager = authenticationManager;
@@ -43,17 +51,18 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDTO> login(@RequestBody LoginDTO loginDTO) {
         log.info("Login attempt for loginId: {}", loginDTO.getLoginId());
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginDTO.getLoginId(), loginDTO.getPassword())
-        );
+        Authentication authentication =
+                authenticationManager.authenticate(
+                        new UsernamePasswordAuthenticationToken(
+                                loginDTO.getLoginId(), loginDTO.getPassword()));
         User user = (User) authentication.getPrincipal();
         String token = jwtUtil.generateToken(user.getLoginId());
-        
+
         log.info("Login successful for loginId: {}", loginDTO.getLoginId());
 
-        return ResponseEntity.ok(new LoginResponseDTO(
-                token, user.getLoginId(), user.getEmail(), user.getAccountStatus()
-        ));
+        return ResponseEntity.ok(
+                new LoginResponseDTO(
+                        token, user.getLoginId(), user.getEmail(), user.getAccountStatus()));
     }
 
     @GetMapping("/me")
@@ -67,8 +76,8 @@ public class UserController {
     }
 
     @PutMapping("/me")
-    public ResponseEntity<UserQueryResult> updateMyUserInfo(@AuthenticationPrincipal User user,
-                                                           @RequestBody UpdateUserCommand command) {
+    public ResponseEntity<UserQueryResult> updateMyUserInfo(
+            @AuthenticationPrincipal User user, @RequestBody UpdateUserCommand command) {
         if (user == null) {
             log.warn("Unauthorized update attempt to /me endpoint");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();

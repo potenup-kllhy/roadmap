@@ -5,4 +5,3 @@ public class InvalidPasswordException extends RuntimeException {
         super(message);
     }
 }
-

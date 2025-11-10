@@ -1,6 +1,6 @@
 package com.kllhy.roadmap.user.domain.command.dto;
 
-import com.ohgiraffers.loadmapuser.domain.AccountStatus;
+import com.kllhy.roadmap.user.domain.AccountStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,4 +14,3 @@ public class RegisterUserCommand {
     private String password;
     private AccountStatus accountStatus;
 }
-

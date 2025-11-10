@@ -29,22 +29,25 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig)
+            throws Exception {
         return authConfig.getAuthenticationManager();
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-            .csrf(csrf -> csrf.disable())
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/v1/users/signup", "/api/v1/users/login").permitAll()
-                .anyRequest().authenticated()
-            )
-            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+        http.csrf(csrf -> csrf.disable())
+                .sessionManagement(
+                        session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(
+                        auth ->
+                                auth.requestMatchers("/api/v1/users/signup", "/api/v1/users/login")
+                                        .permitAll()
+                                        .anyRequest()
+                                        .authenticated())
+                .addFilterBefore(
+                        jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 }
-

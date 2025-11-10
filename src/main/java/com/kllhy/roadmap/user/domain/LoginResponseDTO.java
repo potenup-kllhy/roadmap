@@ -13,4 +13,3 @@ public class LoginResponseDTO {
     private String email;
     private AccountStatus accountStatus;
 }
-

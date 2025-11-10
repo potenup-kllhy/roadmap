@@ -13,4 +13,3 @@ public class LoginDTO {
     private String loginId;
     private String password;
 }
-
