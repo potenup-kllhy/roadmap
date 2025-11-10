@@ -1,4 +1,4 @@
-package com.kllhy.roadmap.roadmap.persistence.model;
+package com.kllhy.roadmap.roadmap.domain.model;
 
 import com.kllhy.roadmap.roadmap.persistence.model.enums.ImportanceLevel;
 import jakarta.persistence.CascadeType;
