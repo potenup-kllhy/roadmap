@@ -37,15 +37,15 @@ public class UserController {
 
     @PostMapping("/signup")
     public ResponseEntity<Void> signup(@RequestBody RegisterUserCommand command) {
-        log.info("Signup request received for loginId: {}", command.getLoginId());
+        log.info("회원가입 요청 - 로그인 ID: {} ", command.getLoginId());
         Long userId = userCommandService.registerUser(command);
-        log.info("Signup successful for user id: {}", userId);
-        return ResponseEntity.created(URI.create("/api/v1/users/" + userId)).build();
+        log.info("회원가입 성공 - 사용자 ID: {}", userId);
+        return ResponseEntity.created(URI.create("/api-v1/users/" + userId)).build();
     }
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
-        log.info("Login attempt for loginId: {}", loginRequest.getLoginId());
+        log.info("로그인 시도 - 로그인 ID: {}", loginRequest.getLoginId());
         Authentication authentication =
                 authenticationManager.authenticate(
                         new UsernamePasswordAuthenticationToken(
@@ -53,7 +53,7 @@ public class UserController {
         User user = (User) authentication.getPrincipal();
         String token = jwtUtil.generateToken(user.getLoginId());
 
-        log.info("Login successful for loginId: {}", loginRequest.getLoginId());
+        log.info("로그인 성공 - 로그인 ID: {}", loginRequest.getLoginId());
 
         return ResponseEntity.ok(
                 new LoginResponse(
