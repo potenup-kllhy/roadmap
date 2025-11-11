@@ -1,4 +1,4 @@
-package com.kllhy.roadmap.roadmap.persistence.model.enums;
+package com.kllhy.roadmap.roadmap.domain.model.enums;
 
 public enum ImportanceLevel {
     DEFAULT,
