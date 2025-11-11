@@ -10,7 +10,7 @@ public record CreationTopic(
         String title,
         String content,
         ImportanceLevel importanceLevel,
-        Integer order,
+        int order,
         boolean isDraft,
         List<CreationResourceTopic> creationResourceTopics,
         List<CreationSubTopic> creationSubTopics) {
@@ -18,7 +18,6 @@ public record CreationTopic(
     public CreationTopic {
         Objects.requireNonNull(title, "CreationTopic: title is null");
         Objects.requireNonNull(importanceLevel, "CreationTopic: importanceLevel is null");
-        Objects.requireNonNull(order, "CreationTopic: order is null");
         if (creationResourceTopics == null) {
             creationResourceTopics = new ArrayList<>();
         }
