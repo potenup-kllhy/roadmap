@@ -2,11 +2,13 @@ package com.kllhy.roadmap.category.domain.model;
 
 import com.kllhy.roadmap.category.domain.enums.Type;
 import com.kllhy.roadmap.common.model.IdEntity;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
@@ -15,7 +17,10 @@ import lombok.NoArgsConstructor;
 public class Category extends IdEntity {
 
     @Enumerated(EnumType.STRING)
+    @Getter
     private Type type;
 
+    @Column(nullable = false)
+    @Getter
     private String name;
 }
