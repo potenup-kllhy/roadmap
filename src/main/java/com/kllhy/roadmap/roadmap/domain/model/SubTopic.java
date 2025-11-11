@@ -5,12 +5,14 @@ import com.kllhy.roadmap.common.model.IdAuditEntity;
 import com.kllhy.roadmap.roadmap.domain.model.creation_spec.CreationSubTopic;
 import com.kllhy.roadmap.roadmap.domain.model.enums.ImportanceLevel;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
+import java.util.Objects;
 
 @Entity
 @Table(name = "sub_topic")
@@ -69,11 +71,11 @@ public class SubTopic extends IdAuditEntity {
     public static SubTopic create(CreationSubTopic creationSpec) {
         // To Do: SubTopic 생성자 불변식 검증
 
-        List<ResourceSubTopic> createdResourceSubTopics =
-                creationSpec.creationResourceSubTopics().stream()
-                        .map(ResourceSubTopic::create)
-                        .sorted(Comparator.comparing(ResourceSubTopic::getOrder))
-                        .toList();
+        List<ResourceSubTopic> createdResourceSubTopics = creationSpec.creationResourceSubTopics()
+                .stream()
+                .map(ResourceSubTopic::create)
+                .sorted(Comparator.comparing(ResourceSubTopic::getOrder))
+                .toList();
 
         SubTopic created =
                 new SubTopic(
@@ -90,10 +92,7 @@ public class SubTopic extends IdAuditEntity {
     }
 
     void setTopic(Topic topic) {
-        if (topic == null) {
-            // To Do: 나중에 도메인 예외 발생시키도록 변경
-            throw new RuntimeException("SubTopic.setTopic: 파라미터 topic 이 null 입니다");
-        }
-        this.topic = topic;
+        this.topic = Objects.requireNonNull(topic,
+                "SubTopic.setTopic: 파라미터 topic 이 null 입니다");
     }
 }

@@ -9,6 +9,8 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.Objects;
+
 @Entity
 @Table(name = "resource_topic")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -22,8 +24,7 @@ public class ResourceTopic extends IdEntity {
     private ResourceType resourceType;
 
     @Column(name = "sort_order", nullable = false)
-    @Getter
-    private Integer order;
+    @Getter private Integer order;
 
     // To Do: 안전한 링크인지 확인하는 기능도 있으면 괜찮을 것 같음
     @Column(name = "link", nullable = false)
@@ -54,10 +55,7 @@ public class ResourceTopic extends IdEntity {
     }
 
     void setTopic(Topic topic) {
-        if (topic == null) {
-            // To Do: 나중에 도메인 예외 발생시키도록 변경
-            throw new RuntimeException("ResourceTopic.setTopic: 파라미터 topic 이 null 입니다");
-        }
-        this.topic = topic;
+        this.topic = Objects.requireNonNull(topic,
+                "ResourceTopic.setTopic: 파라미터 topic 이 null 입니다");
     }
 }

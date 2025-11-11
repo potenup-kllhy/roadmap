@@ -9,6 +9,8 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.Objects;
+
 @Entity
 @Table(name = "resource_sub_topic")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -18,8 +20,7 @@ public class ResourceSubTopic extends IdEntity {
     private String name;
 
     @Column(name = "sort_order", nullable = false)
-    @Getter
-    private Integer order;
+    @Getter private Integer order;
 
     @Enumerated(value = EnumType.STRING)
     private ResourceType resourceType;
@@ -51,10 +52,7 @@ public class ResourceSubTopic extends IdEntity {
     }
 
     void setSubTopic(SubTopic subTopic) {
-        if (subTopic == null) {
-            // To Do: 나중에 도메인 예외 발생시키도록 변경
-            throw new RuntimeException("ResourceSubTopic.setSubTopic: 파라미터 subTopic 이 null 입니다");
-        }
-        this.subTopic = subTopic;
+        this.subTopic= Objects.requireNonNull(subTopic,
+                "ResourceSubTopic.setSubTopic: 파라미터 subTopic 이 null 입니다");
     }
 }
