@@ -22,6 +22,7 @@ public class ResourceSubTopic extends IdEntity {
     @Column(name = "sort_order", nullable = false)
     @Getter private Integer order;
 
+    @Column(name = "resource_type", nullable = false)
     @Enumerated(value = EnumType.STRING)
     private ResourceType resourceType;
 
@@ -43,12 +44,26 @@ public class ResourceSubTopic extends IdEntity {
     }
 
     public static ResourceSubTopic create(CreationResourceSubTopic creationSpec) {
-        // To Do: ResourceSubTopic 생성자 불변식 검증
+        String name = creationSpec.name();
+        if (name.isBlank() || name.length() < 2 || 255 < name.length()) {
+            throw new IllegalArgumentException("ResourceSubTopic.create: name 이 blank 이거나, 길이가 2 미만 또는 255 초과");
+        }
+
+        Integer order = creationSpec.order();
+        if (order < 1) {
+            throw new IllegalArgumentException("ResourceSubTopic.create: order 가 1 미만");
+        }
+
+        String link = creationSpec.link();
+        if (link.isBlank() || 255 < link.length()) {
+            throw new IllegalArgumentException("ResourceSubTopic.create: link 가 blank 이거나, 길이가 255 초과");
+        }
+
         return new ResourceSubTopic(
-                creationSpec.name(),
-                creationSpec.order(),
+                name,
+                order,
                 creationSpec.resourceType(),
-                creationSpec.link());
+                link);
     }
 
     void setSubTopic(SubTopic subTopic) {

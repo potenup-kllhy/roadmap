@@ -6,13 +6,11 @@ import com.kllhy.roadmap.roadmap.domain.model.creation_spec.CreationSubTopic;
 import com.kllhy.roadmap.roadmap.domain.model.enums.ImportanceLevel;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Entity
 @Table(name = "sub_topic")
@@ -20,9 +18,9 @@ import java.util.Objects;
 public class SubTopic extends IdAuditEntity {
 
     @Column(nullable = false)
-    private String title;
+    @Getter private String title;
 
-    @Column(name = "content", nullable = true)
+    @Column(name = "content")
     private String content;
 
     @Enumerated(EnumType.STRING)
@@ -69,17 +67,34 @@ public class SubTopic extends IdAuditEntity {
     }
 
     public static SubTopic create(CreationSubTopic creationSpec) {
-        // To Do: SubTopic 생성자 불변식 검증
 
-        List<ResourceSubTopic> createdResourceSubTopics = creationSpec.creationResourceSubTopics()
-                .stream()
-                .map(ResourceSubTopic::create)
-                .sorted(Comparator.comparing(ResourceSubTopic::getOrder))
-                .toList();
+        String title = creationSpec.title();
+        if (title.isBlank() || title.length() < 2 || 255 < title.length()) {
+            throw new IllegalArgumentException("SubTopic.create: title 이 blank 이거나, 길이가 2 미만 또는 255 초과");
+        }
+
+        String content = creationSpec.content();
+        if (content != null && content.length() > 1000) {
+            throw new IllegalArgumentException("SubTopic.create: content 길이가 1000 초과");
+        }
+
+        List<ResourceSubTopic> createdResourceSubTopics = creationSpec.creationResourceSubTopics() == null
+                ? Collections.emptyList()
+                : creationSpec.creationResourceSubTopics()
+                        .stream()
+                        .map(ResourceSubTopic::create)
+                        .sorted(Comparator.comparing(ResourceSubTopic::getOrder))
+                        .toList();
+
+        for (int i = 0; i < createdResourceSubTopics.size(); i++) {
+            if (createdResourceSubTopics.get(i).getOrder() != (i + 1)) {
+                throw new IllegalArgumentException("SubTopic.create: ResourceSubTopic 리스트 요소의 order 는 1부터 size 까지 1씩 증가해야 합니다.");
+            }
+        }
 
         SubTopic created =
                 new SubTopic(
-                        creationSpec.title(),
+                        title,
                         creationSpec.content(),
                         creationSpec.importanceLevel(),
                         creationSpec.isDraft(),

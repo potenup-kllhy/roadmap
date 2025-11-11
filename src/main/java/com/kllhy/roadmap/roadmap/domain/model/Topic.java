@@ -10,10 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Entity
 @Table(name = "topic")
@@ -21,7 +18,7 @@ import java.util.Objects;
 public class Topic extends IdAuditEntity {
 
     @Column(name = "title", nullable = false)
-    private String title;
+    @Getter private String title;
 
     @Column(name = "content")
     private String content;
@@ -84,25 +81,57 @@ public class Topic extends IdAuditEntity {
     }
 
     public static Topic create(CreationTopic creationSpec) {
-        // To Do: Topic 생성자 불변식 검증
 
-        List<ResourceTopic> createdResourceTopics = creationSpec.creationResourceTopics()
-                .stream()
-                .map(ResourceTopic::create)
-                .sorted(Comparator.comparing(ResourceTopic::getOrder))
-                .toList();
+        String title = creationSpec.title();
+        if (title.isBlank() || title.length() < 2 || 255 < title.length()) {
+            throw new IllegalArgumentException("Topic.create: title 이 blank 이거나, 길이가 2 미만 255 초과");
+        }
 
-        List<SubTopic> createdSubTopics = creationSpec.creationSubTopics()
-                .stream()
-                .map(SubTopic::create)
-                .toList();
+        String content = creationSpec.content();
+        if (content != null && content.length() > 1000) {
+            throw new IllegalArgumentException("Topic.create: content 길이가 1000 초과");
+        }
+
+        Integer order = creationSpec.order();
+        if (order < 1) {
+            throw new IllegalArgumentException("Topic.create: order 가 1 미만");
+        }
+
+        List<ResourceTopic> createdResourceTopics = creationSpec.creationResourceTopics() == null
+                ? Collections.emptyList()
+                : creationSpec.creationResourceTopics()
+                        .stream()
+                        .map(ResourceTopic::create)
+                        .sorted(Comparator.comparing(ResourceTopic::getOrder))
+                        .toList();
+
+        for (int i = 0; i < createdResourceTopics.size(); i++) {
+            if (createdResourceTopics.get(i).getOrder() != (i + 1)) {
+                throw new IllegalArgumentException("Topic.create: ResourceTopic 리스트 요소의 order 는 1부터 size 까지 1씩 증가해야 합니다.");
+            }
+        }
+
+        List<SubTopic> createdSubTopics = creationSpec.creationSubTopics() == null
+                ? Collections.emptyList()
+                : creationSpec.creationSubTopics()
+                        .stream()
+                        .map(SubTopic::create)
+                        .toList();
+
+        Set<String> titleSet = new HashSet<>();
+        for (SubTopic subTopic : createdSubTopics) {
+            titleSet.add(subTopic.getTitle());
+        }
+        if (titleSet.size() != createdSubTopics.size()) {
+            throw new IllegalArgumentException("Topic.create: Topic 에 속한 SubTopic 의 title 은 고유해야 합니다.");
+        }
 
         Topic created =
                 new Topic(
-                        creationSpec.title(),
-                        creationSpec.content(),
+                        title,
+                        content,
                         creationSpec.importanceLevel(),
-                        creationSpec.order(),
+                        order,
                         creationSpec.isDraft(),
                         createdResourceTopics,
                         createdSubTopics);
