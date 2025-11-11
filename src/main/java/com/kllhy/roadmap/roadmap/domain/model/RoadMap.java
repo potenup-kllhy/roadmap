@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import java.sql.Timestamp;
 import java.util.*;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
@@ -14,21 +15,26 @@ import lombok.NoArgsConstructor;
 public class RoadMap extends AggregateRoot {
 
     @Column(name = "title", nullable = false)
+    @Getter
     private String title;
 
     @Column(name = "description")
+    @Getter
     private String description;
 
     @Column(name = "deleted_at")
     private Timestamp deletedAt;
 
     @Column(name = "is_deleted", nullable = false)
+    @Getter
     private boolean isDeleted;
 
     @Column(name = "is_draft", nullable = false)
+    @Getter
     private boolean isDraft;
 
     @Column(name = "category_id", nullable = false)
+    @Getter
     private Long categoryId;
 
     @OneToMany(
@@ -105,5 +111,16 @@ public class RoadMap extends AggregateRoot {
         created.topics.forEach(topic -> topic.setRoadMap(created));
 
         return created;
+    }
+
+    public Timestamp getDeletedAt() {
+        if (deletedAt == null) {
+            return null;
+        }
+        return new Timestamp(deletedAt.getTime());
+    }
+
+    public List<Topic> getTopics() {
+        return List.copyOf(topics);
     }
 }
