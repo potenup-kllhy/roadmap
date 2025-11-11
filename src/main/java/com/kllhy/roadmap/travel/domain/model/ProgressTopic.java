@@ -47,7 +47,7 @@ public class ProgressTopic extends IdAuditEntity {
         return new ProgressTopic(travel, topicId);
     }
 
-    List<ProgressSubTopic> getSubTopics() {
+    public List<ProgressSubTopic> getSubTopics() {
         return List.copyOf(subTopics);
     }
 

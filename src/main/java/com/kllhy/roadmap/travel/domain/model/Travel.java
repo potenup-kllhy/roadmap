@@ -4,6 +4,7 @@ import com.kllhy.roadmap.common.exception.DomainException;
 import com.kllhy.roadmap.common.model.AggregateRoot;
 import com.kllhy.roadmap.travel.domain.exception.TravelErrorCode;
 import com.kllhy.roadmap.travel.domain.model.command.ProgressTopicCommand;
+import com.kllhy.roadmap.travel.domain.model.command.TravelCommand;
 import com.kllhy.roadmap.travel.domain.model.enums.ProgressStatus;
 import com.kllhy.roadmap.travel.domain.model.enums.TravelProgressStatus;
 import com.kllhy.roadmap.travel.domain.model.read.TravelSnapshot;
@@ -50,15 +51,17 @@ public class Travel extends AggregateRoot {
         this.roadMapId = Objects.requireNonNull(roadMapId, "roadMapId must not be null");
     }
 
-    public static Travel create(Long userId, Long roadMapId) {
-        return new Travel(userId, roadMapId);
+    public static Travel create(TravelCommand command) {
+        Travel travel = new Travel(command.userId(), command.roadmapId());
+        travel.addTopics(command.topics());
+        return travel;
     }
 
     public List<ProgressTopic> getTopics() {
         return List.copyOf(topics);
     }
 
-    public void addTopics(List<ProgressTopicCommand> commands) {
+    private void addTopics(List<ProgressTopicCommand> commands) {
         if (commands == null || commands.isEmpty())
             throw new DomainException(TravelErrorCode.TRAVEL_TOPICS_INVALID);
 

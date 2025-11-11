@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.kllhy.roadmap.travel.domain.model.Travel;
 import com.kllhy.roadmap.travel.domain.model.command.ProgressSubTopicCommand;
 import com.kllhy.roadmap.travel.domain.model.command.ProgressTopicCommand;
+import com.kllhy.roadmap.travel.domain.model.command.TravelCommand;
 import com.kllhy.roadmap.travel.domain.model.read.TravelSnapshot;
 import com.kllhy.roadmap.travel.domain.repository.TravelRepository;
 import jakarta.persistence.EntityManager;
@@ -29,7 +30,6 @@ public class TravelSnapshotTest {
     public void snapshot_creation_success() {
         Long userId = 1L;
         Long roadMapId = 100L;
-        Travel travel = Travel.create(userId, roadMapId);
 
         List<ProgressTopicCommand> topicCommands =
                 IntStream.rangeClosed(1, 10)
@@ -47,7 +47,9 @@ public class TravelSnapshotTest {
                                 })
                         .toList();
 
-        travel.addTopics(topicCommands);
+        TravelCommand travelCommand = new TravelCommand(userId, roadMapId, topicCommands);
+
+        Travel travel = Travel.create(travelCommand);
         travelRepository.save(travel);
 
         em.flush();
