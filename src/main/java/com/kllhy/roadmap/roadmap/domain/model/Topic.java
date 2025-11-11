@@ -81,7 +81,7 @@ public class Topic extends IdAuditEntity {
         this.roadMap = null;
     }
 
-    public static Topic create(CreationTopic creationSpec) {
+    static Topic create(CreationTopic creationSpec) {
 
         String title = creationSpec.title();
         if (title.isBlank() || title.length() < 2 || 255 < title.length()) {

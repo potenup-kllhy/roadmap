@@ -43,7 +43,7 @@ public class ResourceSubTopic extends IdEntity {
         this.subTopic = null;
     }
 
-    public static ResourceSubTopic create(CreationResourceSubTopic creationSpec) {
+    static ResourceSubTopic create(CreationResourceSubTopic creationSpec) {
         String name = creationSpec.name();
         if (name.isBlank() || name.length() < 2 || 255 < name.length()) {
             throw new IllegalArgumentException(

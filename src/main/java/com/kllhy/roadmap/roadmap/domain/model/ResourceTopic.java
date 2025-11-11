@@ -44,7 +44,7 @@ public class ResourceTopic extends IdEntity {
         this.topic = null;
     }
 
-    public static ResourceTopic create(CreationResourceTopic creationSpec) {
+    static ResourceTopic create(CreationResourceTopic creationSpec) {
 
         String name = creationSpec.name();
         if (name.isBlank() || name.length() < 2 || 255 < name.length()) {

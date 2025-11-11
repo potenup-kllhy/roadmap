@@ -66,7 +66,7 @@ public class SubTopic extends IdAuditEntity {
         this.topic = null;
     }
 
-    public static SubTopic create(CreationSubTopic creationSpec) {
+    static SubTopic create(CreationSubTopic creationSpec) {
 
         String title = creationSpec.title();
         if (title.isBlank() || title.length() < 2 || 255 < title.length()) {
