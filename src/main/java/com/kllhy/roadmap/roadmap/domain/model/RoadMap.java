@@ -67,13 +67,15 @@ public class RoadMap extends AggregateRoot {
             throw new IllegalArgumentException("RoadMap.create: description 의 길이가 1000 초과");
         }
 
-        List<Topic> createdTopics =
-                creationSpec.creationTopics() == null
-                        ? Collections.emptyList()
-                        : creationSpec.creationTopics().stream()
-                                .map(Topic::create)
-                                .sorted(Comparator.comparing(Topic::getOrder))
-                                .toList();
+        if (creationSpec.creationTopics().isEmpty()) {
+            throw new IllegalArgumentException("RoadMap.create: creationTopics 가 blank 임");
+        }
+
+        List<Topic> createdTopics = creationSpec.creationTopics()
+                .stream()
+                .map(Topic::create)
+                .sorted(Comparator.comparing(Topic::getOrder))
+                .toList();
 
         for (int i = 0; i < createdTopics.size(); i++) {
             if (createdTopics.get(i).getOrder() != (i + 1)) {

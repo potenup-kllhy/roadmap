@@ -13,5 +13,6 @@ public record CreationRoadMap(
     public CreationRoadMap {
         Objects.requireNonNull(title, "CreationRoadMap: title is null");
         Objects.requireNonNull(categoryId, "CreationRoadMap: categoryId is null");
+        Objects.requireNonNull(creationTopics, "CreationRoadMap: creationTopics is null");
     }
 }
