@@ -5,12 +5,11 @@ import com.kllhy.roadmap.common.model.IdAuditEntity;
 import com.kllhy.roadmap.roadmap.domain.model.creation_spec.CreationTopic;
 import com.kllhy.roadmap.roadmap.domain.model.enums.ImportanceLevel;
 import jakarta.persistence.*;
+import java.sql.Timestamp;
+import java.util.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.sql.Timestamp;
-import java.util.*;
 
 @Entity
 @Table(name = "topic")
@@ -18,7 +17,8 @@ import java.util.*;
 public class Topic extends IdAuditEntity {
 
     @Column(name = "title", nullable = false)
-    @Getter private String title;
+    @Getter
+    private String title;
 
     @Column(name = "content")
     private String content;
@@ -28,7 +28,8 @@ public class Topic extends IdAuditEntity {
     private ImportanceLevel importanceLevel;
 
     @Column(name = "sort_order", nullable = false)
-    @Getter private Integer order;
+    @Getter
+    private Integer order;
 
     @Column(name = "deleted_at")
     private Timestamp deletedAt;
@@ -97,33 +98,33 @@ public class Topic extends IdAuditEntity {
             throw new IllegalArgumentException("Topic.create: order 가 1 미만");
         }
 
-        List<ResourceTopic> createdResourceTopics = creationSpec.creationResourceTopics() == null
-                ? Collections.emptyList()
-                : creationSpec.creationResourceTopics()
-                        .stream()
-                        .map(ResourceTopic::create)
-                        .sorted(Comparator.comparing(ResourceTopic::getOrder))
-                        .toList();
+        List<ResourceTopic> createdResourceTopics =
+                creationSpec.creationResourceTopics() == null
+                        ? Collections.emptyList()
+                        : creationSpec.creationResourceTopics().stream()
+                                .map(ResourceTopic::create)
+                                .sorted(Comparator.comparing(ResourceTopic::getOrder))
+                                .toList();
 
         for (int i = 0; i < createdResourceTopics.size(); i++) {
             if (createdResourceTopics.get(i).getOrder() != (i + 1)) {
-                throw new IllegalArgumentException("Topic.create: ResourceTopic 리스트 요소의 order 는 1부터 size 까지 1씩 증가해야 합니다.");
+                throw new IllegalArgumentException(
+                        "Topic.create: ResourceTopic 리스트 요소의 order 는 1부터 size 까지 1씩 증가해야 합니다.");
             }
         }
 
-        List<SubTopic> createdSubTopics = creationSpec.creationSubTopics() == null
-                ? Collections.emptyList()
-                : creationSpec.creationSubTopics()
-                        .stream()
-                        .map(SubTopic::create)
-                        .toList();
+        List<SubTopic> createdSubTopics =
+                creationSpec.creationSubTopics() == null
+                        ? Collections.emptyList()
+                        : creationSpec.creationSubTopics().stream().map(SubTopic::create).toList();
 
         Set<String> titleSet = new HashSet<>();
         for (SubTopic subTopic : createdSubTopics) {
             titleSet.add(subTopic.getTitle());
         }
         if (titleSet.size() != createdSubTopics.size()) {
-            throw new IllegalArgumentException("Topic.create: Topic 에 속한 SubTopic 의 title 은 고유해야 합니다.");
+            throw new IllegalArgumentException(
+                    "Topic.create: Topic 에 속한 SubTopic 의 title 은 고유해야 합니다.");
         }
 
         Topic created =
@@ -144,7 +145,6 @@ public class Topic extends IdAuditEntity {
     }
 
     void setRoadMap(RoadMap roadMap) {
-        this.roadMap = Objects.requireNonNull(roadMap,
-                "Topic.setRoadMap: 파라미터 roadMap 이 null 입니다");
+        this.roadMap = Objects.requireNonNull(roadMap, "Topic.setRoadMap: 파라미터 roadMap 이 null 입니다");
     }
 }

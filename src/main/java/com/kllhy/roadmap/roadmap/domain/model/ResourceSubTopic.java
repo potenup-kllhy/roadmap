@@ -5,11 +5,10 @@ import com.kllhy.roadmap.common.model.IdEntity;
 import com.kllhy.roadmap.roadmap.domain.model.creation_spec.CreationResourceSubTopic;
 import com.kllhy.roadmap.roadmap.domain.model.enums.ResourceType;
 import jakarta.persistence.*;
+import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.util.Objects;
 
 @Entity
 @Table(name = "resource_sub_topic")
@@ -20,7 +19,8 @@ public class ResourceSubTopic extends IdEntity {
     private String name;
 
     @Column(name = "sort_order", nullable = false)
-    @Getter private Integer order;
+    @Getter
+    private Integer order;
 
     @Column(name = "resource_type", nullable = false)
     @Enumerated(value = EnumType.STRING)
@@ -46,7 +46,8 @@ public class ResourceSubTopic extends IdEntity {
     public static ResourceSubTopic create(CreationResourceSubTopic creationSpec) {
         String name = creationSpec.name();
         if (name.isBlank() || name.length() < 2 || 255 < name.length()) {
-            throw new IllegalArgumentException("ResourceSubTopic.create: name 이 blank 이거나, 길이가 2 미만 또는 255 초과");
+            throw new IllegalArgumentException(
+                    "ResourceSubTopic.create: name 이 blank 이거나, 길이가 2 미만 또는 255 초과");
         }
 
         Integer order = creationSpec.order();
@@ -56,18 +57,16 @@ public class ResourceSubTopic extends IdEntity {
 
         String link = creationSpec.link();
         if (link.isBlank() || 255 < link.length()) {
-            throw new IllegalArgumentException("ResourceSubTopic.create: link 가 blank 이거나, 길이가 255 초과");
+            throw new IllegalArgumentException(
+                    "ResourceSubTopic.create: link 가 blank 이거나, 길이가 255 초과");
         }
 
-        return new ResourceSubTopic(
-                name,
-                order,
-                creationSpec.resourceType(),
-                link);
+        return new ResourceSubTopic(name, order, creationSpec.resourceType(), link);
     }
 
     void setSubTopic(SubTopic subTopic) {
-        this.subTopic= Objects.requireNonNull(subTopic,
-                "ResourceSubTopic.setSubTopic: 파라미터 subTopic 이 null 입니다");
+        this.subTopic =
+                Objects.requireNonNull(
+                        subTopic, "ResourceSubTopic.setSubTopic: 파라미터 subTopic 이 null 입니다");
     }
 }

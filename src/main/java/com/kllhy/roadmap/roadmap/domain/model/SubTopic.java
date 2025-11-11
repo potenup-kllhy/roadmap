@@ -5,12 +5,11 @@ import com.kllhy.roadmap.common.model.IdAuditEntity;
 import com.kllhy.roadmap.roadmap.domain.model.creation_spec.CreationSubTopic;
 import com.kllhy.roadmap.roadmap.domain.model.enums.ImportanceLevel;
 import jakarta.persistence.*;
+import java.sql.Timestamp;
+import java.util.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.sql.Timestamp;
-import java.util.*;
 
 @Entity
 @Table(name = "sub_topic")
@@ -18,7 +17,8 @@ import java.util.*;
 public class SubTopic extends IdAuditEntity {
 
     @Column(nullable = false)
-    @Getter private String title;
+    @Getter
+    private String title;
 
     @Column(name = "content")
     private String content;
@@ -70,7 +70,8 @@ public class SubTopic extends IdAuditEntity {
 
         String title = creationSpec.title();
         if (title.isBlank() || title.length() < 2 || 255 < title.length()) {
-            throw new IllegalArgumentException("SubTopic.create: title 이 blank 이거나, 길이가 2 미만 또는 255 초과");
+            throw new IllegalArgumentException(
+                    "SubTopic.create: title 이 blank 이거나, 길이가 2 미만 또는 255 초과");
         }
 
         String content = creationSpec.content();
@@ -78,17 +79,18 @@ public class SubTopic extends IdAuditEntity {
             throw new IllegalArgumentException("SubTopic.create: content 길이가 1000 초과");
         }
 
-        List<ResourceSubTopic> createdResourceSubTopics = creationSpec.creationResourceSubTopics() == null
-                ? Collections.emptyList()
-                : creationSpec.creationResourceSubTopics()
-                        .stream()
-                        .map(ResourceSubTopic::create)
-                        .sorted(Comparator.comparing(ResourceSubTopic::getOrder))
-                        .toList();
+        List<ResourceSubTopic> createdResourceSubTopics =
+                creationSpec.creationResourceSubTopics() == null
+                        ? Collections.emptyList()
+                        : creationSpec.creationResourceSubTopics().stream()
+                                .map(ResourceSubTopic::create)
+                                .sorted(Comparator.comparing(ResourceSubTopic::getOrder))
+                                .toList();
 
         for (int i = 0; i < createdResourceSubTopics.size(); i++) {
             if (createdResourceSubTopics.get(i).getOrder() != (i + 1)) {
-                throw new IllegalArgumentException("SubTopic.create: ResourceSubTopic 리스트 요소의 order 는 1부터 size 까지 1씩 증가해야 합니다.");
+                throw new IllegalArgumentException(
+                        "SubTopic.create: ResourceSubTopic 리스트 요소의 order 는 1부터 size 까지 1씩 증가해야 합니다.");
             }
         }
 
@@ -107,7 +109,6 @@ public class SubTopic extends IdAuditEntity {
     }
 
     void setTopic(Topic topic) {
-        this.topic = Objects.requireNonNull(topic,
-                "SubTopic.setTopic: 파라미터 topic 이 null 입니다");
+        this.topic = Objects.requireNonNull(topic, "SubTopic.setTopic: 파라미터 topic 이 null 입니다");
     }
 }
