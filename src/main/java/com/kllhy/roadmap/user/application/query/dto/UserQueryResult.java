@@ -1,7 +1,7 @@
-package com.kllhy.roadmap.user.domain.query.dto;
+package com.kllhy.roadmap.user.application.query.dto;
 
-import com.kllhy.roadmap.user.domain.AccountStatus;
-import com.kllhy.roadmap.user.domain.User;
+import com.kllhy.roadmap.user.domain.model.User;
+import com.kllhy.roadmap.user.domain.model.enums.AccountStatus;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -16,3 +16,4 @@ public record UserQueryResult(Long id, String loginId, String email, AccountStat
                 user.getId(), user.getLoginId(), user.getEmail(), user.getAccountStatus());
     }
 }
+

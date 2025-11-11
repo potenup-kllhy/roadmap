@@ -1,30 +1,20 @@
-package com.kllhy.roadmap.user.domain.command.service;
+package com.kllhy.roadmap.user.application.command;
 
-<<<<<<< HEAD
-import com.ohgiraffers.loadmapuser.domain.AccountStatus;
-import com.ohgiraffers.loadmapuser.domain.User;
-import com.ohgiraffers.loadmapuser.domain.UserRepository;
-import com.ohgiraffers.loadmapuser.domain.command.dto.RegisterUserCommand;
-import com.ohgiraffers.loadmapuser.domain.command.dto.UpdateUserCommand;
-import com.ohgiraffers.loadmapuser.domain.exception.*;
-import com.ohgiraffers.loadmapuser.domain.util.EmailValidator;
-import com.ohgiraffers.loadmapuser.domain.util.PasswordValidator;
-import java.time.LocalDateTime;
-=======
-import com.kllhy.roadmap.user.domain.AccountStatus;
-import com.kllhy.roadmap.user.domain.User;
-import com.kllhy.roadmap.user.domain.UserRepository;
-import com.kllhy.roadmap.user.domain.command.dto.RegisterUserCommand;
-import com.kllhy.roadmap.user.domain.command.dto.UpdateUserCommand;
+import com.kllhy.roadmap.user.domain.model.User;
+import com.kllhy.roadmap.user.domain.model.enums.AccountStatus;
+import com.kllhy.roadmap.user.domain.repository.UserRepository;
+import com.kllhy.roadmap.user.application.command.dto.RegisterUserCommand;
+import com.kllhy.roadmap.user.application.command.dto.UpdateUserCommand;
 import com.kllhy.roadmap.user.domain.exception.*;
-import com.kllhy.roadmap.user.domain.util.EmailValidator;
-import com.kllhy.roadmap.user.domain.util.PasswordValidator;
->>>>>>> 51513f5 (fix(user):typo)
+import com.kllhy.roadmap.user.domain.valueobject.EmailValidator;
+import com.kllhy.roadmap.user.domain.valueobject.PasswordValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
 
 @Service
 @Transactional
@@ -151,3 +141,4 @@ public class UserCommandService {
         log.info("User deleted successfully with id: {}", userId);
     }
 }
+

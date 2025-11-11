@@ -1,5 +1,6 @@
-package com.kllhy.roadmap.user.domain;
+package com.kllhy.roadmap.user.domain.model;
 
+import com.kllhy.roadmap.user.domain.model.enums.AccountStatus;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -83,3 +84,4 @@ public class User implements UserDetails {
         return accountStatus == AccountStatus.ACTIVE;
     }
 }
+

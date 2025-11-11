@@ -1,4 +1,4 @@
-package com.kllhy.roadmap.user.domain.util;
+package com.kllhy.roadmap.user.domain.valueobject;
 
 import com.kllhy.roadmap.user.domain.exception.InvalidPasswordException;
 
@@ -23,3 +23,4 @@ public class PasswordValidator {
         }
     }
 }
+

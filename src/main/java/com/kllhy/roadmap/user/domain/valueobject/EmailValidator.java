@@ -1,4 +1,4 @@
-package com.kllhy.roadmap.user.domain.util;
+package com.kllhy.roadmap.user.domain.valueobject;
 
 import com.kllhy.roadmap.user.domain.exception.InvalidEmailException;
 import java.util.regex.Pattern;
@@ -18,3 +18,4 @@ public class EmailValidator {
         }
     }
 }
+
