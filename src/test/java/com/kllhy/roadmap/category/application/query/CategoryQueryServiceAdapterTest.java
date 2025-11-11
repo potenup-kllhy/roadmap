@@ -31,8 +31,7 @@ class CategoryQueryServiceAdapterTest {
 
     private CategoryQueryServiceAdapter categoryQueryServiceAdapter;
 
-    @Mock
-    private CategoryRepository categoryRepository;
+    @Mock private CategoryRepository categoryRepository;
 
     @BeforeEach
     void setUp() {
@@ -60,15 +59,18 @@ class CategoryQueryServiceAdapterTest {
             when(categoryRepository.findById(categoryId)).thenReturn(Optional.of(mockCategory));
 
             // when
-            CategoryView foundCategoryView = categoryQueryServiceAdapter.getCategoryById(categoryId);
+            CategoryView foundCategoryView =
+                    categoryQueryServiceAdapter.getCategoryById(categoryId);
 
             // then
             assertAll(
                     () -> assertNotNull(foundCategoryView),
                     () -> assertEquals(mockCategory.getId(), foundCategoryView.id()),
-                    () -> assertEquals(mockCategory.getCategoryType().name(), foundCategoryView.type()),
-                    () -> assertEquals(mockCategory.getName(), foundCategoryView.name())
-            );
+                    () ->
+                            assertEquals(
+                                    mockCategory.getCategoryType().name(),
+                                    foundCategoryView.type()),
+                    () -> assertEquals(mockCategory.getName(), foundCategoryView.name()));
         }
 
         @Test
@@ -79,9 +81,10 @@ class CategoryQueryServiceAdapterTest {
             when(categoryRepository.findById(categoryId)).thenReturn(Optional.empty());
 
             // when & then
-            DomainException exception = assertThrows(DomainException.class,
-                    () -> categoryQueryServiceAdapter.getCategoryById(categoryId)
-            );
+            DomainException exception =
+                    assertThrows(
+                            DomainException.class,
+                            () -> categoryQueryServiceAdapter.getCategoryById(categoryId));
             assertEquals(CategoryErrorCode.CATEGORY_NOT_FOUND, exception.getErrorCode());
         }
     }
@@ -99,15 +102,18 @@ class CategoryQueryServiceAdapterTest {
             when(categoryRepository.findByName(categoryName)).thenReturn(Optional.of(mockCategory));
 
             // when
-            CategoryView foundCategoryView = categoryQueryServiceAdapter.getCategoryByName(categoryName);
+            CategoryView foundCategoryView =
+                    categoryQueryServiceAdapter.getCategoryByName(categoryName);
 
             // then
             assertAll(
                     () -> assertNotNull(foundCategoryView),
                     () -> assertEquals(mockCategory.getId(), foundCategoryView.id()),
-                    () -> assertEquals(mockCategory.getCategoryType().name(), foundCategoryView.type()),
-                    () -> assertEquals(mockCategory.getName(), foundCategoryView.name())
-            );
+                    () ->
+                            assertEquals(
+                                    mockCategory.getCategoryType().name(),
+                                    foundCategoryView.type()),
+                    () -> assertEquals(mockCategory.getName(), foundCategoryView.name()));
         }
 
         @Test
@@ -118,9 +124,12 @@ class CategoryQueryServiceAdapterTest {
             when(categoryRepository.findByName(categoryName)).thenReturn(Optional.empty());
 
             // when & then
-            DomainException exception = assertThrows(DomainException.class, () -> {
-                categoryQueryServiceAdapter.getCategoryByName(categoryName);
-            });
+            DomainException exception =
+                    assertThrows(
+                            DomainException.class,
+                            () -> {
+                                categoryQueryServiceAdapter.getCategoryByName(categoryName);
+                            });
             assertEquals(CategoryErrorCode.CATEGORY_NOT_FOUND, exception.getErrorCode());
         }
     }
@@ -146,8 +155,7 @@ class CategoryQueryServiceAdapterTest {
                     () -> assertFalse(resultList.isEmpty()),
                     () -> assertEquals(2, resultList.size()),
                     () -> assertEquals(mockCategory1.getId(), resultList.get(0).id()),
-                    () -> assertEquals(mockCategory2.getId(), resultList.get(1).id())
-            );
+                    () -> assertEquals(mockCategory2.getId(), resultList.get(1).id()));
         }
 
         @Test
@@ -157,17 +165,18 @@ class CategoryQueryServiceAdapterTest {
             String typeStr = "SKILL";
             Category mockCategory = createMockCategory(3L, CategoryType.SKILL, "Python");
             List<Category> mockList = Collections.singletonList(mockCategory);
-            when(categoryRepository.findAllByCategoryTypeOrderByNameAsc(CategoryType.SKILL)).thenReturn(mockList);
+            when(categoryRepository.findAllByCategoryTypeOrderByNameAsc(CategoryType.SKILL))
+                    .thenReturn(mockList);
 
             // when
-            List<CategoryView> resultList = categoryQueryServiceAdapter.getCategoriesByType(typeStr);
+            List<CategoryView> resultList =
+                    categoryQueryServiceAdapter.getCategoriesByType(typeStr);
 
             // then
             assertAll(
                     () -> assertFalse(resultList.isEmpty()),
                     () -> assertEquals(1, resultList.size()),
-                    () -> assertEquals(mockCategory.getId(), resultList.get(0).id())
-            );
+                    () -> assertEquals(mockCategory.getId(), resultList.get(0).id()));
         }
 
         @Test
@@ -177,12 +186,14 @@ class CategoryQueryServiceAdapterTest {
             String invalidTypeStr = "INVALID_TYPE";
 
             // when & then
-            DomainException exception = assertThrows(DomainException.class, () -> {
-                categoryQueryServiceAdapter.getCategoriesByType(invalidTypeStr);
-            });
+            DomainException exception =
+                    assertThrows(
+                            DomainException.class,
+                            () -> {
+                                categoryQueryServiceAdapter.getCategoriesByType(invalidTypeStr);
+                            });
             assertEquals(CategoryErrorCode.CATEGORY_TYPE_INVALID, exception.getErrorCode());
         }
-
     }
 
     @Nested

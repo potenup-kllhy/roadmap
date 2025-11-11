@@ -47,7 +47,9 @@ public class CategoryQueryServiceAdapter implements CategoryQueryService {
 
     @Override
     public List<CategoryView> getCategoriesByType(String type) {
-        return categoryRepository.findAllByCategoryTypeOrderByNameAsc(CategoryType.from(type)).stream()
+        return categoryRepository
+                .findAllByCategoryTypeOrderByNameAsc(CategoryType.from(type))
+                .stream()
                 .map(this::toView)
                 .toList();
     }
@@ -58,6 +60,7 @@ public class CategoryQueryServiceAdapter implements CategoryQueryService {
     }
 
     private CategoryView toView(Category category) {
-        return new CategoryView(category.getId(), category.getCategoryType().name(), category.getName());
+        return new CategoryView(
+                category.getId(), category.getCategoryType().name(), category.getName());
     }
 }

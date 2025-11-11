@@ -41,7 +41,8 @@ class CategoryTypeTest {
         String invalidInput = "INVALID_TYPE";
 
         // when & then
-        DomainException exception = assertThrows(DomainException.class, () -> CategoryType.from(invalidInput));
+        DomainException exception =
+                assertThrows(DomainException.class, () -> CategoryType.from(invalidInput));
         assertEquals(CategoryErrorCode.CATEGORY_TYPE_INVALID, exception.getErrorCode());
     }
 }
