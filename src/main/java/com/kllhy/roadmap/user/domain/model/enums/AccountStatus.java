@@ -5,4 +5,3 @@ public enum AccountStatus {
     BLOCKED,
     DISABLED
 }
-

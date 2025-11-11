@@ -15,4 +15,3 @@ public class UpdateUserCommand {
     private String password;
     private AccountStatus accountStatus;
 }
-

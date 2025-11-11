@@ -8,6 +8,7 @@ import com.kllhy.roadmap.user.application.query.dto.UserQueryResult;
 import com.kllhy.roadmap.user.domain.model.User;
 import com.kllhy.roadmap.user.presentation.dto.LoginRequest;
 import com.kllhy.roadmap.user.presentation.dto.LoginResponse;
+import java.net.URI;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,8 +17,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
-import java.net.URI;
 
 @RestController
 @RequestMapping("/api/v1/users")
@@ -94,4 +93,3 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 }
-

@@ -16,4 +16,3 @@ public record UserQueryResult(Long id, String loginId, String email, AccountStat
                 user.getId(), user.getLoginId(), user.getEmail(), user.getAccountStatus());
     }
 }
-
