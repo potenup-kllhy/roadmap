@@ -2,6 +2,7 @@ package com.kllhy.roadmap.category.domain.model;
 
 import com.kllhy.roadmap.category.domain.enums.Type;
 import com.kllhy.roadmap.common.model.IdEntity;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -19,5 +20,6 @@ public class Category extends IdEntity {
     @Getter
     private Type type;
 
+    @Column(nullable = false)
     @Getter private String name;
 }
