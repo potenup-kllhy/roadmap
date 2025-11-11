@@ -1,6 +1,6 @@
 package com.kllhy.roadmap.roadmap.application.query.dto;
 
-import com.kllhy.roadmap.roadmap.persistence.model.enums.ImportanceLevel;
+import com.kllhy.roadmap.roadmap.domain.model.enums.ImportanceLevel;
 import java.sql.Timestamp;
 import java.util.List;
 
