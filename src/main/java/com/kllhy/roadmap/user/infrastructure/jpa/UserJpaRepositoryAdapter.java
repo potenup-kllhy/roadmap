@@ -37,3 +37,5 @@ public class UserJpaRepositoryAdapter implements UserRepository {
         return userJpaRepository.save(user);
     }
 }
+
+

@@ -24,3 +24,5 @@ public class UserQueryService {
         return userRepository.findById(id).map(UserQueryResult::toQueryResult);
     }
 }
+
+

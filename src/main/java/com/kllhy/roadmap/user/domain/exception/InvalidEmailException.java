@@ -5,3 +5,5 @@ public class InvalidEmailException extends RuntimeException {
         super(message);
     }
 }
+
+
