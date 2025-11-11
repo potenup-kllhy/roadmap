@@ -3,6 +3,7 @@ package com.kllhy.roadmap.category.domain.enums;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import com.kllhy.roadmap.category.domain.exception.CategoryErrorCode;
 import com.kllhy.roadmap.common.exception.DomainException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -40,9 +41,7 @@ class CategoryTypeTest {
         String invalidInput = "INVALID_TYPE";
 
         // when & then
-        assertThrows(DomainException.class,
-                () -> CategoryType.from(invalidInput),
-                "Invalid category type"
-        );
+        DomainException exception = assertThrows(DomainException.class, () -> CategoryType.from(invalidInput));
+        assertEquals(CategoryErrorCode.CATEGORY_TYPE_INVALID, exception.getErrorCode());
     }
 }
