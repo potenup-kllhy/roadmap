@@ -21,10 +21,12 @@ public class Topic extends IdAuditEntity {
     private String title;
 
     @Column(name = "content")
+    @Getter
     private String content;
 
     @Column(name = "importance_level", nullable = false)
     @Enumerated(EnumType.STRING)
+    @Getter
     private ImportanceLevel importanceLevel;
 
     @Column(name = "sort_order", nullable = false)
@@ -35,9 +37,11 @@ public class Topic extends IdAuditEntity {
     private Timestamp deletedAt;
 
     @Column(name = "is_draft", nullable = false)
+    @Getter
     private boolean isDraft;
 
     @Column(name = "is_deleted", nullable = false)
+    @Getter
     private boolean isDeleted;
 
     @JsonIgnore
@@ -81,7 +85,7 @@ public class Topic extends IdAuditEntity {
         this.roadMap = null;
     }
 
-    public static Topic create(CreationTopic creationSpec) {
+    static Topic create(CreationTopic creationSpec) {
 
         String title = creationSpec.title();
         if (title.isBlank() || title.length() < 2 || 255 < title.length()) {
@@ -99,12 +103,10 @@ public class Topic extends IdAuditEntity {
         }
 
         List<ResourceTopic> createdResourceTopics =
-                creationSpec.creationResourceTopics() == null
-                        ? Collections.emptyList()
-                        : creationSpec.creationResourceTopics().stream()
-                                .map(ResourceTopic::create)
-                                .sorted(Comparator.comparing(ResourceTopic::getOrder))
-                                .toList();
+                creationSpec.creationResourceTopics().stream()
+                        .map(ResourceTopic::create)
+                        .sorted(Comparator.comparing(ResourceTopic::getOrder))
+                        .toList();
 
         for (int i = 0; i < createdResourceTopics.size(); i++) {
             if (createdResourceTopics.get(i).getOrder() != (i + 1)) {
@@ -114,9 +116,7 @@ public class Topic extends IdAuditEntity {
         }
 
         List<SubTopic> createdSubTopics =
-                creationSpec.creationSubTopics() == null
-                        ? Collections.emptyList()
-                        : creationSpec.creationSubTopics().stream().map(SubTopic::create).toList();
+                creationSpec.creationSubTopics().stream().map(SubTopic::create).toList();
 
         Set<String> titleSet = new HashSet<>();
         for (SubTopic subTopic : createdSubTopics) {
@@ -146,5 +146,20 @@ public class Topic extends IdAuditEntity {
 
     void setRoadMap(RoadMap roadMap) {
         this.roadMap = Objects.requireNonNull(roadMap, "Topic.setRoadMap: 파라미터 roadMap 이 null 입니다");
+    }
+
+    public Timestamp getDeletedAt() {
+        if (deletedAt == null) {
+            return null;
+        }
+        return new Timestamp(deletedAt.getTime());
+    }
+
+    public List<ResourceTopic> getResources() {
+        return List.copyOf(resources);
+    }
+
+    public List<SubTopic> getSubTopics() {
+        return List.copyOf(subTopics);
     }
 }

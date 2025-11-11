@@ -21,19 +21,23 @@ public class SubTopic extends IdAuditEntity {
     private String title;
 
     @Column(name = "content")
+    @Getter
     private String content;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
+    @Getter
     private ImportanceLevel importanceLevel;
 
     @Column(nullable = false)
     private Timestamp deletedAt;
 
     @Column(name = "is_draft", nullable = false)
+    @Getter
     private Boolean isDraft;
 
     @Column(name = "is_deleted", nullable = false)
+    @Getter
     private Boolean isDeleted;
 
     @JsonIgnore
@@ -66,7 +70,7 @@ public class SubTopic extends IdAuditEntity {
         this.topic = null;
     }
 
-    public static SubTopic create(CreationSubTopic creationSpec) {
+    static SubTopic create(CreationSubTopic creationSpec) {
 
         String title = creationSpec.title();
         if (title.isBlank() || title.length() < 2 || 255 < title.length()) {
@@ -80,12 +84,10 @@ public class SubTopic extends IdAuditEntity {
         }
 
         List<ResourceSubTopic> createdResourceSubTopics =
-                creationSpec.creationResourceSubTopics() == null
-                        ? Collections.emptyList()
-                        : creationSpec.creationResourceSubTopics().stream()
-                                .map(ResourceSubTopic::create)
-                                .sorted(Comparator.comparing(ResourceSubTopic::getOrder))
-                                .toList();
+                creationSpec.creationResourceSubTopics().stream()
+                        .map(ResourceSubTopic::create)
+                        .sorted(Comparator.comparing(ResourceSubTopic::getOrder))
+                        .toList();
 
         for (int i = 0; i < createdResourceSubTopics.size(); i++) {
             if (createdResourceSubTopics.get(i).getOrder() != (i + 1)) {
@@ -110,5 +112,16 @@ public class SubTopic extends IdAuditEntity {
 
     void setTopic(Topic topic) {
         this.topic = Objects.requireNonNull(topic, "SubTopic.setTopic: 파라미터 topic 이 null 입니다");
+    }
+
+    public Timestamp getDeletedAt() {
+        if (deletedAt == null) {
+            return null;
+        }
+        return new Timestamp(deletedAt.getTime());
+    }
+
+    public List<ResourceSubTopic> getResources() {
+        return List.copyOf(resources);
     }
 }

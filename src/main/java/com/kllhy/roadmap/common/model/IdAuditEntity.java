@@ -26,4 +26,18 @@ public abstract class IdAuditEntity extends IdEntity {
     protected IdAuditEntity() {
         super();
     }
+
+    public Timestamp getCreatedAt() {
+        if (createdAt == null) {
+            return null;
+        }
+        return new Timestamp(createdAt.getTime());
+    }
+
+    public Timestamp getModifiedAt() {
+        if (modifiedAt == null) {
+            return null;
+        }
+        return new Timestamp(modifiedAt.getTime());
+    }
 }

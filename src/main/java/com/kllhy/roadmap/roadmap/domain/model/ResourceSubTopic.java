@@ -16,6 +16,7 @@ import lombok.NoArgsConstructor;
 public class ResourceSubTopic extends IdEntity {
 
     @Column(nullable = false)
+    @Getter
     private String name;
 
     @Column(name = "sort_order", nullable = false)
@@ -24,9 +25,11 @@ public class ResourceSubTopic extends IdEntity {
 
     @Column(name = "resource_type", nullable = false)
     @Enumerated(value = EnumType.STRING)
+    @Getter
     private ResourceType resourceType;
 
     @Column(nullable = false)
+    @Getter
     private String link;
 
     @JsonIgnore
@@ -43,7 +46,7 @@ public class ResourceSubTopic extends IdEntity {
         this.subTopic = null;
     }
 
-    public static ResourceSubTopic create(CreationResourceSubTopic creationSpec) {
+    static ResourceSubTopic create(CreationResourceSubTopic creationSpec) {
         String name = creationSpec.name();
         if (name.isBlank() || name.length() < 2 || 255 < name.length()) {
             throw new IllegalArgumentException(
