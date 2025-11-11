@@ -41,5 +41,5 @@ out/
 .vscode/
 
 # macOS specific files
+.DS_Store/
 .DS_Store
-**/.DS_Store
