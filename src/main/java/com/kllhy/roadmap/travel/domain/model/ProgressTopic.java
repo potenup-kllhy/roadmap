@@ -5,7 +5,6 @@ import com.kllhy.roadmap.common.model.IdAuditEntity;
 import com.kllhy.roadmap.travel.domain.exception.TravelErrorCode;
 import com.kllhy.roadmap.travel.domain.model.command.ProgressSubTopicCommand;
 import com.kllhy.roadmap.travel.domain.model.enums.ProgressStatus;
-import com.kllhy.roadmap.travel.domain.model.read.TravelSnapshot;
 import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -88,11 +87,5 @@ public class ProgressTopic extends IdAuditEntity {
                 .findFirst()
                 .orElseThrow(
                         () -> new DomainException(TravelErrorCode.TRAVEL_SUB_TOPICS_NOT_FOUND));
-    }
-
-    TravelSnapshot.ProgressTopicSnapshot toSnapshot() {
-        List<TravelSnapshot.ProgressSubTopicSnapshot> subs =
-                subTopics.stream().map(ProgressSubTopic::toSnapshot).toList();
-        return new TravelSnapshot.ProgressTopicSnapshot(id, topicId, status, subs);
     }
 }

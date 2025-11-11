@@ -2,6 +2,7 @@ package com.kllhy.roadmap.travel.domain;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
+import com.kllhy.roadmap.travel.domain.model.ProgressTopic;
 import com.kllhy.roadmap.travel.domain.model.Travel;
 import com.kllhy.roadmap.travel.domain.model.command.ProgressSubTopicCommand;
 import com.kllhy.roadmap.travel.domain.model.command.ProgressTopicCommand;
@@ -42,7 +43,7 @@ public class TravelDomainTest {
         assertThat(travel.getUserId()).isEqualTo(userId);
         assertThat(travel.getRoadMapId()).isEqualTo(roadMapId);
         assertThat(travel.getTopics().size()).isEqualTo(topicCommands.size());
-        assertThat(travel.getTopics().stream().map(it -> it.getSubTopics()).toList().size())
+        assertThat(travel.getTopics().stream().map(ProgressTopic::getSubTopics).toList().size())
                 .isEqualTo(topicCommands.size());
     }
 }

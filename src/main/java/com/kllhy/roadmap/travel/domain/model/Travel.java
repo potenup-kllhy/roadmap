@@ -7,7 +7,6 @@ import com.kllhy.roadmap.travel.domain.model.command.ProgressTopicCommand;
 import com.kllhy.roadmap.travel.domain.model.command.TravelCommand;
 import com.kllhy.roadmap.travel.domain.model.enums.ProgressStatus;
 import com.kllhy.roadmap.travel.domain.model.enums.TravelProgressStatus;
-import com.kllhy.roadmap.travel.domain.model.read.TravelSnapshot;
 import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -100,11 +99,8 @@ public class Travel extends AggregateRoot {
                 .orElseThrow(() -> new DomainException(TravelErrorCode.TRAVEL_TOPICS_NOT_FOUND));
     }
 
-    public TravelSnapshot toSnapshot() {
-        List<TravelSnapshot.ProgressTopicSnapshot> topicSnaps =
-                topics.stream().map(ProgressTopic::toSnapshot).toList();
-        return new TravelSnapshot(
-                this.getId(), this.userId, this.roadMapId, calculateStatus(), topicSnaps);
+    public TravelProgressStatus getStatus() {
+        return calculateStatus();
     }
 
     private TravelProgressStatus calculateStatus() {
