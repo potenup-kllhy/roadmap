@@ -17,24 +17,23 @@ import lombok.NoArgsConstructor;
 public class SubTopic extends IdAuditEntity {
 
     @Column(nullable = false)
-    @Getter
-    private String title;
+    @Getter private String title;
 
     @Column(name = "content")
-    private String content;
+    @Getter private String content;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private ImportanceLevel importanceLevel;
+    @Getter private ImportanceLevel importanceLevel;
 
     @Column(nullable = false)
     private Timestamp deletedAt;
 
     @Column(name = "is_draft", nullable = false)
-    private Boolean isDraft;
+    @Getter private Boolean isDraft;
 
     @Column(name = "is_deleted", nullable = false)
-    private Boolean isDeleted;
+    @Getter private Boolean isDeleted;
 
     @JsonIgnore
     @ManyToOne(optional = false)
@@ -108,5 +107,16 @@ public class SubTopic extends IdAuditEntity {
 
     void setTopic(Topic topic) {
         this.topic = Objects.requireNonNull(topic, "SubTopic.setTopic: 파라미터 topic 이 null 입니다");
+    }
+
+    public Timestamp getDeletedAt() {
+        if (deletedAt == null) {
+            return null;
+        }
+        return new Timestamp(deletedAt.getTime());
+    }
+
+    public List<ResourceSubTopic> getResources() {
+        return List.copyOf(resources);
     }
 }

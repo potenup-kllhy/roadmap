@@ -17,28 +17,26 @@ import lombok.NoArgsConstructor;
 public class Topic extends IdAuditEntity {
 
     @Column(name = "title", nullable = false)
-    @Getter
-    private String title;
+    @Getter private String title;
 
     @Column(name = "content")
-    private String content;
+    @Getter private String content;
 
     @Column(name = "importance_level", nullable = false)
     @Enumerated(EnumType.STRING)
-    private ImportanceLevel importanceLevel;
+    @Getter private ImportanceLevel importanceLevel;
 
     @Column(name = "sort_order", nullable = false)
-    @Getter
-    private Integer order;
+    @Getter private Integer order;
 
     @Column(name = "deleted_at")
     private Timestamp deletedAt;
 
     @Column(name = "is_draft", nullable = false)
-    private boolean isDraft;
+    @Getter private boolean isDraft;
 
     @Column(name = "is_deleted", nullable = false)
-    private boolean isDeleted;
+    @Getter private boolean isDeleted;
 
     @JsonIgnore
     @ManyToOne(optional = false)
@@ -144,5 +142,20 @@ public class Topic extends IdAuditEntity {
 
     void setRoadMap(RoadMap roadMap) {
         this.roadMap = Objects.requireNonNull(roadMap, "Topic.setRoadMap: 파라미터 roadMap 이 null 입니다");
+    }
+
+    public Timestamp getDeletedAt() {
+        if (deletedAt == null) {
+            return null;
+        }
+        return new Timestamp(deletedAt.getTime());
+    }
+
+    public List<ResourceTopic> getResources() {
+        return List.copyOf(resources);
+    }
+
+    public List<SubTopic> getSubTopics() {
+        return List.copyOf(subTopics);
     }
 }
