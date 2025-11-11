@@ -1,4 +1,4 @@
-package com.kllhy.roadmap.user.domain;
+package com.kllhy.roadmap.user.presentation.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,7 +9,8 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class LoginDTO {
+public class LoginRequest {
     private String loginId;
     private String password;
 }
+

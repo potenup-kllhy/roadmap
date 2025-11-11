@@ -1,19 +1,13 @@
-package com.kllhy.roadmap.user.domain;
+package com.kllhy.roadmap.user.presentation;
 
-<<<<<<< HEAD
-import com.ohgiraffers.loadmapuser.config.JwtUtil;
-import com.ohgiraffers.loadmapuser.domain.command.dto.RegisterUserCommand;
-import com.ohgiraffers.loadmapuser.domain.command.dto.UpdateUserCommand;
-import com.ohgiraffers.loadmapuser.domain.command.service.UserCommandService;
-import com.ohgiraffers.loadmapuser.domain.query.dto.UserQueryResult;
-import java.net.URI;
-=======
 import com.kllhy.roadmap.common.config.JwtUtil;
-import com.kllhy.roadmap.user.domain.command.dto.RegisterUserCommand;
-import com.kllhy.roadmap.user.domain.command.dto.UpdateUserCommand;
-import com.kllhy.roadmap.user.domain.command.service.UserCommandService;
-import com.kllhy.roadmap.user.domain.query.dto.UserQueryResult;
->>>>>>> 51513f5 (fix(user):typo)
+import com.kllhy.roadmap.user.application.command.UserCommandService;
+import com.kllhy.roadmap.user.application.command.dto.RegisterUserCommand;
+import com.kllhy.roadmap.user.application.command.dto.UpdateUserCommand;
+import com.kllhy.roadmap.user.application.query.dto.UserQueryResult;
+import com.kllhy.roadmap.user.domain.model.User;
+import com.kllhy.roadmap.user.presentation.dto.LoginRequest;
+import com.kllhy.roadmap.user.presentation.dto.LoginResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +16,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.net.URI;
 
 @RestController
 @RequestMapping("/api/v1/users")
@@ -49,19 +45,19 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponseDTO> login(@RequestBody LoginDTO loginDTO) {
-        log.info("Login attempt for loginId: {}", loginDTO.getLoginId());
+    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
+        log.info("Login attempt for loginId: {}", loginRequest.getLoginId());
         Authentication authentication =
                 authenticationManager.authenticate(
                         new UsernamePasswordAuthenticationToken(
-                                loginDTO.getLoginId(), loginDTO.getPassword()));
+                                loginRequest.getLoginId(), loginRequest.getPassword()));
         User user = (User) authentication.getPrincipal();
         String token = jwtUtil.generateToken(user.getLoginId());
 
-        log.info("Login successful for loginId: {}", loginDTO.getLoginId());
+        log.info("Login successful for loginId: {}", loginRequest.getLoginId());
 
         return ResponseEntity.ok(
-                new LoginResponseDTO(
+                new LoginResponse(
                         token, user.getLoginId(), user.getEmail(), user.getAccountStatus()));
     }
 
@@ -98,3 +94,4 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 }
+

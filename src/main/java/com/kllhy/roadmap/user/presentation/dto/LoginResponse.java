@@ -1,6 +1,6 @@
-package com.kllhy.roadmap.user.domain.command.dto;
+package com.kllhy.roadmap.user.presentation.dto;
 
-import com.kllhy.roadmap.user.domain.AccountStatus;
+import com.kllhy.roadmap.user.domain.model.enums.AccountStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,9 +8,10 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class RegisterUserCommand {
+public class LoginResponse {
+    private String token;
     private String loginId;
     private String email;
-    private String password;
     private AccountStatus accountStatus;
 }
+

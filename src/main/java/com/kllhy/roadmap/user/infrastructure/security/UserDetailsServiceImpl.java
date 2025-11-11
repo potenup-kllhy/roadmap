@@ -1,5 +1,7 @@
-package com.kllhy.roadmap.user.domain;
+package com.kllhy.roadmap.user.infrastructure.security;
 
+import com.kllhy.roadmap.user.domain.model.User;
+import com.kllhy.roadmap.user.domain.repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -8,11 +10,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)
-public class UserService implements UserDetailsService {
+public class UserDetailsServiceImpl implements UserDetailsService {
 
     private final UserRepository userRepository;
 
-    public UserService(UserRepository userRepository) {
+    public UserDetailsServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
@@ -25,3 +27,4 @@ public class UserService implements UserDetailsService {
         return user;
     }
 }
+
