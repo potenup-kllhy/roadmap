@@ -14,4 +14,3 @@ public class RegisterUserCommand {
     private String password;
     private AccountStatus accountStatus;
 }
-

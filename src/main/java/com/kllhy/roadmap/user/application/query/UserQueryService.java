@@ -1,9 +1,9 @@
 package com.kllhy.roadmap.user.application.query;
 
-import java.util.Optional;
+import com.kllhy.roadmap.user.application.query.dto.UserQueryResult;
 import com.kllhy.roadmap.user.domain.model.User;
 import com.kllhy.roadmap.user.domain.repository.UserRepository;
-import com.kllhy.roadmap.user.application.query.dto.UserQueryResult;
+import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,4 +24,3 @@ public class UserQueryService {
         return userRepository.findById(id).map(UserQueryResult::toQueryResult);
     }
 }
-

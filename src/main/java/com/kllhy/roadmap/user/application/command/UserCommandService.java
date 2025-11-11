@@ -1,20 +1,19 @@
 package com.kllhy.roadmap.user.application.command;
 
-import com.kllhy.roadmap.user.domain.model.User;
-import com.kllhy.roadmap.user.domain.model.enums.AccountStatus;
-import com.kllhy.roadmap.user.domain.repository.UserRepository;
 import com.kllhy.roadmap.user.application.command.dto.RegisterUserCommand;
 import com.kllhy.roadmap.user.application.command.dto.UpdateUserCommand;
 import com.kllhy.roadmap.user.domain.exception.*;
+import com.kllhy.roadmap.user.domain.model.User;
+import com.kllhy.roadmap.user.domain.model.enums.AccountStatus;
+import com.kllhy.roadmap.user.domain.repository.UserRepository;
 import com.kllhy.roadmap.user.domain.valueobject.EmailValidator;
 import com.kllhy.roadmap.user.domain.valueobject.PasswordValidator;
+import java.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
 
 @Service
 @Transactional
@@ -141,4 +140,3 @@ public class UserCommandService {
         log.info("User deleted successfully with id: {}", userId);
     }
 }
-
