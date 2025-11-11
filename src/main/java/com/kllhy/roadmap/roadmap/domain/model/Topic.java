@@ -162,4 +162,8 @@ public class Topic extends IdAuditEntity {
     public List<SubTopic> getSubTopics() {
         return List.copyOf(subTopics);
     }
+
+    void stepBack() {
+        this.order++;
+    }
 }
