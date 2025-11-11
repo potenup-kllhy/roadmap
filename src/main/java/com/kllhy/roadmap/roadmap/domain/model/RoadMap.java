@@ -71,11 +71,11 @@ public class RoadMap extends AggregateRoot {
             throw new IllegalArgumentException("RoadMap.create: creationTopics 가 blank 임");
         }
 
-        List<Topic> createdTopics = creationSpec.creationTopics()
-                .stream()
-                .map(Topic::create)
-                .sorted(Comparator.comparing(Topic::getOrder))
-                .toList();
+        List<Topic> createdTopics =
+                creationSpec.creationTopics().stream()
+                        .map(Topic::create)
+                        .sorted(Comparator.comparing(Topic::getOrder))
+                        .toList();
 
         for (int i = 0; i < createdTopics.size(); i++) {
             if (createdTopics.get(i).getOrder() != (i + 1)) {
