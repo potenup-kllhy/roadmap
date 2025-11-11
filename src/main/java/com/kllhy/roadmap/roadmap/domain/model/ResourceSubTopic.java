@@ -18,7 +18,8 @@ public class ResourceSubTopic extends IdEntity {
     private String name;
 
     @Column(name = "sort_order", nullable = false)
-    @Getter private Integer order;
+    @Getter
+    private Integer order;
 
     @Enumerated(value = EnumType.STRING)
     private ResourceType resourceType;

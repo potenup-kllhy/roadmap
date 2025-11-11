@@ -5,13 +5,12 @@ import com.kllhy.roadmap.common.model.IdAuditEntity;
 import com.kllhy.roadmap.roadmap.domain.model.creation_spec.CreationSubTopic;
 import com.kllhy.roadmap.roadmap.domain.model.enums.ImportanceLevel;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
-
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "sub_topic")
@@ -70,11 +69,11 @@ public class SubTopic extends IdAuditEntity {
     public static SubTopic create(CreationSubTopic creationSpec) {
         // To Do: SubTopic 생성자 불변식 검증
 
-        List<ResourceSubTopic> createdResourceSubTopics = creationSpec.creationResourceSubTopics()
-                .stream()
-                .map(ResourceSubTopic::create)
-                .sorted(Comparator.comparing(ResourceSubTopic::getOrder))
-                .toList();
+        List<ResourceSubTopic> createdResourceSubTopics =
+                creationSpec.creationResourceSubTopics().stream()
+                        .map(ResourceSubTopic::create)
+                        .sorted(Comparator.comparing(ResourceSubTopic::getOrder))
+                        .toList();
 
         SubTopic created =
                 new SubTopic(

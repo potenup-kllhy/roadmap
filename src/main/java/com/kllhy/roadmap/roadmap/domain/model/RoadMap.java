@@ -3,13 +3,12 @@ package com.kllhy.roadmap.roadmap.domain.model;
 import com.kllhy.roadmap.common.model.AggregateRoot;
 import com.kllhy.roadmap.roadmap.domain.model.creation_spec.CreationRoadMap;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
-
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "road_map")
@@ -60,11 +59,11 @@ public class RoadMap extends AggregateRoot {
     public static RoadMap create(CreationRoadMap creationSpec) {
         // To Do: RoadMap 생성자 불변식 검증
 
-        List<Topic> createdTopics = creationSpec.creationTopics()
-                .stream()
-                .map(Topic::create)
-                .sorted(Comparator.comparing(Topic::getOrder))
-                .toList();
+        List<Topic> createdTopics =
+                creationSpec.creationTopics().stream()
+                        .map(Topic::create)
+                        .sorted(Comparator.comparing(Topic::getOrder))
+                        .toList();
 
         RoadMap created =
                 new RoadMap(

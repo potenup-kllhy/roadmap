@@ -5,14 +5,13 @@ import com.kllhy.roadmap.common.model.IdAuditEntity;
 import com.kllhy.roadmap.roadmap.domain.model.creation_spec.CreationTopic;
 import com.kllhy.roadmap.roadmap.domain.model.enums.ImportanceLevel;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "topic")
@@ -30,7 +29,8 @@ public class Topic extends IdAuditEntity {
     private ImportanceLevel importanceLevel;
 
     @Column(name = "sort_order", nullable = false)
-    @Getter private Integer order;
+    @Getter
+    private Integer order;
 
     @Column(name = "deleted_at")
     private Timestamp deletedAt;
@@ -85,16 +85,14 @@ public class Topic extends IdAuditEntity {
     public static Topic create(CreationTopic creationSpec) {
         // To Do: Topic 생성자 불변식 검증
 
-        List<ResourceTopic> createdResourceTopics = creationSpec.creationResourceTopics()
-                .stream()
-                .map(ResourceTopic::create)
-                .sorted(Comparator.comparing(ResourceTopic::getOrder))
-                .toList();
+        List<ResourceTopic> createdResourceTopics =
+                creationSpec.creationResourceTopics().stream()
+                        .map(ResourceTopic::create)
+                        .sorted(Comparator.comparing(ResourceTopic::getOrder))
+                        .toList();
 
-        List<SubTopic> createdSubTopics = creationSpec.creationSubTopics()
-                .stream()
-                .map(SubTopic::create)
-                .toList();
+        List<SubTopic> createdSubTopics =
+                creationSpec.creationSubTopics().stream().map(SubTopic::create).toList();
 
         Topic created =
                 new Topic(

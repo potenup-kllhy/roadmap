@@ -22,7 +22,8 @@ public class ResourceTopic extends IdEntity {
     private ResourceType resourceType;
 
     @Column(name = "sort_order", nullable = false)
-    @Getter private Integer order;
+    @Getter
+    private Integer order;
 
     // To Do: 안전한 링크인지 확인하는 기능도 있으면 괜찮을 것 같음
     @Column(name = "link", nullable = false)
