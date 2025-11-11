@@ -1,7 +1,6 @@
 package com.kllhy.roadmap.roadmap.domain.model.creation_spec;
 
 import com.kllhy.roadmap.roadmap.domain.model.enums.ImportanceLevel;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;

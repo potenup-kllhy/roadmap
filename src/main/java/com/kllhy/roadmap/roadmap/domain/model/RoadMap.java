@@ -15,22 +15,27 @@ import lombok.NoArgsConstructor;
 public class RoadMap extends AggregateRoot {
 
     @Column(name = "title", nullable = false)
-    @Getter private String title;
+    @Getter
+    private String title;
 
     @Column(name = "description")
-    @Getter private String description;
+    @Getter
+    private String description;
 
     @Column(name = "deleted_at")
     private Timestamp deletedAt;
 
     @Column(name = "is_deleted", nullable = false)
-    @Getter private boolean isDeleted;
+    @Getter
+    private boolean isDeleted;
 
     @Column(name = "is_draft", nullable = false)
-    @Getter private boolean isDraft;
+    @Getter
+    private boolean isDraft;
 
     @Column(name = "category_id", nullable = false)
-    @Getter private Long categoryId;
+    @Getter
+    private Long categoryId;
 
     @OneToMany(
             mappedBy = "roadMap",

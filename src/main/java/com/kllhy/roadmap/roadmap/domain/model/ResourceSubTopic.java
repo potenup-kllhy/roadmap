@@ -16,17 +16,21 @@ import lombok.NoArgsConstructor;
 public class ResourceSubTopic extends IdEntity {
 
     @Column(nullable = false)
-    @Getter private String name;
+    @Getter
+    private String name;
 
     @Column(name = "sort_order", nullable = false)
-    @Getter private Integer order;
+    @Getter
+    private Integer order;
 
     @Column(name = "resource_type", nullable = false)
     @Enumerated(value = EnumType.STRING)
-    @Getter private ResourceType resourceType;
+    @Getter
+    private ResourceType resourceType;
 
     @Column(nullable = false)
-    @Getter private String link;
+    @Getter
+    private String link;
 
     @JsonIgnore
     @ManyToOne(optional = false)

@@ -17,23 +17,28 @@ import lombok.NoArgsConstructor;
 public class SubTopic extends IdAuditEntity {
 
     @Column(nullable = false)
-    @Getter private String title;
+    @Getter
+    private String title;
 
     @Column(name = "content")
-    @Getter private String content;
+    @Getter
+    private String content;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    @Getter private ImportanceLevel importanceLevel;
+    @Getter
+    private ImportanceLevel importanceLevel;
 
     @Column(nullable = false)
     private Timestamp deletedAt;
 
     @Column(name = "is_draft", nullable = false)
-    @Getter private Boolean isDraft;
+    @Getter
+    private Boolean isDraft;
 
     @Column(name = "is_deleted", nullable = false)
-    @Getter private Boolean isDeleted;
+    @Getter
+    private Boolean isDeleted;
 
     @JsonIgnore
     @ManyToOne(optional = false)
@@ -78,11 +83,11 @@ public class SubTopic extends IdAuditEntity {
             throw new IllegalArgumentException("SubTopic.create: content 길이가 1000 초과");
         }
 
-        List<ResourceSubTopic> createdResourceSubTopics = creationSpec.creationResourceSubTopics()
-                .stream()
-                .map(ResourceSubTopic::create)
-                .sorted(Comparator.comparing(ResourceSubTopic::getOrder))
-                .toList();
+        List<ResourceSubTopic> createdResourceSubTopics =
+                creationSpec.creationResourceSubTopics().stream()
+                        .map(ResourceSubTopic::create)
+                        .sorted(Comparator.comparing(ResourceSubTopic::getOrder))
+                        .toList();
 
         for (int i = 0; i < createdResourceSubTopics.size(); i++) {
             if (createdResourceSubTopics.get(i).getOrder() != (i + 1)) {

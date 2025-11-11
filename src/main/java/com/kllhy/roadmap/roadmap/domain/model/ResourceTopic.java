@@ -16,18 +16,22 @@ import lombok.NoArgsConstructor;
 public class ResourceTopic extends IdEntity {
 
     @Column(name = "name")
-    @Getter private String name;
+    @Getter
+    private String name;
 
     @Column(name = "type", nullable = false)
     @Enumerated(EnumType.STRING)
-    @Getter private ResourceType resourceType;
+    @Getter
+    private ResourceType resourceType;
 
     @Column(name = "sort_order", nullable = false)
-    @Getter private Integer order;
+    @Getter
+    private Integer order;
 
     // To Do: 안전한 링크인지 확인하는 기능도 있으면 괜찮을 것 같음
     @Column(name = "link", nullable = false)
-    @Getter private String link;
+    @Getter
+    private String link;
 
     @JsonIgnore
     @ManyToOne(optional = false)

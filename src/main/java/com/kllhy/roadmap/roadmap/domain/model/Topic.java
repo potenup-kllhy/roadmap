@@ -17,26 +17,32 @@ import lombok.NoArgsConstructor;
 public class Topic extends IdAuditEntity {
 
     @Column(name = "title", nullable = false)
-    @Getter private String title;
+    @Getter
+    private String title;
 
     @Column(name = "content")
-    @Getter private String content;
+    @Getter
+    private String content;
 
     @Column(name = "importance_level", nullable = false)
     @Enumerated(EnumType.STRING)
-    @Getter private ImportanceLevel importanceLevel;
+    @Getter
+    private ImportanceLevel importanceLevel;
 
     @Column(name = "sort_order", nullable = false)
-    @Getter private Integer order;
+    @Getter
+    private Integer order;
 
     @Column(name = "deleted_at")
     private Timestamp deletedAt;
 
     @Column(name = "is_draft", nullable = false)
-    @Getter private boolean isDraft;
+    @Getter
+    private boolean isDraft;
 
     @Column(name = "is_deleted", nullable = false)
-    @Getter private boolean isDeleted;
+    @Getter
+    private boolean isDeleted;
 
     @JsonIgnore
     @ManyToOne(optional = false)
@@ -96,11 +102,11 @@ public class Topic extends IdAuditEntity {
             throw new IllegalArgumentException("Topic.create: order 가 1 미만");
         }
 
-        List<ResourceTopic> createdResourceTopics = creationSpec.creationResourceTopics()
-                .stream()
-                .map(ResourceTopic::create)
-                .sorted(Comparator.comparing(ResourceTopic::getOrder))
-                .toList();
+        List<ResourceTopic> createdResourceTopics =
+                creationSpec.creationResourceTopics().stream()
+                        .map(ResourceTopic::create)
+                        .sorted(Comparator.comparing(ResourceTopic::getOrder))
+                        .toList();
 
         for (int i = 0; i < createdResourceTopics.size(); i++) {
             if (createdResourceTopics.get(i).getOrder() != (i + 1)) {
@@ -109,10 +115,8 @@ public class Topic extends IdAuditEntity {
             }
         }
 
-        List<SubTopic> createdSubTopics = creationSpec.creationSubTopics()
-                .stream()
-                .map(SubTopic::create)
-                .toList();
+        List<SubTopic> createdSubTopics =
+                creationSpec.creationSubTopics().stream().map(SubTopic::create).toList();
 
         Set<String> titleSet = new HashSet<>();
         for (SubTopic subTopic : createdSubTopics) {
