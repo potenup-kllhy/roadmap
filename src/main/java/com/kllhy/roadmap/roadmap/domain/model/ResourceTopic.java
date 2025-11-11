@@ -5,9 +5,13 @@ import com.kllhy.roadmap.common.model.IdEntity;
 import com.kllhy.roadmap.roadmap.domain.model.creation_spec.CreationResourceTopic;
 import com.kllhy.roadmap.roadmap.domain.model.enums.ResourceType;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "resource_topic")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ResourceTopic extends IdEntity {
 
     @Column(name = "name")
@@ -18,7 +22,7 @@ public class ResourceTopic extends IdEntity {
     private ResourceType resourceType;
 
     @Column(name = "sort_order", nullable = false)
-    private Integer order;
+    @Getter private Integer order;
 
     // To Do: 안전한 링크인지 확인하는 기능도 있으면 괜찮을 것 같음
     @Column(name = "link", nullable = false)
@@ -28,8 +32,6 @@ public class ResourceTopic extends IdEntity {
     @ManyToOne(optional = false)
     @JoinColumn(name = "topic_id", nullable = false)
     private Topic topic;
-
-    public ResourceTopic() {}
 
     private ResourceTopic(String name, ResourceType resourceType, Integer order, String link) {
         this.name = name;

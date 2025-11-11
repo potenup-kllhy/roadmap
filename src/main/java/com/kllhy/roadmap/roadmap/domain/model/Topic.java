@@ -5,12 +5,18 @@ import com.kllhy.roadmap.common.model.IdAuditEntity;
 import com.kllhy.roadmap.roadmap.domain.model.creation_spec.CreationTopic;
 import com.kllhy.roadmap.roadmap.domain.model.enums.ImportanceLevel;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Entity
 @Table(name = "topic")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Topic extends IdAuditEntity {
 
     @Column(name = "title", nullable = false)
@@ -24,9 +30,9 @@ public class Topic extends IdAuditEntity {
     private ImportanceLevel importanceLevel;
 
     @Column(name = "sort_order", nullable = false)
-    private Integer order;
+    @Getter private Integer order;
 
-    @Column(name = "deleted_at", nullable = false)
+    @Column(name = "deleted_at")
     private Timestamp deletedAt;
 
     @Column(name = "is_draft", nullable = false)
@@ -55,8 +61,6 @@ public class Topic extends IdAuditEntity {
             fetch = FetchType.LAZY)
     private List<SubTopic> subTopics = new ArrayList<>();
 
-    protected Topic() {}
-
     private Topic(
             String title,
             String content,
@@ -81,6 +85,17 @@ public class Topic extends IdAuditEntity {
     public static Topic create(CreationTopic creationSpec) {
         // To Do: Topic 생성자 불변식 검증
 
+        List<ResourceTopic> createdResourceTopics = creationSpec.creationResourceTopics()
+                .stream()
+                .map(ResourceTopic::create)
+                .sorted(Comparator.comparing(ResourceTopic::getOrder))
+                .toList();
+
+        List<SubTopic> createdSubTopics = creationSpec.creationSubTopics()
+                .stream()
+                .map(SubTopic::create)
+                .toList();
+
         Topic created =
                 new Topic(
                         creationSpec.title(),
@@ -88,8 +103,8 @@ public class Topic extends IdAuditEntity {
                         creationSpec.importanceLevel(),
                         creationSpec.order(),
                         creationSpec.isDraft(),
-                        creationSpec.resources(),
-                        creationSpec.subTopics());
+                        createdResourceTopics,
+                        createdSubTopics);
 
         // 양방향 연결
         created.resources.forEach(resource -> resource.setTopic(created));

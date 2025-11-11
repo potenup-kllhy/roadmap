@@ -5,16 +5,20 @@ import com.kllhy.roadmap.common.model.IdEntity;
 import com.kllhy.roadmap.roadmap.domain.model.creation_spec.CreationResourceSubTopic;
 import com.kllhy.roadmap.roadmap.domain.model.enums.ResourceType;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "resource_sub_topic")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ResourceSubTopic extends IdEntity {
 
     @Column(nullable = false)
     private String name;
 
     @Column(name = "sort_order", nullable = false)
-    private Integer order;
+    @Getter private Integer order;
 
     @Enumerated(value = EnumType.STRING)
     private ResourceType resourceType;
@@ -26,8 +30,6 @@ public class ResourceSubTopic extends IdEntity {
     @ManyToOne(optional = false)
     @JoinColumn(name = "sub_topic_id", nullable = false)
     private SubTopic subTopic;
-
-    protected ResourceSubTopic() {}
 
     private ResourceSubTopic(String name, Integer order, ResourceType resourceType, String link) {
         this.name = name;

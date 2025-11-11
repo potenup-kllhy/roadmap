@@ -5,12 +5,17 @@ import com.kllhy.roadmap.common.model.IdAuditEntity;
 import com.kllhy.roadmap.roadmap.domain.model.creation_spec.CreationSubTopic;
 import com.kllhy.roadmap.roadmap.domain.model.enums.ImportanceLevel;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Entity
 @Table(name = "sub_topic")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class SubTopic extends IdAuditEntity {
 
     @Column(nullable = false)
@@ -45,8 +50,6 @@ public class SubTopic extends IdAuditEntity {
     @OrderBy("order ASC")
     private List<ResourceSubTopic> resources = new ArrayList<>();
 
-    protected SubTopic() {}
-
     public SubTopic(
             String title,
             String content,
@@ -67,13 +70,19 @@ public class SubTopic extends IdAuditEntity {
     public static SubTopic create(CreationSubTopic creationSpec) {
         // To Do: SubTopic 생성자 불변식 검증
 
+        List<ResourceSubTopic> createdResourceSubTopics = creationSpec.creationResourceSubTopics()
+                .stream()
+                .map(ResourceSubTopic::create)
+                .sorted(Comparator.comparing(ResourceSubTopic::getOrder))
+                .toList();
+
         SubTopic created =
                 new SubTopic(
                         creationSpec.title(),
                         creationSpec.content(),
                         creationSpec.importanceLevel(),
                         creationSpec.isDraft(),
-                        creationSpec.resources());
+                        createdResourceSubTopics);
 
         // 양방향 연결
         created.resources.forEach(resource -> resource.setSubTopic(created));

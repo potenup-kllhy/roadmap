@@ -3,12 +3,17 @@ package com.kllhy.roadmap.roadmap.domain.model;
 import com.kllhy.roadmap.common.model.AggregateRoot;
 import com.kllhy.roadmap.roadmap.domain.model.creation_spec.CreationRoadMap;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Entity
 @Table(name = "road_map")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class RoadMap extends AggregateRoot {
 
     @Column(name = "title", nullable = false)
@@ -27,7 +32,7 @@ public class RoadMap extends AggregateRoot {
     private boolean isDraft;
 
     @Column(name = "category_id", nullable = false)
-    private Long category_id;
+    private Long categoryId;
 
     @OneToMany(
             mappedBy = "roadMap",
@@ -36,18 +41,16 @@ public class RoadMap extends AggregateRoot {
             fetch = FetchType.LAZY)
     private List<Topic> topics = new ArrayList<>();
 
-    protected RoadMap() {}
-
     private RoadMap(
             String title,
             String description,
             boolean isDraft,
-            Long category_id,
+            Long categoryId,
             List<Topic> topics) {
         this.title = title;
         this.description = description;
         this.isDraft = isDraft;
-        this.category_id = category_id;
+        this.categoryId = categoryId;
         this.topics = topics;
 
         this.deletedAt = null;
@@ -57,13 +60,19 @@ public class RoadMap extends AggregateRoot {
     public static RoadMap create(CreationRoadMap creationSpec) {
         // To Do: RoadMap 생성자 불변식 검증
 
+        List<Topic> createdTopics = creationSpec.creationTopics()
+                .stream()
+                .map(Topic::create)
+                .sorted(Comparator.comparing(Topic::getOrder))
+                .toList();
+
         RoadMap created =
                 new RoadMap(
                         creationSpec.title(),
                         creationSpec.description(),
                         creationSpec.isDraft(),
                         creationSpec.categoryId(),
-                        creationSpec.topics());
+                        createdTopics);
 
         // 양방향 연결
         created.topics.forEach(topic -> topic.setRoadMap(created));
