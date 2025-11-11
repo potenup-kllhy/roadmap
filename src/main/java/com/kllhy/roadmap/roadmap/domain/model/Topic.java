@@ -98,13 +98,11 @@ public class Topic extends IdAuditEntity {
             throw new IllegalArgumentException("Topic.create: order 가 1 미만");
         }
 
-        List<ResourceTopic> createdResourceTopics =
-                creationSpec.creationResourceTopics() == null
-                        ? Collections.emptyList()
-                        : creationSpec.creationResourceTopics().stream()
-                                .map(ResourceTopic::create)
-                                .sorted(Comparator.comparing(ResourceTopic::getOrder))
-                                .toList();
+        List<ResourceTopic> createdResourceTopics = creationSpec.creationResourceTopics()
+                .stream()
+                .map(ResourceTopic::create)
+                .sorted(Comparator.comparing(ResourceTopic::getOrder))
+                .toList();
 
         for (int i = 0; i < createdResourceTopics.size(); i++) {
             if (createdResourceTopics.get(i).getOrder() != (i + 1)) {
@@ -113,10 +111,10 @@ public class Topic extends IdAuditEntity {
             }
         }
 
-        List<SubTopic> createdSubTopics =
-                creationSpec.creationSubTopics() == null
-                        ? Collections.emptyList()
-                        : creationSpec.creationSubTopics().stream().map(SubTopic::create).toList();
+        List<SubTopic> createdSubTopics = creationSpec.creationSubTopics()
+                .stream()
+                .map(SubTopic::create)
+                .toList();
 
         Set<String> titleSet = new HashSet<>();
         for (SubTopic subTopic : createdSubTopics) {

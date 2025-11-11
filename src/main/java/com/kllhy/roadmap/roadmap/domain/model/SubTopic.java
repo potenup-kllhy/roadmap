@@ -79,13 +79,11 @@ public class SubTopic extends IdAuditEntity {
             throw new IllegalArgumentException("SubTopic.create: content 길이가 1000 초과");
         }
 
-        List<ResourceSubTopic> createdResourceSubTopics =
-                creationSpec.creationResourceSubTopics() == null
-                        ? Collections.emptyList()
-                        : creationSpec.creationResourceSubTopics().stream()
-                                .map(ResourceSubTopic::create)
-                                .sorted(Comparator.comparing(ResourceSubTopic::getOrder))
-                                .toList();
+        List<ResourceSubTopic> createdResourceSubTopics = creationSpec.creationResourceSubTopics()
+                .stream()
+                .map(ResourceSubTopic::create)
+                .sorted(Comparator.comparing(ResourceSubTopic::getOrder))
+                .toList();
 
         for (int i = 0; i < createdResourceSubTopics.size(); i++) {
             if (createdResourceSubTopics.get(i).getOrder() != (i + 1)) {
