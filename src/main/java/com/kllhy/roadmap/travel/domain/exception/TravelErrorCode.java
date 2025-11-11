@@ -5,6 +5,11 @@ import com.kllhy.roadmap.common.exception.IErrorCode;
 
 public enum TravelErrorCode implements IErrorCode {
     TRAVEL_NOT_FOUND(DomainHttpStatus.NOT_FOUND, "TRAVEL_001", "not found travel"),
+    TRAVEL_TOPICS_INVALID(DomainHttpStatus.CONFLICT, "TRAVEL_002", "must be topicId"),
+    TRAVEL_TOPICS_DUPLICATED(DomainHttpStatus.CONFLICT, "TRAVEL_003", "duplicated topicId"),
+    TRAVEL_SUB_TOPICS_DUPLICATED(DomainHttpStatus.CONFLICT, "TRAVEL_004", "duplicated subTopicId"),
+    TRAVEL_TOPICS_NOT_FOUND(DomainHttpStatus.NOT_FOUND, "TRAVEL_005", "not found topicId"),
+    TRAVEL_SUB_TOPICS_NOT_FOUND(DomainHttpStatus.NOT_FOUND, "TRAVEL_006", "not found subTopicId"),
     ;
 
     private final DomainHttpStatus httpStatus;
