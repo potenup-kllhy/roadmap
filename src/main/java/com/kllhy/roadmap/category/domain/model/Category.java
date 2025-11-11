@@ -21,5 +21,6 @@ public class Category extends IdEntity {
     private Type type;
 
     @Column(nullable = false)
-    @Getter private String name;
+    @Getter
+    private String name;
 }

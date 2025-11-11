@@ -40,9 +40,6 @@ class TypeTest {
         String invalidInput = "INVALID_TYPE";
 
         // when & then
-        assertThrows(DomainException.class,
-                () -> Type.from(invalidInput),
-                "Invalid category type"
-        );
+        assertThrows(DomainException.class, () -> Type.from(invalidInput), "Invalid category type");
     }
 }
