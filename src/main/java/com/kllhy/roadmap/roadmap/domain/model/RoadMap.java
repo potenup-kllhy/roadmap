@@ -130,11 +130,10 @@ public class RoadMap extends AggregateRoot {
                 .toList();
 
         validateTopics(sortedUpdatedTopics);
+        topics = sortedUpdatedTopics;
 
         // 역방향 연결
-        sortedUpdatedTopics.forEach(topic -> topic.setRoadMap(this));
-        topics.clear();
-        topics.addAll(sortedUpdatedTopics);
+        topics.forEach(topic -> topic.setRoadMap(this));
     }
 
     private static void validateTitle(String title) {
