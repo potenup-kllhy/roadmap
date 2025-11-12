@@ -103,6 +103,10 @@ public class ResourceTopic extends IdEntity {
         }
     }
 
+    CreationResourceTopic cloneAsIs() {
+        return new CreationResourceTopic(name, resourceType, order, link);
+    }
+
     void setTopic(Topic topic) {
         this.topic = Objects.requireNonNull(topic, "ResourceTopic.setTopic: 파라미터 topic 이 null 입니다");
     }

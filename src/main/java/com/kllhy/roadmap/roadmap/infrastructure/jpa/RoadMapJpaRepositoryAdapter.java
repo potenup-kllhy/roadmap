@@ -3,6 +3,10 @@ package com.kllhy.roadmap.roadmap.infrastructure.jpa;
 import com.kllhy.roadmap.roadmap.domain.model.RoadMap;
 import com.kllhy.roadmap.roadmap.domain.repository.RoadMapRepository;
 import java.util.Optional;
+import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Repository;
+
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -13,7 +17,6 @@ public class RoadMapJpaRepositoryAdapter implements RoadMapRepository {
 
     @Override
     public Optional<RoadMap> findById(long id) {
-        // TODO: 현재 LAZY 전략으로 전체 조회가 불가능한데, 추후 한번에 전체 조회 가능하도록 변경해 놓겠습니다
         return roadMapJpaRepository.findById(id);
     }
 

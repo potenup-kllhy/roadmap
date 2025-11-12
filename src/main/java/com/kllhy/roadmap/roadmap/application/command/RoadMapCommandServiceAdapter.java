@@ -41,4 +41,15 @@ public class RoadMapCommandServiceAdapter implements RoadMapCommandService {
                                 () -> new DomainException(RoadMapIErrorCode.ROAD_MAP_BAD_REQUEST));
         roadMap.update(updateRoadMap);
     }
+
+    @Transactional
+    public long cloneRoadMap(long id) {
+        RoadMap roadMap =
+                roadMapRepository
+                        .findById(id)
+                        .orElseThrow(
+                                () -> new DomainException(RoadMapIErrorCode.ROAD_MAP_NOT_FOUND))
+                        .cloneAsIs();
+        return roadMapRepository.save(roadMap);
+    }
 }

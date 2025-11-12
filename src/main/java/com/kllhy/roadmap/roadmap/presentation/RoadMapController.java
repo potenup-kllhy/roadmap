@@ -8,10 +8,7 @@ import com.kllhy.roadmap.roadmap.presentation.dto.mapper.CreateRoadMapCommandMap
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api-v1/roadmap")
@@ -20,11 +17,18 @@ public class RoadMapController {
     private final RoadMapCommandService roadMapCommandService;
 
     @PostMapping
-    public ResponseEntity<?> createRoadMap(@Valid @RequestBody RoadMapCreateRequest request) {
+    public ResponseEntity<ApiResponse<RoadMapCreateResponse>> createRoadMap(
+            @Valid @RequestBody RoadMapCreateRequest request) {
         long id =
                 roadMapCommandService.createRoadMap(
                         CreateRoadMapCommandMapper.mapCreateRoadMapCommand(request));
         return ApiResponse.of(SuccessCode.SUCCESS, new RoadMapCreateResponse(id));
+    }
+
+    @PostMapping("/{id}/clone")
+    public ResponseEntity<?> cloneRoadMap(@PathVariable("id") long id) {
+        long cloneRoadMapId = roadMapCommandService.cloneRoadMap(id);
+        return ApiResponse.of(SuccessCode.SUCCESS, new RoadMapCreateResponse(cloneRoadMapId));
     }
 
     record RoadMapCreateResponse(long id) {}

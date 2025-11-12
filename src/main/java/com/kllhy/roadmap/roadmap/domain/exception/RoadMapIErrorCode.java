@@ -9,6 +9,7 @@ public enum RoadMapIErrorCode implements IErrorCode {
     ROAD_MAP_INTERNAL_SERVER_ERROR(
             DomainHttpStatus.INTERNAL_SERVER_ERROR, "ROAD_MAP_003", "500 internal server error"),
     ROAD_MAP_NOT_FOUND(DomainHttpStatus.NOT_FOUND, "ROAD_MAP_004", "404 not found"),
+    ROAD_MAP_CLONE_NOT_ALLOWED(DomainHttpStatus.CONFLICT, "ROAD_MAP_005", "409 clone not allowed"),
     ;
 
     private final DomainHttpStatus httpStatus;

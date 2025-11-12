@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
-public enum SuccessCode implements IResponseCode{
+public enum SuccessCode implements IResponseCode {
     SUCCESS(HttpStatus.OK, "SUCCESS", "성공했습니다"),
     CREATED(HttpStatus.CREATED, "CREATED", "생성되었습니다");
 

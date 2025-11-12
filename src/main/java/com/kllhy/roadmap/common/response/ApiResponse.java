@@ -18,6 +18,7 @@ public class ApiResponse<T> {
     }
 
     public static <T> ResponseEntity<ApiResponse<T>> of(IResponseCode code, T data) {
-        return ResponseEntity.status(code.getHttpStatus()).body(new ApiResponse<>(code.getCode(), code.getMessage(), data));
+        return ResponseEntity.status(code.getHttpStatus())
+                .body(new ApiResponse<>(code.getCode(), code.getMessage(), data));
     }
 }

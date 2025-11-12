@@ -1,11 +1,6 @@
 package com.kllhy.roadmap.roadmap.domain.model;
 
 import com.kllhy.roadmap.common.model.AggregateRoot;
-import com.kllhy.roadmap.roadmap.domain.event.RoadMapEventOccurred;
-import com.kllhy.roadmap.roadmap.domain.event.SubTopicEventOccurred;
-import com.kllhy.roadmap.roadmap.domain.event.TopicEventOccurred;
-import com.kllhy.roadmap.roadmap.domain.event.enums.ActiveStatus;
-import com.kllhy.roadmap.roadmap.domain.event.enums.EventType;
 import com.kllhy.roadmap.roadmap.domain.model.creation_spec.CreationRoadMap;
 import com.kllhy.roadmap.roadmap.domain.model.update_spec.UpdateRoadMap;
 import com.kllhy.roadmap.roadmap.domain.model.update_spec.UpdateTopic;
@@ -57,13 +52,11 @@ public class RoadMap extends AggregateRoot {
     private List<Topic> topics = new ArrayList<>();
 
     private RoadMap(
-            UUID uuid,
             String title,
             String description,
             boolean isDraft,
             Long categoryId,
             List<Topic> topics) {
-        this.uuid = uuid;
         this.title = title;
         this.description = description;
         this.isDraft = isDraft;
@@ -228,6 +221,25 @@ public class RoadMap extends AggregateRoot {
             throw new IllegalArgumentException(
                     "RoadMap.validateTopics: RoadMap 에 속한 Topic 의 title 은 고유해야 합니다.");
         }
+    }
+
+    public RoadMap cloneAsIs() {
+        if (isDraft || isDeleted) {
+            throw new DomainException(RoadMapIErrorCode.ROAD_MAP_CLONE_NOT_ALLOWED);
+        }
+
+        List<CreationTopic> topics = new ArrayList<>();
+        int order = 1;
+        for (Topic topic : this.topics) {
+            if (topic.isCloneable()) {
+                CreationTopic clonedTopic = topic.cloneAsIs(order++);
+                topics.add(clonedTopic);
+            }
+        }
+
+        CreationRoadMap clonedRoadMap =
+                new CreationRoadMap(title, description, isDraft, categoryId, topics);
+        return RoadMap.create(clonedRoadMap);
     }
 
     public Timestamp getDeletedAt() {
