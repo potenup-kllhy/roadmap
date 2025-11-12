@@ -1,8 +1,6 @@
 package com.kllhy.roadmap.roadmap.domain.event;
 
 import com.kllhy.roadmap.common.event.BaseDomainEvent;
-
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
