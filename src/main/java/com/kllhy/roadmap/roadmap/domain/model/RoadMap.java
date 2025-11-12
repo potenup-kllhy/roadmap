@@ -37,6 +37,10 @@ public class RoadMap extends AggregateRoot {
     @Getter
     private Long categoryId;
 
+    @Column(name = "user_id", nullable = false)
+    @Getter
+    private Long userId;
+
     @OneToMany(
             mappedBy = "roadMap",
             cascade = CascadeType.ALL,
@@ -49,11 +53,13 @@ public class RoadMap extends AggregateRoot {
             String description,
             boolean isDraft,
             Long categoryId,
+            Long userId,
             List<Topic> topics) {
         this.title = title;
         this.description = description;
         this.isDraft = isDraft;
         this.categoryId = categoryId;
+        this.userId = userId;
         this.topics = topics;
 
         this.deletedAt = null;
@@ -105,6 +111,7 @@ public class RoadMap extends AggregateRoot {
                         description,
                         creationSpec.isDraft(),
                         creationSpec.categoryId(),
+                        creationSpec.userId(),
                         createdTopics);
 
         // 양방향 연결
