@@ -188,42 +188,4 @@ public class RoadMap extends AggregateRoot {
     public List<Topic> getTopics() {
         return List.copyOf(topics);
     }
-
-    public void insertTopic(CreationTopic creationTopic) {
-
-        if (creationTopic == null) {
-            throw new IllegalArgumentException("RoadMap.insertTopic: creationTopic 이 null 입니다.");
-        }
-
-        int desiredOrder = creationTopic.order();
-
-        if (desiredOrder < 1 || (topics.size() + 1) < desiredOrder) {
-            throw new IllegalArgumentException("RoadMap.insertTopic: desiredOrder 가 유효한 순서 범위에서 벗어났습니다.");
-        }
-
-        if (isTitleDuplicated(creationTopic)) {
-            throw new IllegalArgumentException("RoadMap.insertTopic: RoadMap 내에서 Topic 의 title 은 유일해야 합니다.");
-        }
-
-        int insertAt = desiredOrder - 1;
-        Topic toBeInserted = Topic.create(creationTopic);
-        if (insertAt == (topics.size())) {
-            topics.add(toBeInserted);
-        } else {
-            stepBackEachOrderFrom(insertAt);
-            topics.add(insertAt, toBeInserted);
-        }
-
-        toBeInserted.setRoadMap(this);
-    }
-
-    private boolean isTitleDuplicated(CreationTopic creationTopic) {
-        return topics.stream().anyMatch(topic -> topic.getTitle().equals(creationTopic.title()));
-    }
-
-    private void stepBackEachOrderFrom(int thisPoint) {
-        for (int i = thisPoint; i < topics.size(); i++) {
-            topics.get(i).stepBack();
-        }
-    }
 }
