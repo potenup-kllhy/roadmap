@@ -38,4 +38,9 @@ public class TravelJpaRepositoryAdapter implements TravelRepository {
     public Travel save(Travel travel) {
         return travelJpaRepository.save(travel);
     }
+
+    @Override
+    public boolean existTravelById(Long id) {
+        return travelJpaRepository.existsById(id);
+    }
 }

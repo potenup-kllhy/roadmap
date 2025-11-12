@@ -23,6 +23,10 @@ public class ProgressSubTopic extends IdAuditEntity {
     @JoinColumn(name = "progress_topic_id", nullable = false)
     private ProgressTopic topic;
 
+    @Getter
+    @Column(nullable = false)
+    private boolean isArchived = false;
+
     private ProgressSubTopic(ProgressTopic topic, Long subTopicId) {
         this.topic = Objects.requireNonNull(topic, "topic must not be null");
         this.subTopicId = Objects.requireNonNull(subTopicId, "subTopicId must not be null");

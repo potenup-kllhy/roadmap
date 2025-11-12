@@ -1,34 +1,45 @@
 package com.kllhy.roadmap.travel.domain.service;
 
 import com.kllhy.roadmap.common.annotation.DomainService;
+import com.kllhy.roadmap.common.exception.DomainException;
+import com.kllhy.roadmap.roadmap.application.query.dto.RoadMapView;
+import com.kllhy.roadmap.travel.domain.exception.TravelErrorCode;
+import com.kllhy.roadmap.travel.domain.model.Travel;
+import com.kllhy.roadmap.travel.domain.model.command.ProgressSubTopicCommand;
+import com.kllhy.roadmap.travel.domain.model.command.ProgressTopicCommand;
+import com.kllhy.roadmap.travel.domain.model.command.TravelCommand;
+import com.kllhy.roadmap.user.domain.enums.AccountStatus;
+import com.kllhy.roadmap.user.service.view.UserView;
+import java.util.List;
 
 @DomainService
 public class TravelCreationService {
 
-    // 여기서 검증 후 travel 반환 후 서비스에ㅓㅅ save
-    // 해당 로드맵은 활성화 상태여야 한다
-    // 또한 topic들도 활성화 상태인것만 가져와야함, -> 활성화시 도메인이벤트로 전달 후 생성 (이건 topic 들 update 부분에서 적용)
+    public Travel create(UserView user, RoadMapView roadMap) {
+        if (!user.status().equals(AccountStatus.ACTIVE)) {
+            throw new DomainException(TravelErrorCode.TRAVEL_USER_NOT_ACTIVE);
+        }
 
-    //        public Travel create(User user, RoadMap roadMap) {
-    //            // user 활성화 되어있는지만 체크
-    //            //TODO domain exception 정의
-    //            if (!roadMap.isPublish() || roadMap.isDeleted()) {
-    //                throw new IllegalArgumentException();
-    //            }
-    //
-    //            //  filter -> 활성화 된 것만 isDeleted와 publised가 false 인것만
-    //            List<ProgressTopicCommand> topicCommands = roadMap.getTopics().stream()
-    //                    .map(t -> new ProgressTopicCommand(
-    //                            t.getId(),
-    //                            t.getSubTopics().stream()
-    //                                    .map(st -> new ProgressSubTopicCommand(st.getId()))
-    //                                    .toList()
-    //                    ))
-    //                    .toList();
-    //
-    //            TravelCommand travelCommand = new TravelCommand(user.getId(), roadMap.getId(),
-    // topicCommands);
-    //            Travel travel = Travel.create(travelCommand);
-    //            return travel;
-    //        }
+        if (!roadMap.isDraft() || roadMap.isDeleted()) {
+            throw new DomainException(TravelErrorCode.TRAVEL_ROADMAP_INVALID);
+        }
+
+        List<ProgressTopicCommand> topicCommands =
+                roadMap.topics().stream()
+                        .map(
+                                t ->
+                                        new ProgressTopicCommand(
+                                                t.id(),
+                                                t.subTopics().stream()
+                                                        .map(
+                                                                st ->
+                                                                        new ProgressSubTopicCommand(
+                                                                                st.id()))
+                                                        .toList()))
+                        .toList();
+
+        TravelCommand travelCommand = new TravelCommand(user.id(), roadMap.id(), topicCommands);
+
+        return Travel.create(travelCommand);
+    }
 }

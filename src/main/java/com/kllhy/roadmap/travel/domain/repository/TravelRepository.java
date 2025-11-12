@@ -16,4 +16,6 @@ public interface TravelRepository {
     Optional<Travel> findBatchByRoadmapIdAndUserId(Long roadmapId, Long userId);
 
     Travel save(Travel travel);
+
+    boolean existTravelById(Long id);
 }

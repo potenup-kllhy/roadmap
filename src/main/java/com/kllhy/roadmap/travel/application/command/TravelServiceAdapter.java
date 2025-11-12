@@ -1,7 +1,17 @@
 package com.kllhy.roadmap.travel.application.command;
 
+import com.kllhy.roadmap.common.exception.DomainException;
+import com.kllhy.roadmap.roadmap.application.query.RoadMapQueryService;
+import com.kllhy.roadmap.roadmap.application.query.dto.RoadMapView;
+import com.kllhy.roadmap.travel.application.view.TravelView;
+import com.kllhy.roadmap.travel.domain.exception.TravelErrorCode;
+import com.kllhy.roadmap.travel.domain.model.Travel;
 import com.kllhy.roadmap.travel.domain.repository.TravelRepository;
 import com.kllhy.roadmap.travel.domain.service.TravelCreationService;
+import com.kllhy.roadmap.travel.domain.service.TravelUpdateService;
+import com.kllhy.roadmap.travel.presentation.request.TravelUpdateRequest;
+import com.kllhy.roadmap.user.service.UserService;
+import com.kllhy.roadmap.user.service.view.UserView;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,13 +22,29 @@ import org.springframework.transaction.annotation.Transactional;
 public class TravelServiceAdapter implements TravelService {
     private final TravelRepository travelRepository;
     private final TravelCreationService travelCreationService;
+    private final UserService userService;
+    private final RoadMapQueryService roadMapQueryService;
+    private final TravelUpdateService travelUpdateService;
 
     @Override
     public void create(Long userId, Long roadmapId) {
-        Long tempUserId = 1L;
-        Long tempRoadmapId = 1L;
+        UserView user = userService.getByUser(userId);
+        RoadMapView roadmap = roadMapQueryService.findById(roadmapId);
 
-        //        travelCreationService.
+        Travel travel = travelCreationService.create(user, roadmap);
+        travelRepository.save(travel);
+    }
 
+    @Override
+    public TravelView update(TravelUpdateRequest request) {
+        Travel travel =
+                travelRepository
+                        .findBatchById(request.travelId())
+                        .orElseThrow(() -> new DomainException(TravelErrorCode.TRAVEL_NOT_FOUND));
+        UserView user = userService.getByUser(request.userId());
+
+        Travel updated = travelUpdateService.update(user, travel, request);
+
+        return TravelView.of(updated);
     }
 }
