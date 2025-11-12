@@ -9,6 +9,8 @@ import com.kllhy.roadmap.roadmap.domain.model.update_spec.UpdateSubTopic;
 import jakarta.persistence.*;
 import java.sql.Timestamp;
 import java.util.*;
+import java.util.stream.Collectors;
+
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -124,6 +126,46 @@ public class SubTopic extends IdAuditEntity {
         created.resources.forEach(resource -> resource.setSubTopic(created));
 
         return created;
+    }
+
+    void update(UpdateSubTopic updateSpec) {
+        validateTitle(updateSpec.title());
+        validateContent(updateSpec.content());
+
+        this.title = updateSpec.title();
+        this.content = updateSpec.content();
+        this.importanceLevel = updateSpec.importanceLevel();
+        this.isDraft = updateSpec.isDraft();
+
+        List<ResourceSubTopic> existingResources = this.resources;
+        Map<Long, ResourceSubTopic> idToResource = existingResources.stream()
+                .filter(resource -> resource.getId() != null)
+                .collect(Collectors.toMap(ResourceSubTopic::getId, resource -> resource));
+
+        List<ResourceSubTopic> sortedUpdatedResources = updateSpec.updateResourceSubTopics()
+                .stream()
+                .sorted(Comparator.comparing(UpdateResourceSubTopic::order))
+                .map(spec -> {
+                    if (spec.id() != null) {
+                        ResourceSubTopic existing = idToResource.remove(spec.id());
+                        if (existing == null) {
+                            throw new IllegalArgumentException(
+                                    "SubTopic.update: 존재하지 않는 ResourceSubTopic id 입니다.");
+                        }
+                        existing.update(spec);
+                        return existing;
+                    }
+                    return ResourceSubTopic.create(spec);
+                })
+                .toList();
+
+        validateResources(sortedUpdatedResources);
+
+        // 양방향 연결
+        sortedUpdatedResources.forEach(resource -> resource.setSubTopic(this));
+
+        resources.clear();
+        resources.addAll(sortedUpdatedResources);
     }
 
     private static void validateTitle(String title) {
