@@ -43,11 +43,11 @@ public class Travel extends AggregateRoot {
             cascade = CascadeType.ALL,
             orphanRemoval = true,
             fetch = FetchType.LAZY)
-    private final List<ProgressTopic> topics = new ArrayList<>();
+    private List<ProgressTopic> topics = new ArrayList<>();
 
     @Getter
     @Column(nullable = false)
-    private boolean isInvalid = false;
+    private boolean isArchived = false;
 
     private Travel(Long userId, Long roadMapId) {
         this.userId = Objects.requireNonNull(userId, "userId must not be null");
@@ -65,6 +65,7 @@ public class Travel extends AggregateRoot {
     }
 
     private void addTopics(List<ProgressTopicCommand> commands) {
+        updateValid();
         if (commands == null || commands.isEmpty())
             throw new DomainException(TravelErrorCode.TRAVEL_TOPICS_INVALID);
 
@@ -76,15 +77,21 @@ public class Travel extends AggregateRoot {
     }
 
     public void markTopic(Long topicId, ProgressStatus status) {
+        updateValid();
         Objects.requireNonNull(status, "status");
         ProgressTopic topic = getTopicOrThrow(topicId);
         topic.changeStatus(status);
     }
 
     public void markSubTopic(Long topicId, Long subTopicId, ProgressStatus status) {
+        updateValid();
         Objects.requireNonNull(status, "status");
         ProgressTopic topic = getTopicOrThrow(topicId);
         topic.markSubTopic(subTopicId, status);
+    }
+
+    private void updateValid() {
+        if (isArchived) throw new DomainException(TravelErrorCode.TRAVEL_NOT_FOUND);
     }
 
     private void addTopic(ProgressTopic topic) {
@@ -110,11 +117,13 @@ public class Travel extends AggregateRoot {
     private TravelProgressStatus calculateStatus() {
         Set<ProgressStatus> allStatuses =
                 topics.stream()
+                        .filter(it -> !it.isArchived())
                         .flatMap(
                                 topic ->
                                         Stream.concat(
                                                 Stream.of(topic.getStatus()),
                                                 topic.getSubTopics().stream()
+                                                        .filter(it -> !it.isArchived())
                                                         .map(ProgressSubTopic::getStatus)))
                         .collect(Collectors.toSet());
 

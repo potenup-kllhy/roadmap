@@ -35,7 +35,11 @@ public class ProgressTopic extends IdAuditEntity {
             orphanRemoval = true,
             fetch = FetchType.LAZY)
     @BatchSize(size = 100)
-    private final List<ProgressSubTopic> subTopics = new ArrayList<>();
+    private List<ProgressSubTopic> subTopics = new ArrayList<>();
+
+    @Getter
+    @Column(nullable = false)
+    private boolean isArchived = false;
 
     private ProgressTopic(Travel travel, Long topicId) {
         this.travel = Objects.requireNonNull(travel, "travel must not be null");
@@ -51,6 +55,7 @@ public class ProgressTopic extends IdAuditEntity {
     }
 
     void addSubTopics(List<ProgressSubTopicCommand> commands) {
+        updateValid();
         if (commands == null || commands.isEmpty()) return;
 
         for (var command : commands) {
@@ -77,8 +82,13 @@ public class ProgressTopic extends IdAuditEntity {
     }
 
     void markSubTopic(Long subTopicId, ProgressStatus status) {
-        ProgressSubTopic subTopic = getSubTopicOrThrow(topicId);
+        updateValid();
+        ProgressSubTopic subTopic = getSubTopicOrThrow(subTopicId);
         subTopic.changeStatus(status);
+    }
+
+    private void updateValid() {
+        if (isArchived) throw new DomainException(TravelErrorCode.TRAVEL_TOPICS_NOT_FOUND);
     }
 
     private ProgressSubTopic getSubTopicOrThrow(Long subTopicId) {
