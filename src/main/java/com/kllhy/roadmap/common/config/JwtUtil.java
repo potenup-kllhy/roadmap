@@ -17,7 +17,7 @@ public class JwtUtil {
 
     public JwtUtil(
             @Value(
-                            "${jwt.secret:your-secret-key-must-be-at-least-256-bits-long-for-hs256-algorithm}")
+                    "${jwt.secret}")
                     String secret,
             @Value("${jwt.expiration:43200000}") long expirationTime) {
         this.secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
