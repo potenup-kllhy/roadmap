@@ -1,0 +1,107 @@
+package com.kllhy.roadmap.user.presentation;
+
+import com.kllhy.roadmap.common.config.JwtUtil;
+import com.kllhy.roadmap.user.application.command.UserCommandService;
+import com.kllhy.roadmap.user.application.command.dto.RegisterUserCommand;
+import com.kllhy.roadmap.user.application.command.dto.UpdateUserCommand;
+import com.kllhy.roadmap.user.application.query.UserQueryService;
+import com.kllhy.roadmap.user.application.query.dto.UserQueryResult;
+import com.kllhy.roadmap.user.domain.model.User;
+import com.kllhy.roadmap.user.presentation.dto.LoginRequest;
+import com.kllhy.roadmap.user.presentation.dto.LoginResponse;
+import java.net.URI;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/api/v1/users")
+@Slf4j
+public class UserController {
+    private final UserCommandService userCommandService;
+    private final UserQueryService userQueryService;
+    private final JwtUtil jwtUtil;
+    private final AuthenticationManager authenticationManager;
+
+    public UserController(
+            UserCommandService userCommandService,
+            UserQueryService userQueryService,
+            JwtUtil jwtUtil,
+            AuthenticationManager authenticationManager) {
+        this.userCommandService = userCommandService;
+        this.userQueryService = userQueryService;
+        this.jwtUtil = jwtUtil;
+        this.authenticationManager = authenticationManager;
+    }
+
+    @PostMapping("/signup")
+    public ResponseEntity<Void> signup(@RequestBody RegisterUserCommand command) {
+        log.info("Signup request received for loginId: {}", command.getLoginId());
+        Long userId = userCommandService.registerUser(command);
+        log.info("Signup successful for user id: {}", userId);
+        return ResponseEntity.created(URI.create("/api/v1/users/" + userId)).build();
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
+        log.info("Login attempt for loginId: {}", loginRequest.getLoginId());
+        Authentication authentication =
+                authenticationManager.authenticate(
+                        new UsernamePasswordAuthenticationToken(
+                                loginRequest.getLoginId(), loginRequest.getPassword()));
+        User user = (User) authentication.getPrincipal();
+        String token = jwtUtil.generateToken(user.getLoginId());
+
+        log.info("Login successful for loginId: {}", loginRequest.getLoginId());
+
+        return ResponseEntity.ok(
+                new LoginResponse(
+                        token, user.getLoginId(), user.getEmail(), user.getAccountStatus()));
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<UserQueryResult> getMyUserInfo(@AuthenticationPrincipal User user) {
+        if (user == null) {
+            log.warn("Unauthorized access attempt to /me endpoint");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        log.debug("User info requested for user id: {}", user.getId());
+        return ResponseEntity.ok(UserQueryResult.toQueryResult(user));
+    }
+
+    @PutMapping("/me")
+    public ResponseEntity<UserQueryResult> updateMyUserInfo(
+            @AuthenticationPrincipal User user, @RequestBody UpdateUserCommand command) {
+        if (user == null) {
+            log.warn("Unauthorized update attempt to /me endpoint");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        log.info("Update request for user id: {}", user.getId());
+        User updatedUser = userCommandService.updateUser(user.getId(), command);
+        return ResponseEntity.ok(UserQueryResult.toQueryResult(updatedUser));
+    }
+
+    @DeleteMapping("/me")
+    public ResponseEntity<Void> deleteMyAccount(@AuthenticationPrincipal User user) {
+        if (user == null) {
+            log.warn("Unauthorized delete attempt to /me endpoint");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        log.info("Account deletion request for user id: {}", user.getId());
+        userCommandService.deleteUser(user.getId());
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<UserQueryResult> getUserById(@PathVariable Long id) {
+        return userQueryService
+                .findUserQueryResultById(id)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+    }
+}
