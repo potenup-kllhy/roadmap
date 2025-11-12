@@ -5,5 +5,9 @@ public interface StarRoadMapCommandService {
 
     void update(Long userId, Long roadmapId, int value);
 
-    void delete(Long userId, Long roadmapId);
+    void deleteById(Long starId);
+
+    void deleteAllStarByUserId(Long userId);
+
+    void deleteAllStarByRoadMapId(Long roadmapId);
 }
