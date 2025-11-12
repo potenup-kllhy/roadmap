@@ -60,6 +60,12 @@ public class ResourceSubTopic extends IdEntity {
         return new ResourceSubTopic(name, order, creationSpec.resourceType(), link);
     }
 
+    /** id 사용 x **/
+    static ResourceSubTopic create(UpdateResourceSubTopic updateSpec) {
+        return create(new CreationResourceSubTopic(
+                updateSpec.name(), updateSpec.order(), updateSpec.resourceType(), updateSpec.link()));
+    }
+
     void update(UpdateResourceSubTopic updateSpec) {
         validateName(updateSpec.name());
         validateOrder(updateSpec.order());

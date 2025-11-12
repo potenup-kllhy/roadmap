@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.kllhy.roadmap.common.model.IdAuditEntity;
 import com.kllhy.roadmap.roadmap.domain.model.creation_spec.CreationTopic;
 import com.kllhy.roadmap.roadmap.domain.model.enums.ImportanceLevel;
+import com.kllhy.roadmap.roadmap.domain.model.update_spec.UpdateTopic;
 import jakarta.persistence.*;
 import java.sql.Timestamp;
 import java.util.*;
@@ -114,6 +115,41 @@ public class Topic extends IdAuditEntity {
                         creationSpec.importanceLevel(),
                         order,
                         creationSpec.isDraft(),
+                        createdResourceTopics,
+                        createdSubTopics);
+
+        // 양방향 연결
+        created.resources.forEach(resource -> resource.setTopic(created));
+        created.subTopics.forEach(subTopic -> subTopic.setTopic(created));
+
+        return created;
+    }
+
+    /** id 사용 x **/
+    static Topic create(UpdateTopic updateSpec) {
+
+        validateTitle(updateSpec.title());
+        validateContent(updateSpec.content());
+        validateOrder(updateSpec.order());
+
+        List<ResourceTopic> createdResourceTopics =
+                updateSpec.resourceTopics().stream()
+                        .map(ResourceTopic::create)
+                        .sorted(Comparator.comparing(ResourceTopic::getOrder))
+                        .toList();
+        validateResources(createdResourceTopics);
+
+        List<SubTopic> createdSubTopics =
+                updateSpec.subTopics().stream().map(SubTopic::create).toList();
+        validateSubTopics(createdSubTopics);
+
+        Topic created =
+                new Topic(
+                        updateSpec.title(),
+                        updateSpec.content(),
+                        updateSpec.importanceLevel(),
+                        updateSpec.order(),
+                        updateSpec.isDraft(),
                         createdResourceTopics,
                         createdSubTopics);
 
