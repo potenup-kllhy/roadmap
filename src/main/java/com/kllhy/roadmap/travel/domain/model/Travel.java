@@ -30,12 +30,12 @@ import lombok.NoArgsConstructor;
         })
 public class Travel extends AggregateRoot {
 
-    @Column(nullable = false, updatable = false)
     @Getter
+    @Column(nullable = false, updatable = false)
     private Long userId;
 
-    @Column(nullable = false)
     @Getter
+    @Column(nullable = false)
     private Long roadMapId;
 
     @OneToMany(
@@ -44,6 +44,10 @@ public class Travel extends AggregateRoot {
             orphanRemoval = true,
             fetch = FetchType.LAZY)
     private final List<ProgressTopic> topics = new ArrayList<>();
+
+    @Getter
+    @Column(nullable = false)
+    private boolean isInvalid = false;
 
     private Travel(Long userId, Long roadMapId) {
         this.userId = Objects.requireNonNull(userId, "userId must not be null");
