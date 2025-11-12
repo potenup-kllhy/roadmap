@@ -99,7 +99,7 @@ public class RoadMap extends AggregateRoot {
 
         validateTitle(updateSpec.title());
         validateDescription(updateSpec.description());
-        validateCategoryId(updateSpec);
+        validateCategoryId(updateSpec.categoryId());
 
         this.title = updateSpec.title();
         this.description = updateSpec.description();
@@ -150,8 +150,8 @@ public class RoadMap extends AggregateRoot {
         }
     }
 
-    private static void validateCategoryId(UpdateRoadMap updateSpec) {
-        if (updateSpec.categoryId() < 0) {
+    private static void validateCategoryId(Long categoryId) {
+        if (categoryId < 0) {
             throw new IllegalArgumentException("RoadMap.update: categoryId 가 음수입니다.");
         }
     }
