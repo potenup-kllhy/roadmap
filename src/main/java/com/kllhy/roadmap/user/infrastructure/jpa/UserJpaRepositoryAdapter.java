@@ -3,7 +3,6 @@ package com.kllhy.roadmap.user.infrastructure.jpa;
 import com.kllhy.roadmap.user.domain.model.User;
 import com.kllhy.roadmap.user.domain.repository.UserRepository;
 import java.util.Optional;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -38,5 +37,3 @@ public class UserJpaRepositoryAdapter implements UserRepository {
         return userJpaRepository.save(user);
     }
 }
-
-

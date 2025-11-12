@@ -140,5 +140,3 @@ public class UserCommandService {
         log.info("User deleted successfully with id: {}", userId);
     }
 }
-
-

@@ -52,8 +52,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     log.debug("JWT authentication successful for user: {}", username);
                 } catch (UsernameNotFoundException e) {
                     log.warn("User not found for JWT token: {}", username);
-
-
                 }
             }
         } catch (Exception e) {
