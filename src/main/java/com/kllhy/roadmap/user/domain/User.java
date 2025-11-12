@@ -1,7 +1,6 @@
 package com.kllhy.roadmap.user.domain;
 
 import com.kllhy.roadmap.common.model.AggregateRoot;
-import com.kllhy.roadmap.common.model.IdAuditEntity;
 import com.kllhy.roadmap.user.domain.enums.AccountStatus;
 import jakarta.persistence.*;
 import java.time.Instant;
