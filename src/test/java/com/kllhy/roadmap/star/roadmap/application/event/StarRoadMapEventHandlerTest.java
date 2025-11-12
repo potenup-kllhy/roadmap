@@ -19,27 +19,26 @@ import org.springframework.transaction.support.TransactionTemplate;
 @SpringBootTest
 class StarRoadMapEventHandlerTest {
 
-    @Autowired
-    private ApplicationEventPublisher eventPublisher;
+    @Autowired private ApplicationEventPublisher eventPublisher;
 
-    @MockitoBean
-    private StarRoadMapCommandService starRoadmapCommandService;
+    @MockitoBean private StarRoadMapCommandService starRoadmapCommandService;
 
-    @Autowired
-    private TransactionTemplate transactionTemplate;
+    @Autowired private TransactionTemplate transactionTemplate;
 
     @Test
     @DisplayName("유저 상태가 BLOCKED로 변경되면, 해당 유저의 모든 별점을 삭제하는 서비스가 호출된다")
     void whenUserStatusIsBlocked_thenDeleteAllStarsIsCalled() {
         // given
         Long userId = 123L;
-        UserAccountStatusUpdated event = new UserAccountStatusUpdated(userId, "ACTIVE", "BLOCKED", Instant.now());
+        UserAccountStatusUpdated event =
+                new UserAccountStatusUpdated(userId, "ACTIVE", "BLOCKED", Instant.now());
 
         // when
-        transactionTemplate.execute(status -> {
-            eventPublisher.publishEvent(event);
-            return null;
-        });
+        transactionTemplate.execute(
+                status -> {
+                    eventPublisher.publishEvent(event);
+                    return null;
+                });
 
         // then
         verify(starRoadmapCommandService, times(1)).deleteAllStarByUserId(userId);
@@ -50,13 +49,15 @@ class StarRoadMapEventHandlerTest {
     void whenUserStatusIsActive_thenDeleteAllStarsIsNotCalled() {
         // given
         Long userId = 123L;
-        UserAccountStatusUpdated event = new UserAccountStatusUpdated(userId, "BLOCKED", "ACTIVE", Instant.now());
+        UserAccountStatusUpdated event =
+                new UserAccountStatusUpdated(userId, "BLOCKED", "ACTIVE", Instant.now());
 
         // when
-        transactionTemplate.execute(status -> {
-            eventPublisher.publishEvent(event);
-            return null;
-        });
+        transactionTemplate.execute(
+                status -> {
+                    eventPublisher.publishEvent(event);
+                    return null;
+                });
 
         // then
         verify(starRoadmapCommandService, never()).deleteAllStarByUserId(anyLong());

@@ -23,8 +23,10 @@ public class StarRoadMapEventHandler {
         String newStatus = event.newStatus();
         Long userId = event.userId();
 
-        if("BLOCKED".equals(newStatus)) {
-            log.info("User account status updated to BLOCKED. Deleting star roadmaps for userId: {}", userId);
+        if ("BLOCKED".equals(newStatus)) {
+            log.info(
+                    "User account status updated to BLOCKED. Deleting star roadmaps for userId: {}",
+                    userId);
             starRoadMapCommandService.deleteAllStarByUserId(userId);
         }
     }
