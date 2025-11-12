@@ -10,6 +10,9 @@ public enum TravelErrorCode implements IErrorCode {
     TRAVEL_SUB_TOPICS_DUPLICATED(DomainHttpStatus.CONFLICT, "TRAVEL_004", "duplicated subTopicId"),
     TRAVEL_TOPICS_NOT_FOUND(DomainHttpStatus.NOT_FOUND, "TRAVEL_005", "not found topicId"),
     TRAVEL_SUB_TOPICS_NOT_FOUND(DomainHttpStatus.NOT_FOUND, "TRAVEL_006", "not found subTopicId"),
+    TRAVEL_USER_NOT_ACTIVE(DomainHttpStatus.NOT_FOUND, "TRAVEL_007", "user not active"),
+    TRAVEL_ROADMAP_INVALID(DomainHttpStatus.NOT_FOUND, "TRAVEL_008", "roadmap invalid"),
+    TRAVEL_TOPIC_INVALID(DomainHttpStatus.NOT_FOUND, "TRAVEL_009", "topic invalid"),
     ;
 
     private final DomainHttpStatus httpStatus;
