@@ -239,39 +239,39 @@ public class Topic extends IdAuditEntity {
 
     private static void validateTitle(String title) {
         if (title.isBlank() || title.length() < 2 || 255 < title.length()) {
-            throw new IllegalArgumentException("Topic.create: title 이 blank 이거나, 길이가 2 미만 255 초과");
+            throw new IllegalArgumentException("Topic.validateTitle: title 이 blank 이거나, 길이가 2 미만 255 초과");
         }
     }
 
     private static void validateContent(String content) {
         if (content != null && content.length() > 1000) {
-            throw new IllegalArgumentException("Topic.create: content 길이가 1000 초과");
+            throw new IllegalArgumentException("Topic.validateContent: content 길이가 1000 초과");
         }
     }
 
     private static void validateOrder(Integer order) {
         if (order < 1) {
-            throw new IllegalArgumentException("Topic.create: order 가 1 미만");
+            throw new IllegalArgumentException("Topic.validateOrder: order 가 1 미만");
         }
     }
 
-    private static void validateResources(List<ResourceTopic> createdResourceTopics) {
-        for (int i = 0; i < createdResourceTopics.size(); i++) {
-            if (createdResourceTopics.get(i).getOrder() != (i + 1)) {
+    private static void validateResources(List<ResourceTopic> resources) {
+        for (int i = 0; i < resources.size(); i++) {
+            if (resources.get(i).getOrder() != (i + 1)) {
                 throw new IllegalArgumentException(
-                        "Topic.create: ResourceTopic 리스트 요소의 order 는 1부터 size 까지 1씩 증가해야 합니다.");
+                        "Topic.validateResources: ResourceTopic 리스트 요소의 order 는 1부터 size 까지 1씩 증가해야 합니다.");
             }
         }
     }
 
-    private static void validateSubTopics(List<SubTopic> createdSubTopics) {
+    private static void validateSubTopics(List<SubTopic> subTopics) {
         Set<String> titleSet = new HashSet<>();
-        for (SubTopic subTopic : createdSubTopics) {
+        for (SubTopic subTopic : subTopics) {
             titleSet.add(subTopic.getTitle());
         }
-        if (titleSet.size() != createdSubTopics.size()) {
+        if (titleSet.size() != subTopics.size()) {
             throw new IllegalArgumentException(
-                    "Topic.create: Topic 에 속한 SubTopic 의 title 은 고유해야 합니다.");
+                    "Topic.validateSubTopics: Topic 에 속한 SubTopic 의 title 은 고유해야 합니다.");
         }
     }
 

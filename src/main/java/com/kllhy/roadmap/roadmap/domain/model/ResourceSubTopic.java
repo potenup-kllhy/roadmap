@@ -80,20 +80,20 @@ public class ResourceSubTopic extends IdEntity {
     private static void validateName(String name) {
         if (name.isBlank() || name.length() < 2 || 255 < name.length()) {
             throw new IllegalArgumentException(
-                    "ResourceSubTopic.create: name 이 blank 이거나, 길이가 2 미만 또는 255 초과");
+                    "ResourceSubTopic.validateName: name 이 blank 이거나, 길이가 2 미만 또는 255 초과");
         }
     }
 
     private static void validateOrder(Integer order) {
         if (order < 1) {
-            throw new IllegalArgumentException("ResourceSubTopic.create: order 가 1 미만");
+            throw new IllegalArgumentException("ResourceSubTopic.validateOrder: order 가 1 미만");
         }
     }
 
     private static void validateLink(String link) {
         if (link.isBlank() || 255 < link.length()) {
             throw new IllegalArgumentException(
-                    "ResourceSubTopic.create: link 가 blank 이거나, 길이가 255 초과");
+                    "ResourceSubTopic.validateLink: link 가 blank 이거나, 길이가 255 초과");
         }
     }
 

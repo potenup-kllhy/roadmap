@@ -140,41 +140,41 @@ public class RoadMap extends AggregateRoot {
     private static void validateTitle(String title) {
         if (title.isBlank() || title.length() < 2 || 255 < title.length()) {
             throw new IllegalArgumentException(
-                    "RoadMap.create: title 이 blank 이거나, 길이가 2 미만 또는 255 초과");
+                    "RoadMap.validateTitle: title 이 blank 이거나, 길이가 2 미만 또는 255 초과");
         }
     }
 
     private static void validateDescription(String description) {
         if (description != null && description.length() > 1000) {
-            throw new IllegalArgumentException("RoadMap.create: description 의 길이가 1000 초과");
+            throw new IllegalArgumentException("RoadMap.validateDescription: description 의 길이가 1000 초과");
         }
     }
 
     private static void validateCategoryId(Long categoryId) {
         if (categoryId < 0) {
-            throw new IllegalArgumentException("RoadMap.update: categoryId 가 음수입니다.");
+            throw new IllegalArgumentException("RoadMap.validateCategoryId: categoryId 가 음수입니다.");
         }
     }
 
-    private static void validateTopics(List<Topic> createdTopics) {
-        if (createdTopics.isEmpty()) {
-            throw new IllegalArgumentException("RoadMap.create: creationTopics 가 blank 임");
+    private static void validateTopics(List<Topic> topics) {
+        if (topics.isEmpty()) {
+            throw new IllegalArgumentException("RoadMap.validateTopics: topics 가 blank 임");
         }
 
-        for (int i = 0; i < createdTopics.size(); i++) {
-            if (createdTopics.get(i).getOrder() != (i + 1)) {
+        for (int i = 0; i < topics.size(); i++) {
+            if (topics.get(i).getOrder() != (i + 1)) {
                 throw new IllegalArgumentException(
-                        "RoadMap.create: Topic 리스트 요소의 order 는 1부터 size 까지 1씩 증가해야 합니다.");
+                        "RoadMap.validateTopics: Topic 리스트 요소의 order 는 1부터 size 까지 1씩 증가해야 합니다.");
             }
         }
 
         Set<String> titleSet = new HashSet<>();
-        for (Topic topic : createdTopics) {
+        for (Topic topic : topics) {
             titleSet.add(topic.getTitle());
         }
-        if (titleSet.size() != createdTopics.size()) {
+        if (titleSet.size() != topics.size()) {
             throw new IllegalArgumentException(
-                    "RoadMap.create: RoadMap 에 속한 Topic 의 title 은 고유해야 합니다.");
+                    "RoadMap.validateTopics: RoadMap 에 속한 Topic 의 title 은 고유해야 합니다.");
         }
     }
 
