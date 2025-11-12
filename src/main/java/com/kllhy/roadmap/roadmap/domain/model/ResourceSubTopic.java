@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.kllhy.roadmap.common.model.IdEntity;
 import com.kllhy.roadmap.roadmap.domain.model.creation_spec.CreationResourceSubTopic;
 import com.kllhy.roadmap.roadmap.domain.model.enums.ResourceType;
+import com.kllhy.roadmap.roadmap.domain.model.update_spec.UpdateResourceSubTopic;
 import jakarta.persistence.*;
 import java.util.Objects;
 import lombok.AccessLevel;
@@ -57,6 +58,17 @@ public class ResourceSubTopic extends IdEntity {
         validateLink(link);
 
         return new ResourceSubTopic(name, order, creationSpec.resourceType(), link);
+    }
+
+    void update(UpdateResourceSubTopic updateSpec) {
+        validateName(updateSpec.name());
+        validateOrder(updateSpec.order());
+        validateLink(updateSpec.link());
+
+        this.name = updateSpec.name();
+        this.order = updateSpec.order();
+        this.resourceType = updateSpec.resourceType();
+        this.link = updateSpec.link();
     }
 
     private static void validateName(String name) {
