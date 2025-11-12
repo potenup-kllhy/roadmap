@@ -201,11 +201,10 @@ public class Topic extends IdAuditEntity {
                 .toList();
 
         validateResources(sortedUpdatedResources);
+        resources = sortedUpdatedResources;
 
         // 역방향 연결
-        sortedUpdatedResources.forEach(resource -> resource.setTopic(this));
-        resources.clear();
-        resources.addAll(sortedUpdatedResources);
+        resources.forEach(resource -> resource.setTopic(this));
     }
 
     private void updateSubTopics(UpdateTopic updateSpec) {
@@ -230,11 +229,10 @@ public class Topic extends IdAuditEntity {
                 .forEach(updatedSubTopics::add);
 
         validateSubTopics(updatedSubTopics);
+        subTopics = updatedSubTopics;
 
         // 역방향 연결
-        updatedSubTopics.forEach(subTopic -> subTopic.setTopic(this));
-        subTopics.clear();
-        subTopics.addAll(updatedSubTopics);
+        subTopics.forEach(subTopic -> subTopic.setTopic(this));
     }
 
     private static void validateTitle(String title) {

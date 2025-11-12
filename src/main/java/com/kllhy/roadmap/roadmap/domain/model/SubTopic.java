@@ -163,12 +163,10 @@ public class SubTopic extends IdAuditEntity {
                 .toList();
 
         validateResources(sortedUpdatedResources);
+        resources = sortedUpdatedResources;
 
         // 양방향 연결
-        sortedUpdatedResources.forEach(resource -> resource.setSubTopic(this));
-
-        resources.clear();
-        resources.addAll(sortedUpdatedResources);
+        resources.forEach(resource -> resource.setSubTopic(this));
     }
 
     private static void validateTitle(String title) {
