@@ -39,17 +39,17 @@ public class StarRoadMap extends AggregateRoot {
     private Long roadMapId;
 
     private StarRoadMap(int value, Long userId, Long roadMapId) {
-        validateStarValue(value);
         this.value = value;
         this.userId = Objects.requireNonNull(userId, "userId must not be null");
         this.roadMapId = Objects.requireNonNull(roadMapId, "roadMapId must not be null");
     }
 
     public static StarRoadMap create(CreateStarRoadMapCommand command) {
+        validateStarValue(command.value());
         return new StarRoadMap(command.value(), command.userId(), command.roadmapId());
     }
 
-    private void validateStarValue(int value) {
+    private static void validateStarValue(int value) {
         if (value < 0 || value > 5) {
             throw new DomainException(StarRoadMapErrorCode.STAR_ROAD_MAP_INVALID_VALUE);
         }
