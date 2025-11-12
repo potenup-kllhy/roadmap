@@ -16,12 +16,13 @@ import org.hibernate.annotations.ColumnDefault;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "star_road_map",
+@Table(
+        name = "star_road_map",
         uniqueConstraints = {
-                @UniqueConstraint(
-                        name = "uk_star_user_roadmap",
-                        columnNames = {"user_id", "road_map_id"})
-})
+            @UniqueConstraint(
+                    name = "uk_star_user_roadmap",
+                    columnNames = {"user_id", "road_map_id"})
+        })
 public class StarRoadMap extends AggregateRoot {
 
     @Column(nullable = false)
