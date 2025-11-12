@@ -4,9 +4,12 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.kllhy.roadmap.common.model.IdAuditEntity;
 import com.kllhy.roadmap.roadmap.domain.model.creation_spec.CreationSubTopic;
 import com.kllhy.roadmap.roadmap.domain.model.enums.ImportanceLevel;
+import com.kllhy.roadmap.roadmap.domain.model.update_spec.UpdateResourceSubTopic;
+import com.kllhy.roadmap.roadmap.domain.model.update_spec.UpdateSubTopic;
 import jakarta.persistence.*;
 import java.sql.Timestamp;
 import java.util.*;
+import java.util.stream.Collectors;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -72,28 +75,17 @@ public class SubTopic extends IdAuditEntity {
     static SubTopic create(CreationSubTopic creationSpec) {
 
         String title = creationSpec.title();
-        if (title.isBlank() || title.length() < 2 || 255 < title.length()) {
-            throw new IllegalArgumentException(
-                    "SubTopic.create: title 이 blank 이거나, 길이가 2 미만 또는 255 초과");
-        }
+        validateTitle(title);
 
         String content = creationSpec.content();
-        if (content != null && content.length() > 1000) {
-            throw new IllegalArgumentException("SubTopic.create: content 길이가 1000 초과");
-        }
+        validateContent(content);
 
         List<ResourceSubTopic> createdResourceSubTopics =
                 creationSpec.creationResourceSubTopics().stream()
                         .map(ResourceSubTopic::create)
                         .sorted(Comparator.comparing(ResourceSubTopic::getOrder))
                         .toList();
-
-        for (int i = 0; i < createdResourceSubTopics.size(); i++) {
-            if (createdResourceSubTopics.get(i).getOrder() != (i + 1)) {
-                throw new IllegalArgumentException(
-                        "SubTopic.create: ResourceSubTopic 리스트 요소의 order 는 1부터 size 까지 1씩 증가해야 합니다.");
-            }
-        }
+        validateResources(createdResourceSubTopics);
 
         SubTopic created =
                 new SubTopic(
@@ -107,6 +99,98 @@ public class SubTopic extends IdAuditEntity {
         created.resources.forEach(resource -> resource.setSubTopic(created));
 
         return created;
+    }
+
+    /** id 사용 x * */
+    static SubTopic create(UpdateSubTopic updateSpec) {
+        validateTitle(updateSpec.title());
+        validateContent(updateSpec.content());
+
+        List<ResourceSubTopic> createdResourceSubTopics =
+                updateSpec.updateResourceSubTopics().stream()
+                        .map(ResourceSubTopic::create)
+                        .sorted(Comparator.comparing(ResourceSubTopic::getOrder))
+                        .toList();
+        validateResources(createdResourceSubTopics);
+
+        SubTopic created =
+                new SubTopic(
+                        updateSpec.title(),
+                        updateSpec.content(),
+                        updateSpec.importanceLevel(),
+                        updateSpec.isDraft(),
+                        createdResourceSubTopics);
+
+        // 양방향 연결
+        created.resources.forEach(resource -> resource.setSubTopic(created));
+
+        return created;
+    }
+
+    void update(UpdateSubTopic updateSpec) {
+        validateTitle(updateSpec.title());
+        validateContent(updateSpec.content());
+
+        this.title = updateSpec.title();
+        this.content = updateSpec.content();
+        this.importanceLevel = updateSpec.importanceLevel();
+        this.isDraft = updateSpec.isDraft();
+
+        updateResources(updateSpec);
+    }
+
+    private void updateResources(UpdateSubTopic updateSpec) {
+        Map<Long, ResourceSubTopic> remainingResources =
+                resources.stream()
+                        .filter(resource -> resource.getId() != null)
+                        .collect(Collectors.toMap(ResourceSubTopic::getId, resource -> resource));
+
+        List<ResourceSubTopic> sortedUpdatedResources =
+                updateSpec.updateResourceSubTopics().stream()
+                        .sorted(Comparator.comparing(UpdateResourceSubTopic::order))
+                        .map(
+                                spec -> {
+                                    if (spec.id() != null) {
+                                        ResourceSubTopic existing =
+                                                remainingResources.remove(spec.id());
+                                        if (existing == null) {
+                                            throw new IllegalArgumentException(
+                                                    "SubTopic.update: 존재하지 않는 ResourceSubTopic id 입니다.");
+                                        }
+                                        existing.update(spec);
+                                        return existing;
+                                    }
+                                    return ResourceSubTopic.create(spec);
+                                })
+                        .toList();
+
+        validateResources(sortedUpdatedResources);
+        resources = sortedUpdatedResources;
+
+        // 양방향 연결
+        resources.forEach(resource -> resource.setSubTopic(this));
+    }
+
+    private static void validateTitle(String title) {
+        if (title.isBlank() || title.length() < 2 || 255 < title.length()) {
+            throw new IllegalArgumentException(
+                    "SubTopic.validateTitle: title 이 blank 이거나, 길이가 2 미만 또는 255 초과");
+        }
+    }
+
+    private static void validateContent(String content) {
+        if (content != null && content.length() > 1000) {
+            throw new IllegalArgumentException("SubTopic.validateContent: content 길이가 1000 초과");
+        }
+    }
+
+    private static void validateResources(List<ResourceSubTopic> resources) {
+        for (int i = 0; i < resources.size(); i++) {
+            if (resources.get(i).getOrder() != (i + 1)) {
+                throw new IllegalArgumentException(
+                        "SubTopic.validateResources: ResourceSubTopic 리스트 요소의 order 는 1부터 size 까지 1씩 증가해야 합니다.");
+            }
+        }
     }
 
     void setTopic(Topic topic) {

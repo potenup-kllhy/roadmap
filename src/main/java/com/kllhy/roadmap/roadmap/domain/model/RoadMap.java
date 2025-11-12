@@ -2,9 +2,12 @@ package com.kllhy.roadmap.roadmap.domain.model;
 
 import com.kllhy.roadmap.common.model.AggregateRoot;
 import com.kllhy.roadmap.roadmap.domain.model.creation_spec.CreationRoadMap;
+import com.kllhy.roadmap.roadmap.domain.model.update_spec.UpdateRoadMap;
+import com.kllhy.roadmap.roadmap.domain.model.update_spec.UpdateTopic;
 import jakarta.persistence.*;
 import java.sql.Timestamp;
 import java.util.*;
+import java.util.stream.Collectors;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -37,10 +40,6 @@ public class RoadMap extends AggregateRoot {
     @Getter
     private Long categoryId;
 
-    @Column(name = "user_id", nullable = false)
-    @Getter
-    private Long userId;
-
     @OneToMany(
             mappedBy = "roadMap",
             cascade = CascadeType.ALL,
@@ -53,13 +52,11 @@ public class RoadMap extends AggregateRoot {
             String description,
             boolean isDraft,
             Long categoryId,
-            Long userId,
             List<Topic> topics) {
         this.title = title;
         this.description = description;
         this.isDraft = isDraft;
         this.categoryId = categoryId;
-        this.userId = userId;
         this.topics = topics;
 
         this.deletedAt = null;
@@ -69,41 +66,17 @@ public class RoadMap extends AggregateRoot {
     public static RoadMap create(CreationRoadMap creationSpec) {
 
         String title = creationSpec.title();
-        if (title.isBlank() || title.length() < 2 || 255 < title.length()) {
-            throw new IllegalArgumentException(
-                    "RoadMap.create: title 이 blank 이거나, 길이가 2 미만 또는 255 초과");
-        }
+        validateTitle(title);
 
         String description = creationSpec.description();
-        if (description != null && description.length() > 1000) {
-            throw new IllegalArgumentException("RoadMap.create: description 의 길이가 1000 초과");
-        }
-
-        if (creationSpec.creationTopics().isEmpty()) {
-            throw new IllegalArgumentException("RoadMap.create: creationTopics 가 blank 임");
-        }
+        validateDescription(description);
 
         List<Topic> createdTopics =
                 creationSpec.creationTopics().stream()
                         .map(Topic::create)
                         .sorted(Comparator.comparing(Topic::getOrder))
                         .toList();
-
-        for (int i = 0; i < createdTopics.size(); i++) {
-            if (createdTopics.get(i).getOrder() != (i + 1)) {
-                throw new IllegalArgumentException(
-                        "RoadMap.create: Topic 리스트 요소의 order 는 1부터 size 까지 1씩 증가해야 합니다.");
-            }
-        }
-
-        Set<String> titleSet = new HashSet<>();
-        for (Topic topic : createdTopics) {
-            titleSet.add(topic.getTitle());
-        }
-        if (titleSet.size() != createdTopics.size()) {
-            throw new IllegalArgumentException(
-                    "RoadMap.create: RoadMap 에 속한 Topic 의 title 은 고유해야 합니다.");
-        }
+        validateTopics(createdTopics);
 
         RoadMap created =
                 new RoadMap(
@@ -111,13 +84,100 @@ public class RoadMap extends AggregateRoot {
                         description,
                         creationSpec.isDraft(),
                         creationSpec.categoryId(),
-                        creationSpec.userId(),
                         createdTopics);
 
         // 양방향 연결
         created.topics.forEach(topic -> topic.setRoadMap(created));
 
         return created;
+    }
+
+    public void update(UpdateRoadMap updateSpec) {
+        Objects.requireNonNull(updateSpec, "RoadMap.update: updateSpec 이 null 입니다.");
+
+        validateTitle(updateSpec.title());
+        validateDescription(updateSpec.description());
+        validateCategoryId(updateSpec.categoryId());
+
+        this.title = updateSpec.title();
+        this.description = updateSpec.description();
+        this.isDraft = updateSpec.isDraft();
+        this.categoryId = updateSpec.categoryId();
+
+        updateTopics(updateSpec);
+    }
+
+    private void updateTopics(UpdateRoadMap updateSpec) {
+        Map<Long, Topic> remainingTopics =
+                topics.stream()
+                        .filter(topic -> topic.getId() != null)
+                        .collect(Collectors.toMap(Topic::getId, topic -> topic));
+
+        List<Topic> sortedUpdatedTopics =
+                updateSpec.updateTopics().stream()
+                        .sorted(Comparator.comparing(UpdateTopic::order))
+                        .map(
+                                spec -> {
+                                    if (spec.id() != null) {
+                                        Topic existing = remainingTopics.remove(spec.id());
+                                        if (existing == null) {
+                                            throw new IllegalArgumentException(
+                                                    "RoadMap.update: 존재하지 않는 Topic id 입니다.");
+                                        }
+                                        existing.update(spec);
+                                        return existing;
+                                    }
+                                    return Topic.create(spec);
+                                })
+                        .toList();
+
+        validateTopics(sortedUpdatedTopics);
+        topics = sortedUpdatedTopics;
+
+        // 역방향 연결
+        topics.forEach(topic -> topic.setRoadMap(this));
+    }
+
+    private static void validateTitle(String title) {
+        if (title.isBlank() || title.length() < 2 || 255 < title.length()) {
+            throw new IllegalArgumentException(
+                    "RoadMap.validateTitle: title 이 blank 이거나, 길이가 2 미만 또는 255 초과");
+        }
+    }
+
+    private static void validateDescription(String description) {
+        if (description != null && description.length() > 1000) {
+            throw new IllegalArgumentException(
+                    "RoadMap.validateDescription: description 의 길이가 1000 초과");
+        }
+    }
+
+    private static void validateCategoryId(Long categoryId) {
+        if (categoryId < 0) {
+            throw new IllegalArgumentException("RoadMap.validateCategoryId: categoryId 가 음수입니다.");
+        }
+    }
+
+    private static void validateTopics(List<Topic> topics) {
+        if (topics.isEmpty()) {
+            throw new IllegalArgumentException("RoadMap.validateTopics: topics 가 blank 임");
+        }
+
+        for (int i = 0; i < topics.size(); i++) {
+            if (topics.get(i).getOrder() != (i + 1)) {
+                throw new IllegalArgumentException(
+                        "RoadMap.validateTopics: Topic 리스트 요소의 order 는 1부터 size 까지 1씩 증가해야 합니다.");
+            }
+        }
+
+        Set<String> titleSet = new HashSet<>();
+        for (Topic topic : topics) {
+            titleSet.add(topic.getTitle());
+        }
+        if (titleSet.size() != topics.size()) {
+            throw new IllegalArgumentException(
+                    "RoadMap.validateTopics: RoadMap 에 속한 Topic 의 title 은 고유해야 합니다.");
+        }
     }
 
     public Timestamp getDeletedAt() {
