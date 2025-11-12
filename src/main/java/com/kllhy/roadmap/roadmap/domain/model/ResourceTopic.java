@@ -50,23 +50,35 @@ public class ResourceTopic extends IdEntity {
     static ResourceTopic create(CreationResourceTopic creationSpec) {
 
         String name = creationSpec.name();
+        validateName(name);
+
+        Integer order = creationSpec.order();
+        validateOrder(order);
+
+        String link = creationSpec.link();
+        validateLink(link);
+
+        return new ResourceTopic(name, creationSpec.resourceType(), order, link);
+    }
+
+    private static void validateName(String name) {
         if (name.isBlank() || name.length() < 2 || 255 < name.length()) {
             throw new IllegalArgumentException(
                     "ResourceTopic.create: name 이 blank 이거나, 길이가 2 미만 255 초과");
         }
+    }
 
-        Integer order = creationSpec.order();
+    private static void validateOrder(Integer order) {
         if (order < 1) {
             throw new IllegalArgumentException("ResourceTopic.create: order 가 1 미만");
         }
+    }
 
-        String link = creationSpec.link();
+    private static void validateLink(String link) {
         if (link.isBlank() || 255 < link.length()) {
             throw new IllegalArgumentException(
                     "ResourceTopic.create: link 가 blank 이거나, 길이가 255 초과");
         }
-
-        return new ResourceTopic(name, creationSpec.resourceType(), order, link);
     }
 
     void setTopic(Topic topic) {

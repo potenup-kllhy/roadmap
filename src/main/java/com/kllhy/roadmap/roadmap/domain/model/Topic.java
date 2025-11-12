@@ -88,44 +88,24 @@ public class Topic extends IdAuditEntity {
     static Topic create(CreationTopic creationSpec) {
 
         String title = creationSpec.title();
-        if (title.isBlank() || title.length() < 2 || 255 < title.length()) {
-            throw new IllegalArgumentException("Topic.create: title 이 blank 이거나, 길이가 2 미만 255 초과");
-        }
+        validateTitle(title);
 
         String content = creationSpec.content();
-        if (content != null && content.length() > 1000) {
-            throw new IllegalArgumentException("Topic.create: content 길이가 1000 초과");
-        }
+        validateContent(content);
 
         Integer order = creationSpec.order();
-        if (order < 1) {
-            throw new IllegalArgumentException("Topic.create: order 가 1 미만");
-        }
+        validateOrder(order);
 
         List<ResourceTopic> createdResourceTopics =
                 creationSpec.creationResourceTopics().stream()
                         .map(ResourceTopic::create)
                         .sorted(Comparator.comparing(ResourceTopic::getOrder))
                         .toList();
-
-        for (int i = 0; i < createdResourceTopics.size(); i++) {
-            if (createdResourceTopics.get(i).getOrder() != (i + 1)) {
-                throw new IllegalArgumentException(
-                        "Topic.create: ResourceTopic 리스트 요소의 order 는 1부터 size 까지 1씩 증가해야 합니다.");
-            }
-        }
+        validateResources(createdResourceTopics);
 
         List<SubTopic> createdSubTopics =
                 creationSpec.creationSubTopics().stream().map(SubTopic::create).toList();
-
-        Set<String> titleSet = new HashSet<>();
-        for (SubTopic subTopic : createdSubTopics) {
-            titleSet.add(subTopic.getTitle());
-        }
-        if (titleSet.size() != createdSubTopics.size()) {
-            throw new IllegalArgumentException(
-                    "Topic.create: Topic 에 속한 SubTopic 의 title 은 고유해야 합니다.");
-        }
+        validateSubTopics(createdSubTopics);
 
         Topic created =
                 new Topic(
@@ -142,6 +122,44 @@ public class Topic extends IdAuditEntity {
         created.subTopics.forEach(subTopic -> subTopic.setTopic(created));
 
         return created;
+    }
+
+    private static void validateTitle(String title) {
+        if (title.isBlank() || title.length() < 2 || 255 < title.length()) {
+            throw new IllegalArgumentException("Topic.create: title 이 blank 이거나, 길이가 2 미만 255 초과");
+        }
+    }
+
+    private static void validateContent(String content) {
+        if (content != null && content.length() > 1000) {
+            throw new IllegalArgumentException("Topic.create: content 길이가 1000 초과");
+        }
+    }
+
+    private static void validateOrder(Integer order) {
+        if (order < 1) {
+            throw new IllegalArgumentException("Topic.create: order 가 1 미만");
+        }
+    }
+
+    private static void validateResources(List<ResourceTopic> createdResourceTopics) {
+        for (int i = 0; i < createdResourceTopics.size(); i++) {
+            if (createdResourceTopics.get(i).getOrder() != (i + 1)) {
+                throw new IllegalArgumentException(
+                        "Topic.create: ResourceTopic 리스트 요소의 order 는 1부터 size 까지 1씩 증가해야 합니다.");
+            }
+        }
+    }
+
+    private static void validateSubTopics(List<SubTopic> createdSubTopics) {
+        Set<String> titleSet = new HashSet<>();
+        for (SubTopic subTopic : createdSubTopics) {
+            titleSet.add(subTopic.getTitle());
+        }
+        if (titleSet.size() != createdSubTopics.size()) {
+            throw new IllegalArgumentException(
+                    "Topic.create: Topic 에 속한 SubTopic 의 title 은 고유해야 합니다.");
+        }
     }
 
     void setRoadMap(RoadMap roadMap) {

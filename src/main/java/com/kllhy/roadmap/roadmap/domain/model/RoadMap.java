@@ -3,6 +3,7 @@ package com.kllhy.roadmap.roadmap.domain.model;
 import com.kllhy.roadmap.common.model.AggregateRoot;
 import com.kllhy.roadmap.roadmap.domain.model.creation_spec.CreationRoadMap;
 import com.kllhy.roadmap.roadmap.domain.model.creation_spec.CreationTopic;
+import com.kllhy.roadmap.roadmap.domain.model.update_spec.UpdateRoadMap;
 import jakarta.persistence.*;
 import java.sql.Timestamp;
 import java.util.*;
@@ -38,10 +39,6 @@ public class RoadMap extends AggregateRoot {
     @Getter
     private Long categoryId;
 
-    @Column(name = "user_id", nullable = false)
-    @Getter
-    private Long userId;
-
     @OneToMany(
             mappedBy = "roadMap",
             cascade = CascadeType.ALL,
@@ -54,13 +51,11 @@ public class RoadMap extends AggregateRoot {
             String description,
             boolean isDraft,
             Long categoryId,
-            Long userId,
             List<Topic> topics) {
         this.title = title;
         this.description = description;
         this.isDraft = isDraft;
         this.categoryId = categoryId;
-        this.userId = userId;
         this.topics = topics;
 
         this.deletedAt = null;
@@ -70,25 +65,49 @@ public class RoadMap extends AggregateRoot {
     public static RoadMap create(CreationRoadMap creationSpec) {
 
         String title = creationSpec.title();
-        if (title.isBlank() || title.length() < 2 || 255 < title.length()) {
-            throw new IllegalArgumentException(
-                    "RoadMap.create: title 이 blank 이거나, 길이가 2 미만 또는 255 초과");
-        }
+        validateTitle(title);
 
         String description = creationSpec.description();
-        if (description != null && description.length() > 1000) {
-            throw new IllegalArgumentException("RoadMap.create: description 의 길이가 1000 초과");
-        }
-
-        if (creationSpec.creationTopics().isEmpty()) {
-            throw new IllegalArgumentException("RoadMap.create: creationTopics 가 blank 임");
-        }
+        validateDescription(description);
 
         List<Topic> createdTopics =
                 creationSpec.creationTopics().stream()
                         .map(Topic::create)
                         .sorted(Comparator.comparing(Topic::getOrder))
                         .toList();
+        validateTopics(createdTopics);
+
+        RoadMap created =
+                new RoadMap(
+                        title,
+                        description,
+                        creationSpec.isDraft(),
+                        creationSpec.categoryId(),
+                        createdTopics);
+
+        // 양방향 연결
+        created.topics.forEach(topic -> topic.setRoadMap(created));
+
+        return created;
+    }
+
+    private static void validateTitle(String title) {
+        if (title.isBlank() || title.length() < 2 || 255 < title.length()) {
+            throw new IllegalArgumentException(
+                    "RoadMap.create: title 이 blank 이거나, 길이가 2 미만 또는 255 초과");
+        }
+    }
+
+    private static void validateDescription(String description) {
+        if (description != null && description.length() > 1000) {
+            throw new IllegalArgumentException("RoadMap.create: description 의 길이가 1000 초과");
+        }
+    }
+
+    private static void validateTopics(List<Topic> createdTopics) {
+        if (createdTopics.isEmpty()) {
+            throw new IllegalArgumentException("RoadMap.create: creationTopics 가 blank 임");
+        }
 
         for (int i = 0; i < createdTopics.size(); i++) {
             if (createdTopics.get(i).getOrder() != (i + 1)) {
@@ -105,20 +124,6 @@ public class RoadMap extends AggregateRoot {
             throw new IllegalArgumentException(
                     "RoadMap.create: RoadMap 에 속한 Topic 의 title 은 고유해야 합니다.");
         }
-
-        RoadMap created =
-                new RoadMap(
-                        title,
-                        description,
-                        creationSpec.isDraft(),
-                        creationSpec.categoryId(),
-                        creationSpec.userId(),
-                        createdTopics);
-
-        // 양방향 연결
-        created.topics.forEach(topic -> topic.setRoadMap(created));
-
-        return created;
     }
 
     public Timestamp getDeletedAt() {
@@ -170,4 +175,7 @@ public class RoadMap extends AggregateRoot {
         }
     }
 
+    public void update(UpdateRoadMap updateRoadMap) {
+
+    }
 }

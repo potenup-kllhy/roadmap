@@ -72,28 +72,17 @@ public class SubTopic extends IdAuditEntity {
     static SubTopic create(CreationSubTopic creationSpec) {
 
         String title = creationSpec.title();
-        if (title.isBlank() || title.length() < 2 || 255 < title.length()) {
-            throw new IllegalArgumentException(
-                    "SubTopic.create: title 이 blank 이거나, 길이가 2 미만 또는 255 초과");
-        }
+        validateTitle(title);
 
         String content = creationSpec.content();
-        if (content != null && content.length() > 1000) {
-            throw new IllegalArgumentException("SubTopic.create: content 길이가 1000 초과");
-        }
+        validateContent(content);
 
         List<ResourceSubTopic> createdResourceSubTopics =
                 creationSpec.creationResourceSubTopics().stream()
                         .map(ResourceSubTopic::create)
                         .sorted(Comparator.comparing(ResourceSubTopic::getOrder))
                         .toList();
-
-        for (int i = 0; i < createdResourceSubTopics.size(); i++) {
-            if (createdResourceSubTopics.get(i).getOrder() != (i + 1)) {
-                throw new IllegalArgumentException(
-                        "SubTopic.create: ResourceSubTopic 리스트 요소의 order 는 1부터 size 까지 1씩 증가해야 합니다.");
-            }
-        }
+        validateResources(createdResourceSubTopics);
 
         SubTopic created =
                 new SubTopic(
@@ -107,6 +96,28 @@ public class SubTopic extends IdAuditEntity {
         created.resources.forEach(resource -> resource.setSubTopic(created));
 
         return created;
+    }
+
+    private static void validateTitle(String title) {
+        if (title.isBlank() || title.length() < 2 || 255 < title.length()) {
+            throw new IllegalArgumentException(
+                    "SubTopic.create: title 이 blank 이거나, 길이가 2 미만 또는 255 초과");
+        }
+    }
+
+    private static void validateContent(String content) {
+        if (content != null && content.length() > 1000) {
+            throw new IllegalArgumentException("SubTopic.create: content 길이가 1000 초과");
+        }
+    }
+
+    private static void validateResources(List<ResourceSubTopic> createdResourceSubTopics) {
+        for (int i = 0; i < createdResourceSubTopics.size(); i++) {
+            if (createdResourceSubTopics.get(i).getOrder() != (i + 1)) {
+                throw new IllegalArgumentException(
+                        "SubTopic.create: ResourceSubTopic 리스트 요소의 order 는 1부터 size 까지 1씩 증가해야 합니다.");
+            }
+        }
     }
 
     void setTopic(Topic topic) {
