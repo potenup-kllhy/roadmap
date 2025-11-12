@@ -12,7 +12,12 @@ public class SubTopicEventOccurred extends BaseDomainEvent {
     private final EventType eventType;
     private final ActiveStatus activeStatus;
 
-    public SubTopicEventOccurred(Long roadMapId, Long topicId, Long subTopicId, EventType eventType, ActiveStatus activeStatus) {
+    public SubTopicEventOccurred(
+            Long roadMapId,
+            Long topicId,
+            Long subTopicId,
+            EventType eventType,
+            ActiveStatus activeStatus) {
         this.roadMapId = roadMapId;
         this.topicId = topicId;
         this.subTopicId = subTopicId;

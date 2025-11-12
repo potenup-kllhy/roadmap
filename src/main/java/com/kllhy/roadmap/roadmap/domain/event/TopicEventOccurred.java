@@ -11,7 +11,8 @@ public class TopicEventOccurred extends BaseDomainEvent {
     private final EventType eventType;
     private final ActiveStatus activeStatus;
 
-    public TopicEventOccurred(Long roadMapId, Long topicId, EventType eventType, ActiveStatus activeStatus) {
+    public TopicEventOccurred(
+            Long roadMapId, Long topicId, EventType eventType, ActiveStatus activeStatus) {
         this.roadMapId = roadMapId;
         this.topicId = topicId;
         this.eventType = eventType;
