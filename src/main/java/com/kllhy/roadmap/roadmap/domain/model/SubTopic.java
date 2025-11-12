@@ -137,8 +137,7 @@ public class SubTopic extends IdAuditEntity {
         this.importanceLevel = updateSpec.importanceLevel();
         this.isDraft = updateSpec.isDraft();
 
-        List<ResourceSubTopic> existingResources = this.resources;
-        Map<Long, ResourceSubTopic> idToResource = existingResources.stream()
+        Map<Long, ResourceSubTopic> remainingResources = resources.stream()
                 .filter(resource -> resource.getId() != null)
                 .collect(Collectors.toMap(ResourceSubTopic::getId, resource -> resource));
 
@@ -147,7 +146,7 @@ public class SubTopic extends IdAuditEntity {
                 .sorted(Comparator.comparing(UpdateResourceSubTopic::order))
                 .map(spec -> {
                     if (spec.id() != null) {
-                        ResourceSubTopic existing = idToResource.remove(spec.id());
+                        ResourceSubTopic existing = remainingResources.remove(spec.id());
                         if (existing == null) {
                             throw new IllegalArgumentException(
                                     "SubTopic.update: 존재하지 않는 ResourceSubTopic id 입니다.");
