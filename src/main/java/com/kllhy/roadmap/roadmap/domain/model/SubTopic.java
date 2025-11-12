@@ -10,7 +10,6 @@ import jakarta.persistence.*;
 import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
-
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -102,16 +101,16 @@ public class SubTopic extends IdAuditEntity {
         return created;
     }
 
-    /** id 사용 x **/
+    /** id 사용 x * */
     static SubTopic create(UpdateSubTopic updateSpec) {
         validateTitle(updateSpec.title());
         validateContent(updateSpec.content());
 
-        List<ResourceSubTopic> createdResourceSubTopics = updateSpec.updateResourceSubTopics()
-                .stream()
-                .map(ResourceSubTopic::create)
-                .sorted(Comparator.comparing(ResourceSubTopic::getOrder))
-                .toList();
+        List<ResourceSubTopic> createdResourceSubTopics =
+                updateSpec.updateResourceSubTopics().stream()
+                        .map(ResourceSubTopic::create)
+                        .sorted(Comparator.comparing(ResourceSubTopic::getOrder))
+                        .toList();
         validateResources(createdResourceSubTopics);
 
         SubTopic created =
@@ -141,26 +140,29 @@ public class SubTopic extends IdAuditEntity {
     }
 
     private void updateResources(UpdateSubTopic updateSpec) {
-        Map<Long, ResourceSubTopic> remainingResources = resources.stream()
-                .filter(resource -> resource.getId() != null)
-                .collect(Collectors.toMap(ResourceSubTopic::getId, resource -> resource));
+        Map<Long, ResourceSubTopic> remainingResources =
+                resources.stream()
+                        .filter(resource -> resource.getId() != null)
+                        .collect(Collectors.toMap(ResourceSubTopic::getId, resource -> resource));
 
-        List<ResourceSubTopic> sortedUpdatedResources = updateSpec.updateResourceSubTopics()
-                .stream()
-                .sorted(Comparator.comparing(UpdateResourceSubTopic::order))
-                .map(spec -> {
-                    if (spec.id() != null) {
-                        ResourceSubTopic existing = remainingResources.remove(spec.id());
-                        if (existing == null) {
-                            throw new IllegalArgumentException(
-                                    "SubTopic.update: 존재하지 않는 ResourceSubTopic id 입니다.");
-                        }
-                        existing.update(spec);
-                        return existing;
-                    }
-                    return ResourceSubTopic.create(spec);
-                })
-                .toList();
+        List<ResourceSubTopic> sortedUpdatedResources =
+                updateSpec.updateResourceSubTopics().stream()
+                        .sorted(Comparator.comparing(UpdateResourceSubTopic::order))
+                        .map(
+                                spec -> {
+                                    if (spec.id() != null) {
+                                        ResourceSubTopic existing =
+                                                remainingResources.remove(spec.id());
+                                        if (existing == null) {
+                                            throw new IllegalArgumentException(
+                                                    "SubTopic.update: 존재하지 않는 ResourceSubTopic id 입니다.");
+                                        }
+                                        existing.update(spec);
+                                        return existing;
+                                    }
+                                    return ResourceSubTopic.create(spec);
+                                })
+                        .toList();
 
         validateResources(sortedUpdatedResources);
         resources = sortedUpdatedResources;

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public record UpdateRoadMap (
+public record UpdateRoadMap(
         // To Do: id?
         String title,
         String description,

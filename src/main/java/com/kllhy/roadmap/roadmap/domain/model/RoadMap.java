@@ -2,14 +2,12 @@ package com.kllhy.roadmap.roadmap.domain.model;
 
 import com.kllhy.roadmap.common.model.AggregateRoot;
 import com.kllhy.roadmap.roadmap.domain.model.creation_spec.CreationRoadMap;
-import com.kllhy.roadmap.roadmap.domain.model.creation_spec.CreationTopic;
 import com.kllhy.roadmap.roadmap.domain.model.update_spec.UpdateRoadMap;
 import com.kllhy.roadmap.roadmap.domain.model.update_spec.UpdateTopic;
 import jakarta.persistence.*;
 import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
-
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -110,24 +108,28 @@ public class RoadMap extends AggregateRoot {
     }
 
     private void updateTopics(UpdateRoadMap updateSpec) {
-        Map<Long, Topic> remainingTopics = topics.stream()
-                .filter(topic -> topic.getId() != null)
-                .collect(Collectors.toMap(Topic::getId, topic -> topic));
+        Map<Long, Topic> remainingTopics =
+                topics.stream()
+                        .filter(topic -> topic.getId() != null)
+                        .collect(Collectors.toMap(Topic::getId, topic -> topic));
 
-        List<Topic> sortedUpdatedTopics = updateSpec.updateTopics().stream()
-                .sorted(Comparator.comparing(UpdateTopic::order))
-                .map(spec -> {
-                    if (spec.id() != null) {
-                        Topic existing = remainingTopics.remove(spec.id());
-                        if (existing == null) {
-                            throw new IllegalArgumentException("RoadMap.update: 존재하지 않는 Topic id 입니다.");
-                        }
-                        existing.update(spec);
-                        return existing;
-                    }
-                    return Topic.create(spec);
-                })
-                .toList();
+        List<Topic> sortedUpdatedTopics =
+                updateSpec.updateTopics().stream()
+                        .sorted(Comparator.comparing(UpdateTopic::order))
+                        .map(
+                                spec -> {
+                                    if (spec.id() != null) {
+                                        Topic existing = remainingTopics.remove(spec.id());
+                                        if (existing == null) {
+                                            throw new IllegalArgumentException(
+                                                    "RoadMap.update: 존재하지 않는 Topic id 입니다.");
+                                        }
+                                        existing.update(spec);
+                                        return existing;
+                                    }
+                                    return Topic.create(spec);
+                                })
+                        .toList();
 
         validateTopics(sortedUpdatedTopics);
         topics = sortedUpdatedTopics;
@@ -145,7 +147,8 @@ public class RoadMap extends AggregateRoot {
 
     private static void validateDescription(String description) {
         if (description != null && description.length() > 1000) {
-            throw new IllegalArgumentException("RoadMap.validateDescription: description 의 길이가 1000 초과");
+            throw new IllegalArgumentException(
+                    "RoadMap.validateDescription: description 의 길이가 1000 초과");
         }
     }
 

@@ -1,10 +1,9 @@
 package com.kllhy.roadmap.roadmap.domain.model.update_spec;
 
 import com.kllhy.roadmap.roadmap.domain.model.enums.ResourceType;
-
 import java.util.Objects;
 
-public record UpdateResourceSubTopic (
+public record UpdateResourceSubTopic(
         Long id, String name, Integer order, ResourceType resourceType, String link) {
 
     public UpdateResourceSubTopic {
@@ -12,6 +11,5 @@ public record UpdateResourceSubTopic (
         Objects.requireNonNull(order, "UpdateResourceSubTopic: order is null");
         Objects.requireNonNull(resourceType, "UpdateResourceSubTopic: resourceType is null");
         Objects.requireNonNull(link, "UpdateResourceSubTopic: link is null");
-
     }
 }

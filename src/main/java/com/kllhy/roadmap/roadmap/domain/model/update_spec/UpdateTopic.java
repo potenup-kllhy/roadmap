@@ -1,12 +1,11 @@
 package com.kllhy.roadmap.roadmap.domain.model.update_spec;
 
 import com.kllhy.roadmap.roadmap.domain.model.enums.ImportanceLevel;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public record UpdateTopic (
+public record UpdateTopic(
         Long id,
         String title,
         String content,

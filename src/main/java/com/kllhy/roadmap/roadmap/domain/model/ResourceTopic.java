@@ -62,10 +62,14 @@ public class ResourceTopic extends IdEntity {
         return new ResourceTopic(name, creationSpec.resourceType(), order, link);
     }
 
-    /** id 사용 x **/
+    /** id 사용 x * */
     static ResourceTopic create(UpdateResourceTopic updateSpec) {
-        return create(new CreationResourceTopic(
-                updateSpec.name(), updateSpec.resourceType(), updateSpec.order(), updateSpec.link()));
+        return create(
+                new CreationResourceTopic(
+                        updateSpec.name(),
+                        updateSpec.resourceType(),
+                        updateSpec.order(),
+                        updateSpec.link()));
     }
 
     void update(UpdateResourceTopic updateSpec) {

@@ -1,10 +1,9 @@
 package com.kllhy.roadmap.roadmap.domain.model.update_spec;
 
 import com.kllhy.roadmap.roadmap.domain.model.enums.ResourceType;
-
 import java.util.Objects;
 
-public record UpdateResourceTopic (
+public record UpdateResourceTopic(
         Long id, String name, Integer order, ResourceType resourceType, String link) {
 
     public UpdateResourceTopic {
