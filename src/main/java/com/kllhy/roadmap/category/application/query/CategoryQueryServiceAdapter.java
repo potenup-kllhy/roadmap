@@ -1,7 +1,7 @@
 package com.kllhy.roadmap.category.application.query;
 
 import com.kllhy.roadmap.category.application.query.dto.CategoryView;
-import com.kllhy.roadmap.category.domain.enums.Type;
+import com.kllhy.roadmap.category.domain.enums.CategoryType;
 import com.kllhy.roadmap.category.domain.exception.CategoryErrorCode;
 import com.kllhy.roadmap.category.domain.model.Category;
 import com.kllhy.roadmap.category.domain.repository.CategoryRepository;
@@ -20,7 +20,7 @@ public class CategoryQueryServiceAdapter implements CategoryQueryService {
 
     @Override
     public List<CategoryView> getAllCategoriesOrdered() {
-        return categoryRepository.findAllByOrderByTypeAscNameAsc().stream()
+        return categoryRepository.findAllByOrderByCategoryTypeAscNameAsc().stream()
                 .map(this::toView)
                 .toList();
     }
@@ -47,7 +47,9 @@ public class CategoryQueryServiceAdapter implements CategoryQueryService {
 
     @Override
     public List<CategoryView> getCategoriesByType(String type) {
-        return categoryRepository.findAllByTypeOrderByNameAsc(Type.from(type)).stream()
+        return categoryRepository
+                .findAllByCategoryTypeOrderByNameAsc(CategoryType.from(type))
+                .stream()
                 .map(this::toView)
                 .toList();
     }
@@ -58,6 +60,7 @@ public class CategoryQueryServiceAdapter implements CategoryQueryService {
     }
 
     private CategoryView toView(Category category) {
-        return new CategoryView(category.getId(), category.getType().name(), category.getName());
+        return new CategoryView(
+                category.getId(), category.getCategoryType().name(), category.getName());
     }
 }

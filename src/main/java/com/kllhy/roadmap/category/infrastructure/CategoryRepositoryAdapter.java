@@ -1,8 +1,9 @@
-package com.kllhy.roadmap.category.infrastructure.jpa;
+package com.kllhy.roadmap.category.infrastructure;
 
-import com.kllhy.roadmap.category.domain.enums.Type;
+import com.kllhy.roadmap.category.domain.enums.CategoryType;
 import com.kllhy.roadmap.category.domain.model.Category;
 import com.kllhy.roadmap.category.domain.repository.CategoryRepository;
+import com.kllhy.roadmap.category.infrastructure.jpa.CategoryJpaRepository;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -10,13 +11,13 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 @RequiredArgsConstructor
-public class CategoryJpaRepositoryAdapter implements CategoryRepository {
+public class CategoryRepositoryAdapter implements CategoryRepository {
 
     private final CategoryJpaRepository categoryJpaRepository;
 
     @Override
-    public List<Category> findAllByOrderByTypeAscNameAsc() {
-        return categoryJpaRepository.findAllByOrderByTypeAscNameAsc();
+    public List<Category> findAllByOrderByCategoryTypeAscNameAsc() {
+        return categoryJpaRepository.findAllByOrderByCategoryTypeAscNameAsc();
     }
 
     @Override
@@ -30,8 +31,8 @@ public class CategoryJpaRepositoryAdapter implements CategoryRepository {
     }
 
     @Override
-    public List<Category> findAllByTypeOrderByNameAsc(Type type) {
-        return categoryJpaRepository.findAllByTypeOrderByNameAsc(type);
+    public List<Category> findAllByCategoryTypeOrderByNameAsc(CategoryType categoryType) {
+        return categoryJpaRepository.findAllByCategoryTypeOrderByNameAsc(categoryType);
     }
 
     @Override

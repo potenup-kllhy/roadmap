@@ -3,23 +3,24 @@ package com.kllhy.roadmap.category.domain.enums;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import com.kllhy.roadmap.category.domain.exception.CategoryErrorCode;
 import com.kllhy.roadmap.common.exception.DomainException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-class TypeTest {
+class CategoryTypeTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"role", "ROLE", "Role"})
     @DisplayName("다양한 ROLE 문자열 입력에 대해 Type.ROLE을 반환한다.")
     void shouldReturnRole_forVariousRoleStrings(String input) {
         // when
-        Type result = Type.from(input);
+        CategoryType result = CategoryType.from(input);
 
         // then
-        assertEquals(Type.ROLE, result);
+        assertEquals(CategoryType.ROLE, result);
     }
 
     @ParameterizedTest
@@ -27,10 +28,10 @@ class TypeTest {
     @DisplayName("다양한 SKILL 문자열 입력에 대해 Type.SKILL을 반환한다.")
     void shouldReturnSkill_forVariousSkillStrings(String input) {
         // when
-        Type result = Type.from(input);
+        CategoryType result = CategoryType.from(input);
 
         // then
-        assertEquals(Type.SKILL, result);
+        assertEquals(CategoryType.SKILL, result);
     }
 
     @Test
@@ -40,6 +41,8 @@ class TypeTest {
         String invalidInput = "INVALID_TYPE";
 
         // when & then
-        assertThrows(DomainException.class, () -> Type.from(invalidInput), "Invalid category type");
+        DomainException exception =
+                assertThrows(DomainException.class, () -> CategoryType.from(invalidInput));
+        assertEquals(CategoryErrorCode.CATEGORY_TYPE_INVALID, exception.getErrorCode());
     }
 }
