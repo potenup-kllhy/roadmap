@@ -5,6 +5,6 @@ import java.util.Optional;
 
 public interface RoadMapRepository {
     Optional<RoadMap> findById(long id);
-
     boolean existsById(long id);
+    long save(RoadMap roadMap);
 }
