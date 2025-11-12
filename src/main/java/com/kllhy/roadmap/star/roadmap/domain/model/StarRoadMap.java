@@ -23,7 +23,8 @@ public class StarRoadMap extends IdAuditEntity {
 
     @Column(nullable = false)
     @ColumnDefault("0")
-    @Getter private int value;
+    @Getter
+    private int value;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
