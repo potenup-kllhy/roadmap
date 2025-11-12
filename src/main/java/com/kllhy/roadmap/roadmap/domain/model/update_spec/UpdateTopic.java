@@ -13,20 +13,20 @@ public record UpdateTopic (
         ImportanceLevel importanceLevel,
         Integer order,
         boolean isDraft,
-        List<UpdateResourceTopic> resourceTopics,
-        List<UpdateSubTopic> subTopics) {
+        List<UpdateResourceTopic> updateResourceTopics,
+        List<UpdateSubTopic> updateSubTopics) {
 
     public UpdateTopic {
         Objects.requireNonNull(title, "UpdateTopic: title is null");
         Objects.requireNonNull(importanceLevel, "UpdateTopic: importanceLevel is null");
         Objects.requireNonNull(order, "UpdateTopic: order is null");
-        if (resourceTopics == null) {
-            resourceTopics = new ArrayList<>();
+        if (updateResourceTopics == null) {
+            updateResourceTopics = new ArrayList<>();
         }
-        if (subTopics == null) {
-            subTopics = new ArrayList<>();
+        if (updateSubTopics == null) {
+            updateSubTopics = new ArrayList<>();
         }
-        resourceTopics = List.copyOf(resourceTopics);
-        subTopics = List.copyOf(subTopics);
+        updateResourceTopics = List.copyOf(updateResourceTopics);
+        updateSubTopics = List.copyOf(updateSubTopics);
     }
 }

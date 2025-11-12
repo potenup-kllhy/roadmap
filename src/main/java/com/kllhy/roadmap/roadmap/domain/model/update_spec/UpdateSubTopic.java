@@ -12,14 +12,14 @@ public record UpdateSubTopic (
         String content,
         ImportanceLevel importanceLevel,
         boolean isDraft,
-        List<UpdateResourceSubTopic> resourceSubTopics) {
+        List<UpdateResourceSubTopic> updateResourceSubTopics) {
 
     public UpdateSubTopic {
         Objects.requireNonNull(title, "UpdateSubTopic: title is null");
         Objects.requireNonNull(importanceLevel, "UpdateSubTopic: importanceLevel is null");
-        if (resourceSubTopics == null) {
-            resourceSubTopics = new ArrayList<>();
+        if (updateResourceSubTopics == null) {
+            updateResourceSubTopics = new ArrayList<>();
         }
-        resourceSubTopics = List.copyOf(resourceSubTopics);
+        updateResourceSubTopics = List.copyOf(updateResourceSubTopics);
     }
 }

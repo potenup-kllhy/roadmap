@@ -10,15 +10,15 @@ public record UpdateRoadMap (
         String description,
         boolean isDraft,
         Long categoryId,
-        List<UpdateTopic> topics) {
+        List<UpdateTopic> updateTopics) {
 
     public UpdateRoadMap {
         Objects.requireNonNull(title, "UpdateRoadMap: title is null");
         Objects.requireNonNull(description, "UpdateRoadMap: description is null");
-        // CreationRoadMap 과는 달리 UpdateRoadMap 에서는 topics 가 null 일 수 있음
-        if (topics == null) {
-            topics = new ArrayList<>();
+        // CreationRoadMap 과는 달리 UpdateRoadMap 에서는 updateTopics 가 null 일 수 있음
+        if (updateTopics == null) {
+            updateTopics = new ArrayList<>();
         }
-        topics = List.copyOf(topics);
+        updateTopics = List.copyOf(updateTopics);
     }
 }

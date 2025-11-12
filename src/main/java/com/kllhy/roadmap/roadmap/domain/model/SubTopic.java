@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.kllhy.roadmap.common.model.IdAuditEntity;
 import com.kllhy.roadmap.roadmap.domain.model.creation_spec.CreationSubTopic;
 import com.kllhy.roadmap.roadmap.domain.model.enums.ImportanceLevel;
+import com.kllhy.roadmap.roadmap.domain.model.update_spec.UpdateResourceSubTopic;
 import com.kllhy.roadmap.roadmap.domain.model.update_spec.UpdateSubTopic;
 import jakarta.persistence.*;
 import java.sql.Timestamp;
@@ -104,11 +105,11 @@ public class SubTopic extends IdAuditEntity {
         validateTitle(updateSpec.title());
         validateContent(updateSpec.content());
 
-        List<ResourceSubTopic> createdResourceSubTopics =
-                updateSpec.resourceSubTopics().stream()
-                        .map(ResourceSubTopic::create)
-                        .sorted(Comparator.comparing(ResourceSubTopic::getOrder))
-                        .toList();
+        List<ResourceSubTopic> createdResourceSubTopics = updateSpec.updateResourceSubTopics()
+                .stream()
+                .map(ResourceSubTopic::create)
+                .sorted(Comparator.comparing(ResourceSubTopic::getOrder))
+                .toList();
         validateResources(createdResourceSubTopics);
 
         SubTopic created =

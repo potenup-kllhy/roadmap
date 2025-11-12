@@ -133,14 +133,14 @@ public class Topic extends IdAuditEntity {
         validateOrder(updateSpec.order());
 
         List<ResourceTopic> createdResourceTopics =
-                updateSpec.resourceTopics().stream()
+                updateSpec.updateResourceTopics().stream()
                         .map(ResourceTopic::create)
                         .sorted(Comparator.comparing(ResourceTopic::getOrder))
                         .toList();
         validateResources(createdResourceTopics);
 
         List<SubTopic> createdSubTopics =
-                updateSpec.subTopics().stream().map(SubTopic::create).toList();
+                updateSpec.updateSubTopics().stream().map(SubTopic::create).toList();
         validateSubTopics(createdSubTopics);
 
         Topic created =
