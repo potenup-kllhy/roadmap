@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.kllhy.roadmap.common.model.IdEntity;
 import com.kllhy.roadmap.roadmap.domain.model.creation_spec.CreationResourceTopic;
 import com.kllhy.roadmap.roadmap.domain.model.enums.ResourceType;
+import com.kllhy.roadmap.roadmap.domain.model.update_spec.UpdateResourceTopic;
 import jakarta.persistence.*;
 import java.util.Objects;
 import lombok.AccessLevel;
@@ -50,23 +51,56 @@ public class ResourceTopic extends IdEntity {
     static ResourceTopic create(CreationResourceTopic creationSpec) {
 
         String name = creationSpec.name();
-        if (name.isBlank() || name.length() < 2 || 255 < name.length()) {
-            throw new IllegalArgumentException(
-                    "ResourceTopic.create: name 이 blank 이거나, 길이가 2 미만 255 초과");
-        }
+        validateName(name);
 
         Integer order = creationSpec.order();
-        if (order < 1) {
-            throw new IllegalArgumentException("ResourceTopic.create: order 가 1 미만");
-        }
+        validateOrder(order);
 
         String link = creationSpec.link();
-        if (link.isBlank() || 255 < link.length()) {
-            throw new IllegalArgumentException(
-                    "ResourceTopic.create: link 가 blank 이거나, 길이가 255 초과");
-        }
+        validateLink(link);
 
         return new ResourceTopic(name, creationSpec.resourceType(), order, link);
+    }
+
+    /** id 사용 x * */
+    static ResourceTopic create(UpdateResourceTopic updateSpec) {
+        return create(
+                new CreationResourceTopic(
+                        updateSpec.name(),
+                        updateSpec.resourceType(),
+                        updateSpec.order(),
+                        updateSpec.link()));
+    }
+
+    void update(UpdateResourceTopic updateSpec) {
+        validateName(updateSpec.name());
+        validateOrder(updateSpec.order());
+        validateLink(updateSpec.link());
+
+        this.name = updateSpec.name();
+        this.order = updateSpec.order();
+        this.resourceType = updateSpec.resourceType();
+        this.link = updateSpec.link();
+    }
+
+    private static void validateName(String name) {
+        if (name.isBlank() || name.length() < 2 || 255 < name.length()) {
+            throw new IllegalArgumentException(
+                    "ResourceTopic.validateName: name 이 blank 이거나, 길이가 2 미만 255 초과");
+        }
+    }
+
+    private static void validateOrder(Integer order) {
+        if (order < 1) {
+            throw new IllegalArgumentException("ResourceTopic.validateOrder: order 가 1 미만");
+        }
+    }
+
+    private static void validateLink(String link) {
+        if (link.isBlank() || 255 < link.length()) {
+            throw new IllegalArgumentException(
+                    "ResourceTopic.validateLink: link 가 blank 이거나, 길이가 255 초과");
+        }
     }
 
     void setTopic(Topic topic) {
