@@ -6,7 +6,7 @@ import java.util.List;
 public interface StarRoadMapQueryService {
     StarRoadMapView getById(Long starRoadMapId);
 
-    List<StarRoadMapView> getStarByUserId(Long userId);
+    List<StarRoadMapView> getAllStarByUserId(Long userId);
 
-    List<StarRoadMapView> getStarByRoadMapId(Long roadMapId);
+    List<StarRoadMapView> getAllStarByRoadMapId(Long roadMapId);
 }
