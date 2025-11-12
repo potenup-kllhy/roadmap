@@ -137,6 +137,10 @@ public class SubTopic extends IdAuditEntity {
         this.importanceLevel = updateSpec.importanceLevel();
         this.isDraft = updateSpec.isDraft();
 
+        updateResources(updateSpec);
+    }
+
+    private void updateResources(UpdateSubTopic updateSpec) {
         Map<Long, ResourceSubTopic> remainingResources = resources.stream()
                 .filter(resource -> resource.getId() != null)
                 .collect(Collectors.toMap(ResourceSubTopic::getId, resource -> resource));
