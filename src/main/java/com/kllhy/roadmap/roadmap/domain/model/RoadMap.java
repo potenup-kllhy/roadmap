@@ -4,9 +4,12 @@ import com.kllhy.roadmap.common.model.AggregateRoot;
 import com.kllhy.roadmap.roadmap.domain.model.creation_spec.CreationRoadMap;
 import com.kllhy.roadmap.roadmap.domain.model.creation_spec.CreationTopic;
 import com.kllhy.roadmap.roadmap.domain.model.update_spec.UpdateRoadMap;
+import com.kllhy.roadmap.roadmap.domain.model.update_spec.UpdateTopic;
 import jakarta.persistence.*;
 import java.sql.Timestamp;
 import java.util.*;
+import java.util.stream.Collectors;
+
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -91,6 +94,49 @@ public class RoadMap extends AggregateRoot {
         return created;
     }
 
+    public void update(UpdateRoadMap updateSpec) {
+        Objects.requireNonNull(updateSpec, "RoadMap.update: updateSpec 이 null 입니다.");
+
+        validateTitle(updateSpec.title());
+        validateDescription(updateSpec.description());
+        validateCategoryId(updateSpec);
+
+        this.title = updateSpec.title();
+        this.description = updateSpec.description();
+        this.isDraft = updateSpec.isDraft();
+        this.categoryId = updateSpec.categoryId();
+
+        updateTopics(updateSpec);
+    }
+
+    private void updateTopics(UpdateRoadMap updateSpec) {
+        Map<Long, Topic> remainingTopics = topics.stream()
+                .filter(topic -> topic.getId() != null)
+                .collect(Collectors.toMap(Topic::getId, topic -> topic));
+
+        List<Topic> sortedUpdatedTopics = updateSpec.updateTopics().stream()
+                .sorted(Comparator.comparing(UpdateTopic::order))
+                .map(spec -> {
+                    if (spec.id() != null) {
+                        Topic existing = remainingTopics.remove(spec.id());
+                        if (existing == null) {
+                            throw new IllegalArgumentException("RoadMap.update: 존재하지 않는 Topic id 입니다.");
+                        }
+                        existing.update(spec);
+                        return existing;
+                    }
+                    return Topic.create(spec);
+                })
+                .toList();
+
+        validateTopics(sortedUpdatedTopics);
+
+        // 역방향 연결
+        sortedUpdatedTopics.forEach(topic -> topic.setRoadMap(this));
+        topics.clear();
+        topics.addAll(sortedUpdatedTopics);
+    }
+
     private static void validateTitle(String title) {
         if (title.isBlank() || title.length() < 2 || 255 < title.length()) {
             throw new IllegalArgumentException(
@@ -101,6 +147,12 @@ public class RoadMap extends AggregateRoot {
     private static void validateDescription(String description) {
         if (description != null && description.length() > 1000) {
             throw new IllegalArgumentException("RoadMap.create: description 의 길이가 1000 초과");
+        }
+    }
+
+    private static void validateCategoryId(UpdateRoadMap updateSpec) {
+        if (updateSpec.categoryId() < 0) {
+            throw new IllegalArgumentException("RoadMap.update: categoryId 가 음수입니다.");
         }
     }
 
@@ -173,9 +225,5 @@ public class RoadMap extends AggregateRoot {
         for (int i = thisPoint; i < topics.size(); i++) {
             topics.get(i).stepBack();
         }
-    }
-
-    public void update(UpdateRoadMap updateRoadMap) {
-
     }
 }

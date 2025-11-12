@@ -4,10 +4,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.kllhy.roadmap.common.model.IdAuditEntity;
 import com.kllhy.roadmap.roadmap.domain.model.creation_spec.CreationTopic;
 import com.kllhy.roadmap.roadmap.domain.model.enums.ImportanceLevel;
+import com.kllhy.roadmap.roadmap.domain.model.update_spec.UpdateResourceTopic;
 import com.kllhy.roadmap.roadmap.domain.model.update_spec.UpdateTopic;
 import jakarta.persistence.*;
 import java.sql.Timestamp;
 import java.util.*;
+import java.util.stream.Collectors;
+
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -97,15 +100,14 @@ public class Topic extends IdAuditEntity {
         Integer order = creationSpec.order();
         validateOrder(order);
 
-        List<ResourceTopic> createdResourceTopics =
-                creationSpec.creationResourceTopics().stream()
-                        .map(ResourceTopic::create)
-                        .sorted(Comparator.comparing(ResourceTopic::getOrder))
-                        .toList();
+        List<ResourceTopic> createdResourceTopics = creationSpec.creationResourceTopics().stream()
+                .map(ResourceTopic::create)
+                .sorted(Comparator.comparing(ResourceTopic::getOrder))
+                .toList();
         validateResources(createdResourceTopics);
 
-        List<SubTopic> createdSubTopics =
-                creationSpec.creationSubTopics().stream().map(SubTopic::create).toList();
+        List<SubTopic> createdSubTopics = creationSpec.creationSubTopics().stream()
+                .map(SubTopic::create).toList();
         validateSubTopics(createdSubTopics);
 
         Topic created =
@@ -132,15 +134,14 @@ public class Topic extends IdAuditEntity {
         validateContent(updateSpec.content());
         validateOrder(updateSpec.order());
 
-        List<ResourceTopic> createdResourceTopics =
-                updateSpec.updateResourceTopics().stream()
-                        .map(ResourceTopic::create)
-                        .sorted(Comparator.comparing(ResourceTopic::getOrder))
-                        .toList();
+        List<ResourceTopic> createdResourceTopics = updateSpec.updateResourceTopics().stream()
+                .map(ResourceTopic::create)
+                .sorted(Comparator.comparing(ResourceTopic::getOrder))
+                .toList();
         validateResources(createdResourceTopics);
 
-        List<SubTopic> createdSubTopics =
-                updateSpec.updateSubTopics().stream().map(SubTopic::create).toList();
+        List<SubTopic> createdSubTopics = updateSpec.updateSubTopics()
+                .stream().map(SubTopic::create).toList();
         validateSubTopics(createdSubTopics);
 
         Topic created =
@@ -158,6 +159,82 @@ public class Topic extends IdAuditEntity {
         created.subTopics.forEach(subTopic -> subTopic.setTopic(created));
 
         return created;
+    }
+
+    void update(UpdateTopic updateSpec) {
+        validateTitle(updateSpec.title());
+        validateContent(updateSpec.content());
+        validateOrder(updateSpec.order());
+
+        this.title = updateSpec.title();
+        this.content = updateSpec.content();
+        this.importanceLevel = updateSpec.importanceLevel();
+        this.order = updateSpec.order();
+        this.isDraft = updateSpec.isDraft();
+
+        // resources 동기화
+        updateResources(updateSpec);
+
+        // subtopic 동기화
+        updateSubTopics(updateSpec);
+    }
+
+    private void updateResources(UpdateTopic updateSpec) {
+        Map<Long, ResourceTopic> remainingResources = resources.stream()
+                .filter(resource -> resource.getId() != null)
+                .collect(Collectors.toMap(ResourceTopic::getId, resource -> resource));
+
+        List<ResourceTopic> sortedUpdatedResources = updateSpec.updateResourceTopics().stream()
+                .sorted(Comparator.comparing(UpdateResourceTopic::order))
+                .map(spec -> {
+                    if (spec.id() != null) {
+                        ResourceTopic existing = remainingResources.remove(spec.id());
+                        if (existing == null) {
+                            throw new IllegalArgumentException(
+                                    "Topic.update: 존재하지 않는 ResourceTopic id 입니다.");
+                        }
+                        existing.update(spec);
+                        return existing;
+                    }
+                    return ResourceTopic.create(spec);
+                })
+                .toList();
+
+        validateResources(sortedUpdatedResources);
+
+        // 역방향 연결
+        sortedUpdatedResources.forEach(resource -> resource.setTopic(this));
+        resources.clear();
+        resources.addAll(sortedUpdatedResources);
+    }
+
+    private void updateSubTopics(UpdateTopic updateSpec) {
+        Map<Long, SubTopic> remainingSubTopics = subTopics.stream()
+                .filter(subTopic -> subTopic.getId() != null)
+                .collect(Collectors.toMap(SubTopic::getId, subTopic -> subTopic));
+
+        List<SubTopic> updatedSubTopics = new ArrayList<>();
+        updateSpec.updateSubTopics().stream()
+                .map(spec -> {
+                    if (spec.id() != null) {
+                        SubTopic existing = remainingSubTopics.remove(spec.id());
+                        if (existing == null) {
+                            throw new IllegalArgumentException(
+                                    "Topic.update: 존재하지 않는 SubTopic id 입니다.");
+                        }
+                        existing.update(spec);
+                        return existing;
+                    }
+                    return SubTopic.create(spec);
+                })
+                .forEach(updatedSubTopics::add);
+
+        validateSubTopics(updatedSubTopics);
+
+        // 역방향 연결
+        updatedSubTopics.forEach(subTopic -> subTopic.setTopic(this));
+        subTopics.clear();
+        subTopics.addAll(updatedSubTopics);
     }
 
     private static void validateTitle(String title) {
