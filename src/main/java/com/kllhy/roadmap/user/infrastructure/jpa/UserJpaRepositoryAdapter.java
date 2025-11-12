@@ -4,10 +4,11 @@ import com.kllhy.roadmap.user.domain.model.User;
 import com.kllhy.roadmap.user.domain.repository.UserRepository;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 @Repository
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class UserJpaRepositoryAdapter implements UserRepository {
 
     private final UserJpaRepository userJpaRepository;
