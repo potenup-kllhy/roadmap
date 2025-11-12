@@ -4,8 +4,9 @@ import com.kllhy.roadmap.common.exception.DomainHttpStatus;
 import com.kllhy.roadmap.common.exception.IErrorCode;
 
 public enum UserErrorCode implements IErrorCode {
-    USER_NOT_FOUND(DomainHttpStatus.NOT_FOUND, "USER_001", "not found user");
-
+    USER_NOT_FOUND(DomainHttpStatus.NOT_FOUND, "USER_001", "not found user"),
+    USER_STATUS_ERROR(DomainHttpStatus.CONFLICT, "USER_002", "status error");
+    ;
     private final DomainHttpStatus httpStatus;
     private final String code;
     private final String message;

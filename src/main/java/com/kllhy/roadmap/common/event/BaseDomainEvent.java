@@ -6,9 +6,13 @@ public class BaseDomainEvent implements DomainEvent {
     private final LocalDateTime occurredOn;
     private final String eventName;
 
-    protected BaseDomainEvent(String eventName) {
-        this.occurredOn = LocalDateTime.now();
-        this.eventName = eventName;
+    protected BaseDomainEvent() {
+        this(null, null);
+    }
+
+    protected BaseDomainEvent(String eventName, LocalDateTime occurredOn) {
+        this.eventName = eventName != null ? eventName : getClass().getSimpleName();
+        this.occurredOn = occurredOn != null ? occurredOn : LocalDateTime.now();
     }
 
     @Override
