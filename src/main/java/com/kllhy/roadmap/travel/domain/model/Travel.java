@@ -91,7 +91,7 @@ public class Travel extends AggregateRoot {
     }
 
     private void updateValid() {
-        if(isArchived) throw new DomainException(TravelErrorCode.TRAVEL_NOT_FOUND);
+        if (isArchived) throw new DomainException(TravelErrorCode.TRAVEL_NOT_FOUND);
     }
 
     private void addTopic(ProgressTopic topic) {

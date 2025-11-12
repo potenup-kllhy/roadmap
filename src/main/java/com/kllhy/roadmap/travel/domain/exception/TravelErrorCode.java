@@ -13,7 +13,7 @@ public enum TravelErrorCode implements IErrorCode {
     TRAVEL_USER_NOT_ACTIVE(DomainHttpStatus.NOT_FOUND, "TRAVEL_007", "user not active"),
     TRAVEL_ROADMAP_INVALID(DomainHttpStatus.NOT_FOUND, "TRAVEL_008", "roadmap invalid"),
     TRAVEL_TOPIC_INVALID(DomainHttpStatus.NOT_FOUND, "TRAVEL_009", "topic invalid"),
-    ;
+    TRAVEL_NOT_AUTHORITY(DomainHttpStatus.UNAUTHORIZED, "TRAVEL_010", "not auth");
 
     private final DomainHttpStatus httpStatus;
     private final String code;

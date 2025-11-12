@@ -83,12 +83,12 @@ public class ProgressTopic extends IdAuditEntity {
 
     void markSubTopic(Long subTopicId, ProgressStatus status) {
         updateValid();
-        ProgressSubTopic subTopic = getSubTopicOrThrow(topicId);
+        ProgressSubTopic subTopic = getSubTopicOrThrow(subTopicId);
         subTopic.changeStatus(status);
     }
 
     private void updateValid() {
-        if(isArchived) throw new DomainException(TravelErrorCode.TRAVEL_TOPICS_NOT_FOUND);
+        if (isArchived) throw new DomainException(TravelErrorCode.TRAVEL_TOPICS_NOT_FOUND);
     }
 
     private ProgressSubTopic getSubTopicOrThrow(Long subTopicId) {

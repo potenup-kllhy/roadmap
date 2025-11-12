@@ -9,16 +9,14 @@ import com.kllhy.roadmap.travel.domain.model.command.ProgressSubTopicCommand;
 import com.kllhy.roadmap.travel.domain.model.command.ProgressTopicCommand;
 import com.kllhy.roadmap.travel.domain.model.command.TravelCommand;
 import com.kllhy.roadmap.user.domain.enums.AccountStatus;
-import com.kllhy.roadmap.user.exception.UserErrorCode;
 import com.kllhy.roadmap.user.service.view.UserView;
-
 import java.util.List;
 
 @DomainService
 public class TravelCreationService {
 
     public Travel create(UserView user, RoadMapView roadMap) {
-        if (!user.status().equals(AccountStatus.ACTIVE)){
+        if (!user.status().equals(AccountStatus.ACTIVE)) {
             throw new DomainException(TravelErrorCode.TRAVEL_USER_NOT_ACTIVE);
         }
 
@@ -26,14 +24,19 @@ public class TravelCreationService {
             throw new DomainException(TravelErrorCode.TRAVEL_ROADMAP_INVALID);
         }
 
-        List<ProgressTopicCommand> topicCommands = roadMap.topics().stream()
-                .map(t -> new ProgressTopicCommand(
-                        t.id(),
-                        t.subTopics().stream()
-                                .map(st -> new ProgressSubTopicCommand(st.id()))
-                                .toList()
-                ))
-                .toList();
+        List<ProgressTopicCommand> topicCommands =
+                roadMap.topics().stream()
+                        .map(
+                                t ->
+                                        new ProgressTopicCommand(
+                                                t.id(),
+                                                t.subTopics().stream()
+                                                        .map(
+                                                                st ->
+                                                                        new ProgressSubTopicCommand(
+                                                                                st.id()))
+                                                        .toList()))
+                        .toList();
 
         TravelCommand travelCommand = new TravelCommand(user.id(), roadMap.id(), topicCommands);
 
