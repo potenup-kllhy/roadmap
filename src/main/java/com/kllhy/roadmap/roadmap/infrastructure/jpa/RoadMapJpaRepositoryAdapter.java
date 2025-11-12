@@ -16,6 +16,7 @@ public class RoadMapJpaRepositoryAdapter implements RoadMapRepository {
         // TODO: 현재 LAZY 전략으로 전체 조회가 불가능한데, 추후 한번에 전체 조회 가능하도록 변경해 놓겠습니다
         return roadMapJpaRepository.findById(id);
     }
+
     @Override
     public long save(RoadMap roadMap) {
         return roadMapJpaRepository.save(roadMap).getId();

@@ -7,4 +7,4 @@ public record ResourceSubTopicCreateRequest(
         @NotBlank @Size(max = 255) String name,
         @NotNull @PositiveOrZero Integer order,
         @NotNull ResourceType resourceType,
-        @NotBlank @Size(max = 255) @Pattern(regexp = "^https?://.+$^") String link) {}
+        @NotBlank @Size(max = 255) @Pattern(regexp = "^https?://.+$") String link) {}
