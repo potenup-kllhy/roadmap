@@ -1,5 +1,7 @@
 package com.kllhy.roadmap.roadmap.presentation;
 
+import com.kllhy.roadmap.common.response.ApiResponse;
+import com.kllhy.roadmap.common.response.SuccessCode;
 import com.kllhy.roadmap.roadmap.application.command.RoadMapCommandService;
 import com.kllhy.roadmap.roadmap.presentation.dto.RoadMapCreateRequest;
 import com.kllhy.roadmap.roadmap.presentation.dto.mapper.CreateRoadMapCommandMapper;
@@ -22,6 +24,8 @@ public class RoadMapController {
         long id =
                 roadMapCommandService.createRoadMap(
                         CreateRoadMapCommandMapper.mapCreateRoadMapCommand(request));
-        return ResponseEntity.ok().body(id);
+        return ApiResponse.of(SuccessCode.SUCCESS, new RoadMapCreateResponse(id));
     }
+
+    record RoadMapCreateResponse(long id) {}
 }

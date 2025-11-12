@@ -22,6 +22,7 @@ public class RoadMapCommandServiceAdapter implements RoadMapCommandService {
     private final CategoryQueryService categoryQueryService;
 
     @Override
+    @Transactional
     public long createRoadMap(CreateRoadMapCommand command) {
         boolean isNotExists = !categoryQueryService.categoryExists(command.categoryId());
         if (isNotExists) {
