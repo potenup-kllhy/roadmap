@@ -29,7 +29,6 @@ public class SubTopic extends IdAuditEntity {
     @Getter
     private ImportanceLevel importanceLevel;
 
-    @Column(nullable = false)
     private Timestamp deletedAt;
 
     @Column(name = "is_draft", nullable = false)
