@@ -19,6 +19,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class SubTopic extends IdAuditEntity {
 
+    @Column(name = "uuid", nullable = false, unique = true)
+    private UUID uuid;
+
     @Column(nullable = false)
     @Getter
     private String title;
@@ -55,12 +58,14 @@ public class SubTopic extends IdAuditEntity {
     @OrderBy("order ASC")
     private List<ResourceSubTopic> resources = new ArrayList<>();
 
-    public SubTopic(
+    private SubTopic(
+            UUID uuid,
             String title,
             String content,
             ImportanceLevel importanceLevel,
             Boolean isDraft,
             List<ResourceSubTopic> resources) {
+        this.uuid = uuid;
         this.title = title;
         this.content = content;
         this.importanceLevel = importanceLevel;
@@ -89,6 +94,7 @@ public class SubTopic extends IdAuditEntity {
 
         SubTopic created =
                 new SubTopic(
+                        UUID.randomUUID(),
                         title,
                         creationSpec.content(),
                         creationSpec.importanceLevel(),
@@ -115,6 +121,7 @@ public class SubTopic extends IdAuditEntity {
 
         SubTopic created =
                 new SubTopic(
+                        UUID.randomUUID(),
                         updateSpec.title(),
                         updateSpec.content(),
                         updateSpec.importanceLevel(),

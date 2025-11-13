@@ -17,6 +17,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class RoadMap extends AggregateRoot {
 
+    @Column(name = "uuid", nullable = false, unique = true)
+    private UUID uuid;
+
     @Column(name = "title", nullable = false)
     @Getter
     private String title;
@@ -48,11 +51,13 @@ public class RoadMap extends AggregateRoot {
     private List<Topic> topics = new ArrayList<>();
 
     private RoadMap(
+            UUID uuid,
             String title,
             String description,
             boolean isDraft,
             Long categoryId,
             List<Topic> topics) {
+        this.uuid = uuid;
         this.title = title;
         this.description = description;
         this.isDraft = isDraft;
@@ -80,6 +85,7 @@ public class RoadMap extends AggregateRoot {
 
         RoadMap created =
                 new RoadMap(
+                        UUID.randomUUID(),
                         title,
                         description,
                         creationSpec.isDraft(),
