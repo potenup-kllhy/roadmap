@@ -12,9 +12,11 @@ import com.kllhy.roadmap.roadmap.domain.exception.RoadMapIErrorCode;
 import com.kllhy.roadmap.roadmap.domain.model.creation_spec.CreationRoadMap;
 import com.kllhy.roadmap.roadmap.domain.model.creation_spec.CreationTopic;
 import com.kllhy.roadmap.roadmap.domain.model.update_spec.UpdateRoadMap;
+import com.kllhy.roadmap.roadmap.domain.model.update_spec.UpdateSubTopic;
 import com.kllhy.roadmap.roadmap.domain.model.update_spec.UpdateTopic;
 import jakarta.persistence.*;
 import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 import lombok.AccessLevel;
@@ -57,7 +59,6 @@ public class RoadMap extends AggregateRoot {
     @OneToMany(
             mappedBy = "roadMap",
             cascade = CascadeType.ALL,
-            orphanRemoval = true,
             fetch = FetchType.LAZY)
     private List<Topic> topics = new ArrayList<>();
 
@@ -90,7 +91,7 @@ public class RoadMap extends AggregateRoot {
                 creationSpec.creationTopics().stream()
                         .map(Topic::create)
                         .sorted(Comparator.comparing(Topic::getOrder))
-                        .toList();
+                        .collect(Collectors.toList());
         validateTopics(createdTopics);
 
         RoadMap created =
@@ -108,35 +109,6 @@ public class RoadMap extends AggregateRoot {
         return created;
     }
 
-    private void afterUpdate() {
-        ActiveStatus roadMapActiveStatus =
-                this.isDraft ? ActiveStatus.INACTIVE : ActiveStatus.ACTIVE;
-        this.addDomainEvent(
-                new RoadMapEventOccurred(this.id, EventType.UPDATED, roadMapActiveStatus));
-
-        for (Topic topic : this.topics) {
-            // Topic Event
-            ActiveStatus topicActiveStatus =
-                    topic.isDraft() ? ActiveStatus.INACTIVE : ActiveStatus.ACTIVE;
-            this.addDomainEvent(
-                    new TopicEventOccurred(
-                            this.id, topic.getId(), EventType.UPDATED, topicActiveStatus));
-
-            // SubTopic Event
-            for (SubTopic subTopic : topic.getSubTopics()) {
-                ActiveStatus subTopicActiveStatus =
-                        subTopic.getIsDraft() ? ActiveStatus.INACTIVE : ActiveStatus.ACTIVE;
-                this.addDomainEvent(
-                        new SubTopicEventOccurred(
-                                this.id,
-                                topic.getId(),
-                                subTopic.getId(),
-                                EventType.CREATED,
-                                subTopicActiveStatus));
-            }
-        }
-    }
-
     public void update(UpdateRoadMap updateSpec) {
         Objects.requireNonNull(updateSpec, "RoadMap.update: updateSpec 이 null 입니다.");
 
@@ -150,38 +122,91 @@ public class RoadMap extends AggregateRoot {
         this.categoryId = updateSpec.categoryId();
 
         updateTopics(updateSpec);
-        afterUpdate();
+
+        // 로드맵 업데이트 이벤트 트리거
+        roadMapUpdated();
     }
 
     private void updateTopics(UpdateRoadMap updateSpec) {
-        Map<Long, Topic> remainingTopics =
+
+        Map<Long, Topic> wouldBeRemovedTopic =
                 topics.stream()
                         .filter(topic -> topic.getId() != null)
                         .collect(Collectors.toMap(Topic::getId, topic -> topic));
 
-        List<Topic> sortedUpdatedTopics =
-                updateSpec.updateTopics().stream()
-                        .sorted(Comparator.comparing(UpdateTopic::order))
-                        .map(
-                                spec -> {
-                                    if (spec.id() != null) {
-                                        Topic existing = remainingTopics.remove(spec.id());
-                                        if (existing == null) {
-                                            throw new IllegalArgumentException(
-                                                    "RoadMap.update: 존재하지 않는 Topic id 입니다.");
-                                        }
-                                        existing.update(spec);
-                                        return existing;
-                                    }
-                                    return Topic.create(spec);
-                                })
-                        .toList();
+        updateSpec.updateTopics()
+                .forEach(spec -> {
+                        if (spec.id() != null) {
+                            Topic existingTopic = wouldBeRemovedTopic.remove(spec.id());
+                            if (existingTopic == null) {
+                                throw new IllegalArgumentException(
+                                        "RoadMap.update: 존재하지 않는 Topic id 입니다.");
+                            }
+                            existingTopic.update(spec);
+                        }
+                        topics.add(Topic.create(spec));
+                });
 
-        validateTopics(sortedUpdatedTopics);
-        topics = sortedUpdatedTopics;
+        topics.forEach(Topic::softDelete);
+        topics.sort(Comparator.comparing(Topic::getOrder));
+        validateTopics(topics);
 
         // 역방향 연결
         topics.forEach(topic -> topic.setRoadMap(this));
+    }
+
+    private void triggerTopicEvent(Topic topic) {
+        if (topic.isDeletedEventAvailable()) {
+            addDomainEvent(new TopicEventOccurred(id, topic.getId(), EventType.DELETED,
+                    topic.isDraft() ? ActiveStatus.INACTIVE : ActiveStatus.ACTIVE));
+
+            return;
+        }
+
+        if (topic.isUpdatedEventAvailable()) {
+            addDomainEvent(new TopicEventOccurred(id, topic.getId(), EventType.UPDATED,
+                    topic.isDraft() ? ActiveStatus.INACTIVE : ActiveStatus.ACTIVE));
+        }
+
+        for (SubTopic subTopic : topic.getSubTopics()) {
+            triggerSubTopicEvent(subTopic);
+        }
+    }
+
+    private void triggerSubTopicEvent(SubTopic subTopic) {
+        EventType eventType = null;
+        // update flag 는 delete flag 에 덮어 씌워짐
+        // 두 flag 를 한 번에 모두 읽어야 함
+        if (subTopic.isUpdatedEventAvailable()) {
+            eventType = EventType.UPDATED;
+        }
+        if (subTopic.isDeletedEventAvailable()) {
+            eventType = EventType.DELETED;
+        }
+        addDomainEvent(new SubTopicEventOccurred(
+                id,
+                subTopic.getTopic().getId(),
+                subTopic.getId(),
+                eventType,
+                subTopic.getIsDraft() ? ActiveStatus.INACTIVE : ActiveStatus.ACTIVE)
+        );
+    }
+
+    private void roadMapUpdated() {
+        addDomainEvent(new RoadMapEventOccurred(id, EventType.UPDATED,
+                isDraft ? ActiveStatus.INACTIVE : ActiveStatus.ACTIVE));
+
+        for (Topic topic : topics) {
+            triggerTopicEvent(topic);
+        }
+    }
+
+    private void roadMapDeleted() {
+        addDomainEvent(new RoadMapEventOccurred(
+                id,
+                EventType.DELETED,
+                isDraft ? ActiveStatus.INACTIVE : ActiveStatus.ACTIVE
+        ));
     }
 
     private static void validateTitle(String title) {
@@ -209,6 +234,7 @@ public class RoadMap extends AggregateRoot {
             throw new IllegalArgumentException("RoadMap.validateTopics: topics 가 blank 임");
         }
 
+        int cur = 0;
         for (int i = 0; i < topics.size(); i++) {
             if (topics.get(i).getOrder() != (i + 1)) {
                 throw new IllegalArgumentException(
@@ -224,6 +250,12 @@ public class RoadMap extends AggregateRoot {
             throw new IllegalArgumentException(
                     "RoadMap.validateTopics: RoadMap 에 속한 Topic 의 title 은 고유해야 합니다.");
         }
+    }
+
+    public void softDelete() {
+        this.isDeleted = true;
+        this.deletedAt = Timestamp.from(Instant.now());
+        roadMapDeleted();
     }
 
     public RoadMap cloneAsIs(long userId) {
