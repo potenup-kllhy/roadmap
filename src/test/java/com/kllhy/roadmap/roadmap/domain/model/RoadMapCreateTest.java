@@ -1,14 +1,13 @@
 package com.kllhy.roadmap.roadmap.domain.model;
 
+import static org.assertj.core.api.Assertions.*;
+
 import com.kllhy.roadmap.roadmap.domain.model.creation_spec.*;
 import com.kllhy.roadmap.roadmap.domain.model.enums.ImportanceLevel;
 import com.kllhy.roadmap.roadmap.domain.model.enums.ResourceType;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.*;
 
 class RoadMapCreateTest {
     @Test
@@ -37,7 +36,7 @@ class RoadMapCreateTest {
         var testSubTopic = rm.getTopics().get(0).getSubTopics().get(0);
         assertThat(testSubTopic.getTitle()).isEqualTo("프로젝트 스캐폴딩");
         assertThat(testSubTopic.getContent()).isEqualTo("start.spring.io 사용");
-        assertThat(testSubTopic.getImportanceLevel()).isEqualTo( ImportanceLevel.DEFAULT);
+        assertThat(testSubTopic.getImportanceLevel()).isEqualTo(ImportanceLevel.DEFAULT);
         assertThat(testSubTopic.getIsDraft()).isEqualTo(true);
         assertThat(testSubTopic.getResources()).hasSize(1);
 
@@ -67,15 +66,17 @@ class RoadMapCreateTest {
         RoadMap clonedRoadMap = rm.cloneAsIs(1);
 
         // then
-        clonedRoadMap.getTopics().forEach(t -> {
-            assertThat(rm.isDraft()).isFalse();
-            t.getSubTopics().forEach(s -> assertThat(s.getIsDraft()).isFalse());
-        });
+        clonedRoadMap
+                .getTopics()
+                .forEach(
+                        t -> {
+                            assertThat(rm.isDraft()).isFalse();
+                            t.getSubTopics().forEach(s -> assertThat(s.getIsDraft()).isFalse());
+                        });
 
         assertThat(clonedRoadMap.getTopics()).hasSize(2);
         assertThat(clonedRoadMap.getTopics().get(1).getSubTopics()).hasSize(1);
     }
-
 
     static CreationRoadMap testRoadMapBuilders(List<CreationTopic> topics) {
         return new CreationRoadMap(
@@ -84,8 +85,7 @@ class RoadMapCreateTest {
                 false,
                 1L,
                 1L,
-                topics
-        );
+                topics);
     }
 
     static List<CreationTopic> successTestTopicBuilders() {
@@ -97,9 +97,16 @@ class RoadMapCreateTest {
                         1,
                         false,
                         List.of(
-                                new CreationResourceTopic("Adoptium Temurin", ResourceType.OFFICIAL, 1, "https://adoptium.net/"),
-                                new CreationResourceTopic("Gradle User Guide", ResourceType.OFFICIAL, 2, "https://docs.gradle.org/current/userguide/userguide.html")
-                        ),
+                                new CreationResourceTopic(
+                                        "Adoptium Temurin",
+                                        ResourceType.OFFICIAL,
+                                        1,
+                                        "https://adoptium.net/"),
+                                new CreationResourceTopic(
+                                        "Gradle User Guide",
+                                        ResourceType.OFFICIAL,
+                                        2,
+                                        "https://docs.gradle.org/current/userguide/userguide.html")),
                         List.of(
                                 new CreationSubTopic(
                                         "프로젝트 스캐폴딩",
@@ -107,11 +114,11 @@ class RoadMapCreateTest {
                                         ImportanceLevel.DEFAULT,
                                         true,
                                         List.of(
-                                                new CreationResourceSubTopic("Spring Initializr", 1, ResourceType.OFFICIAL, "https://start.spring.io/")
-                                        )
-                                )
-                        )
-                ),
+                                                new CreationResourceSubTopic(
+                                                        "Spring Initializr",
+                                                        1,
+                                                        ResourceType.OFFICIAL,
+                                                        "https://start.spring.io/"))))),
                 new CreationTopic(
                         "REST API 설계",
                         "리소스 모델과 상태코드, 오류 응답",
@@ -119,9 +126,16 @@ class RoadMapCreateTest {
                         2,
                         false,
                         List.of(
-                                new CreationResourceTopic("RFC 9110 HTTP Semantics", ResourceType.OFFICIAL, 1, "https://www.rfc-editor.org/rfc/rfc9110"),
-                                new CreationResourceTopic("Richardson Maturity Model", ResourceType.POST, 2, "https://martinfowler.com/articles/richardsonMaturityModel.html")
-                        ),
+                                new CreationResourceTopic(
+                                        "RFC 9110 HTTP Semantics",
+                                        ResourceType.OFFICIAL,
+                                        1,
+                                        "https://www.rfc-editor.org/rfc/rfc9110"),
+                                new CreationResourceTopic(
+                                        "Richardson Maturity Model",
+                                        ResourceType.POST,
+                                        2,
+                                        "https://martinfowler.com/articles/richardsonMaturityModel.html")),
                         List.of(
                                 new CreationSubTopic(
                                         "에러 응답 규격",
@@ -129,20 +143,22 @@ class RoadMapCreateTest {
                                         ImportanceLevel.DEFAULT,
                                         false,
                                         List.of(
-                                                new CreationResourceSubTopic("RFC 7807 Problem Details", 1, ResourceType.OFFICIAL, "https://www.rfc-editor.org/rfc/rfc7807")
-                                        )
-                                ),
+                                                new CreationResourceSubTopic(
+                                                        "RFC 7807 Problem Details",
+                                                        1,
+                                                        ResourceType.OFFICIAL,
+                                                        "https://www.rfc-editor.org/rfc/rfc7807"))),
                                 new CreationSubTopic(
                                         "페이징과 정렬",
                                         "Cursor vs Offset",
                                         ImportanceLevel.OPTIONAL,
                                         true,
                                         List.of(
-                                                new CreationResourceSubTopic("Cursor Pagination 사례", 1, ResourceType.POST, "https://shopify.engineering/pagination-relative-cursors")
-                                        )
-                                )
-                        )
-                ),
+                                                new CreationResourceSubTopic(
+                                                        "Cursor Pagination 사례",
+                                                        1,
+                                                        ResourceType.POST,
+                                                        "https://shopify.engineering/pagination-relative-cursors"))))),
                 new CreationTopic(
                         "JPA와 영속성",
                         "엔티티 매핑, 트랜잭션, 성능",
@@ -150,10 +166,21 @@ class RoadMapCreateTest {
                         3,
                         true,
                         List.of(
-                                new CreationResourceTopic("Hibernate User Guide", ResourceType.OFFICIAL, 1, "https://docs.jboss.org/hibernate/orm/current/userguide/html_single/Hibernate_User_Guide.html"),
-                                new CreationResourceTopic("JPA 사양", ResourceType.OFFICIAL, 2, "https://jakarta.ee/specifications/persistence/"),
-                                new CreationResourceTopic("백엔드 로드맵 레퍼런스", ResourceType.ROADMAP, 3, "https://roadmap.sh/backend")
-                        ),
+                                new CreationResourceTopic(
+                                        "Hibernate User Guide",
+                                        ResourceType.OFFICIAL,
+                                        1,
+                                        "https://docs.jboss.org/hibernate/orm/current/userguide/html_single/Hibernate_User_Guide.html"),
+                                new CreationResourceTopic(
+                                        "JPA 사양",
+                                        ResourceType.OFFICIAL,
+                                        2,
+                                        "https://jakarta.ee/specifications/persistence/"),
+                                new CreationResourceTopic(
+                                        "백엔드 로드맵 레퍼런스",
+                                        ResourceType.ROADMAP,
+                                        3,
+                                        "https://roadmap.sh/backend")),
                         List.of(
                                 new CreationSubTopic(
                                         "지연 로딩과 N+1",
@@ -161,31 +188,42 @@ class RoadMapCreateTest {
                                         ImportanceLevel.RECOMMENDED,
                                         false,
                                         List.of(
-                                                new CreationResourceSubTopic("N+1 해결 가이드", 1, ResourceType.POST, "https://vladmihalcea.com/n-plus-1-query-problem/")
-                                        )
-                                ),
+                                                new CreationResourceSubTopic(
+                                                        "N+1 해결 가이드",
+                                                        1,
+                                                        ResourceType.POST,
+                                                        "https://vladmihalcea.com/n-plus-1-query-problem/"))),
                                 new CreationSubTopic(
                                         "트랜잭션 경계",
                                         "서비스 계층에서의 경계 설정",
                                         ImportanceLevel.PARALLEL,
                                         false,
                                         List.of(
-                                                new CreationResourceSubTopic("Spring Transaction 문서", 1, ResourceType.OFFICIAL, "https://docs.spring.io/spring-framework/reference/data-access/transaction.html"),
-                                                new CreationResourceSubTopic("실전 트랜잭션 전파", 2, ResourceType.POST, "https://spring.io/guides/gs/managing-transactions/")
-                                        )
-                                ),
+                                                new CreationResourceSubTopic(
+                                                        "Spring Transaction 문서",
+                                                        1,
+                                                        ResourceType.OFFICIAL,
+                                                        "https://docs.spring.io/spring-framework/reference/data-access/transaction.html"),
+                                                new CreationResourceSubTopic(
+                                                        "실전 트랜잭션 전파",
+                                                        2,
+                                                        ResourceType.POST,
+                                                        "https://spring.io/guides/gs/managing-transactions/"))),
                                 new CreationSubTopic(
                                         "엔티티 설계 원칙",
                                         "동등성, 식별자, 값 타입",
                                         ImportanceLevel.OPTIONAL,
                                         true,
                                         List.of(
-                                                new CreationResourceSubTopic("DDD Aggregates 소개", 1, ResourceType.POST, "https://martinfowler.com/bliki/DDD_Aggregate.html"),
-                                                new CreationResourceSubTopic("JPA 값 타입 정리", 2, ResourceType.POST, "https://www.baeldung.com/jpa-value-type")
-                                        )
-                                )
-                        )
-                )
-        );
+                                                new CreationResourceSubTopic(
+                                                        "DDD Aggregates 소개",
+                                                        1,
+                                                        ResourceType.POST,
+                                                        "https://martinfowler.com/bliki/DDD_Aggregate.html"),
+                                                new CreationResourceSubTopic(
+                                                        "JPA 값 타입 정리",
+                                                        2,
+                                                        ResourceType.POST,
+                                                        "https://www.baeldung.com/jpa-value-type"))))));
     }
 }

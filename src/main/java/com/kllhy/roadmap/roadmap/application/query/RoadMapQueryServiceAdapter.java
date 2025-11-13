@@ -32,8 +32,7 @@ public class RoadMapQueryServiceAdapter implements RoadMapQueryService {
 
     @Override
     public RoadMapView findByIdWithAssociations(long id) {
-        RoadMap roadMap = roadMapRepository.findByIdWithAssociations(id)
-                .orElseThrow(() -> new DomainException(RoadMapIErrorCode.ROAD_MAP_BAD_REQUEST));
+        RoadMap roadMap = roadMapRepository.findByIdWithAssociations(id);
 
         return RoadMapViewMapper.toView(roadMap);
     }

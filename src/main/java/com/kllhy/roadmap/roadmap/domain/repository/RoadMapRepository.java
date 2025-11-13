@@ -10,5 +10,5 @@ public interface RoadMapRepository {
 
     long save(RoadMap roadMap);
 
-    Optional<RoadMap> findByIdWithAssociations(long id);
+    RoadMap findByIdWithAssociations(long id);
 }
