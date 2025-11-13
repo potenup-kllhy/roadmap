@@ -35,13 +35,13 @@ public class StarRoadMapRepositoryAdapter implements StarRoadMapRepository {
     }
 
     @Override
-    public List<StarRoadMap> findAll() {
-        return starRoadMapJpaRepository.findAll();
+    public Optional<StarRoadMap> findByUserIdAndRoadmapId(Long userId, Long roadmapId) {
+        return starRoadMapJpaRepository.findByUserIdAndRoadMapId(userId, roadmapId);
     }
 
     @Override
-    public void deleteById(Long id) {
-        starRoadMapJpaRepository.deleteById(id);
+    public void deleteByUserIdAndRoadmapId(Long userId, Long roadmapId) {
+        starRoadMapJpaRepository.deleteByUserIdAndRoadMapId(userId, roadmapId);
     }
 
     @Override
@@ -57,10 +57,5 @@ public class StarRoadMapRepositoryAdapter implements StarRoadMapRepository {
     @Override
     public boolean existsByUserIdAndRoadmapId(Long userId, Long roadmapId) {
         return starRoadMapJpaRepository.existsByUserIdAndRoadMapId(userId, roadmapId);
-    }
-
-    @Override
-    public void deleteByUserIdAndRoadmapId(Long userId, Long roadmapId) {
-        starRoadMapJpaRepository.deleteByUserIdAndRoadMapId(userId, roadmapId);
     }
 }

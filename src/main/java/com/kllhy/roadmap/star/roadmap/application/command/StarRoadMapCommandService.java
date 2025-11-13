@@ -1,18 +1,13 @@
 package com.kllhy.roadmap.star.roadmap.application.command;
 
-import com.kllhy.roadmap.star.roadmap.domain.model.command.CreateStarRoadMapCommand;
-import com.kllhy.roadmap.star.roadmap.domain.model.command.UpdateStarRoadMapCommand;
-
 public interface StarRoadMapCommandService {
-    Long create(CreateStarRoadMapCommand command);
+    Long create(Long userId, Long roadmapId, int value);
 
-    void update(UpdateStarRoadMapCommand command);
+    void update(Long starRoadmapId, Long userId, int value);
 
-    void deleteById(Long starId);
+    void deleteByUserIdAndRoadmapId(Long userId, Long roadmapId);
 
     void deleteAllStarByUserId(Long userId);
 
     void deleteAllStarByRoadMapId(Long roadmapId);
-
-    void deleteByUserIdAndRoadmapId(Long userId, Long roadmapId);
 }
