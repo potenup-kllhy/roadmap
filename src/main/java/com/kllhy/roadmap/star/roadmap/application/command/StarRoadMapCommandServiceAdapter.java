@@ -42,7 +42,8 @@ public class StarRoadMapCommandServiceAdapter implements StarRoadMapCommandServi
 
     @Override
     public void update(Long starRoadmapId, Long userId, int value) {
-        UpdateStarRoadMapCommand command = new UpdateStarRoadMapCommand(userId, starRoadmapId, value);
+        UpdateStarRoadMapCommand command =
+                new UpdateStarRoadMapCommand(userId, starRoadmapId, value);
 
         StarRoadMap starRoadMap =
                 starRoadMapRepository

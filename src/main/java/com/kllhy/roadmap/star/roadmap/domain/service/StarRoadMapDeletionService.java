@@ -13,8 +13,7 @@ public class StarRoadMapDeletionService {
 
     private final StarRoadMapRepository starRoadMapRepository;
 
-    public void deleteByUserIdAndRoadmapId(
-            DeleteStarRoadMapCommand command) {
+    public void deleteByUserIdAndRoadmapId(DeleteStarRoadMapCommand command) {
         if (!starRoadMapRepository.existsByUserIdAndRoadmapId(
                 command.userId(), command.roadmapId())) {
             throw new DomainException(StarRoadMapErrorCode.STAR_ROAD_MAP_NOT_FOUND);

@@ -40,23 +40,15 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class StarRoadMapCommandServiceAdapterTest {
 
-    @InjectMocks
-    private StarRoadMapCommandServiceAdapter starRoadMapCommandServiceAdapter;
+    @InjectMocks private StarRoadMapCommandServiceAdapter starRoadMapCommandServiceAdapter;
 
-    @Mock
-    private StarRoadMapRepository starRoadMapRepository;
-    @Mock
-    private StarRoadMapCreationService starRoadMapCreationService;
-    @Mock
-    private StarRoadMapUpdateService starRoadMapUpdateService;
-    @Mock
-    private StarRoadMapDeletionService starRoadMapDeletionService;
-    @Mock
-    private UserService userService;
-    @Mock
-    private RoadMapQueryService roadMapQueryService;
-    @Mock
-    private User mockUser;
+    @Mock private StarRoadMapRepository starRoadMapRepository;
+    @Mock private StarRoadMapCreationService starRoadMapCreationService;
+    @Mock private StarRoadMapUpdateService starRoadMapUpdateService;
+    @Mock private StarRoadMapDeletionService starRoadMapDeletionService;
+    @Mock private UserService userService;
+    @Mock private RoadMapQueryService roadMapQueryService;
+    @Mock private User mockUser;
 
     private UserView mockUserView;
     private RoadMapView mockRoadMapView;
@@ -72,7 +64,16 @@ class StarRoadMapCommandServiceAdapterTest {
         Timestamp now = Timestamp.from(Instant.now());
         mockRoadMapView =
                 new RoadMapView(
-                        1L, "title", "desc", null, now, now, false, false, 1L, List.of(mock(TopicView.class)));
+                        1L,
+                        "title",
+                        "desc",
+                        null,
+                        now,
+                        now,
+                        false,
+                        false,
+                        1L,
+                        List.of(mock(TopicView.class)));
     }
 
     @Test
@@ -113,11 +114,14 @@ class StarRoadMapCommandServiceAdapterTest {
 
         StarRoadMap mockStarRoadMap = mock(StarRoadMap.class);
 
-        when(starRoadMapRepository.findById(starRoadmapId)).thenReturn(Optional.of(mockStarRoadMap));
+        when(starRoadMapRepository.findById(starRoadmapId))
+                .thenReturn(Optional.of(mockStarRoadMap));
         when(mockStarRoadMap.getRoadMapId()).thenReturn(roadmapId);
         when(userService.getByUser(userId)).thenReturn(mockUserView);
         when(roadMapQueryService.findById(roadmapId)).thenReturn(mockRoadMapView);
-        doNothing().when(starRoadMapUpdateService).update(any(StarRoadMap.class), any(UpdateStarRoadMapCommand.class));
+        doNothing()
+                .when(starRoadMapUpdateService)
+                .update(any(StarRoadMap.class), any(UpdateStarRoadMapCommand.class));
         when(starRoadMapRepository.save(mockStarRoadMap)).thenReturn(mockStarRoadMap);
 
         // when
@@ -125,7 +129,8 @@ class StarRoadMapCommandServiceAdapterTest {
 
         // then
         verify(starRoadMapRepository, times(1)).findById(starRoadmapId);
-        verify(starRoadMapUpdateService, times(1)).update(any(StarRoadMap.class), any(UpdateStarRoadMapCommand.class));
+        verify(starRoadMapUpdateService, times(1))
+                .update(any(StarRoadMap.class), any(UpdateStarRoadMapCommand.class));
         verify(starRoadMapRepository, times(1)).save(mockStarRoadMap);
     }
 

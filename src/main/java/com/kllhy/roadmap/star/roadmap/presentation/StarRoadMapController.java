@@ -40,8 +40,7 @@ public class StarRoadMapController {
     @DeleteMapping
     public ResponseEntity<Void> deleteStarRoadMapByUserAndRoadmap(
             @RequestBody DeleteStarRoadMapRequest request) {
-        starRoadMapCommandService.deleteByUserIdAndRoadmapId(
-                request.userId(), request.roadmapId());
+        starRoadMapCommandService.deleteByUserIdAndRoadmapId(request.userId(), request.roadmapId());
         return ResponseEntity.noContent().build();
     }
 }
