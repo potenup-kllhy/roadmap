@@ -14,4 +14,8 @@ public record ProgressTopicCommand(Long topicId, List<ProgressSubTopicCommand> s
         }
         subTopics = List.copyOf(subTopics);
     }
+
+    public static ProgressTopicCommand ofTopicOnly(Long topicId) {
+        return new ProgressTopicCommand(topicId, List.of());
+    }
 }

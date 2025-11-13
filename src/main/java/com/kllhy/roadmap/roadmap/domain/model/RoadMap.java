@@ -72,7 +72,6 @@ public class RoadMap extends AggregateRoot {
         this.isDraft = isDraft;
         this.categoryId = categoryId;
         this.topics = topics;
-
         this.deletedAt = null;
         this.isDeleted = false;
     }

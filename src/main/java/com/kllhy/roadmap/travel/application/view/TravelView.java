@@ -12,7 +12,10 @@ public record TravelView(
     public static TravelView of(Travel travel) {
 
         List<ProgressTopicView> progressTopicViews =
-                travel.getTopics().stream().map(ProgressTopicView::of).toList();
+                travel.getTopics().stream()
+                        .filter(it -> !it.isArchived())
+                        .map(ProgressTopicView::of)
+                        .toList();
 
         return new TravelView(
                 travel.getUserId(),

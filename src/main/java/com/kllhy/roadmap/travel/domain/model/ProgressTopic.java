@@ -2,6 +2,7 @@ package com.kllhy.roadmap.travel.domain.model;
 
 import com.kllhy.roadmap.common.exception.DomainException;
 import com.kllhy.roadmap.common.model.IdAuditEntity;
+import com.kllhy.roadmap.roadmap.domain.event.enums.ActiveStatus;
 import com.kllhy.roadmap.travel.domain.exception.TravelErrorCode;
 import com.kllhy.roadmap.travel.domain.model.command.ProgressSubTopicCommand;
 import com.kllhy.roadmap.travel.domain.model.enums.ProgressStatus;
@@ -91,11 +92,16 @@ public class ProgressTopic extends IdAuditEntity {
         if (isArchived) throw new DomainException(TravelErrorCode.TRAVEL_TOPICS_NOT_FOUND);
     }
 
-    private ProgressSubTopic getSubTopicOrThrow(Long subTopicId) {
+    public ProgressSubTopic getSubTopicOrThrow(Long subTopicId) {
         return subTopics.stream()
                 .filter(st -> st.getSubTopicId().equals(subTopicId))
                 .findFirst()
                 .orElseThrow(
                         () -> new DomainException(TravelErrorCode.TRAVEL_SUB_TOPICS_NOT_FOUND));
+    }
+
+    public void activate(ActiveStatus status) {
+        Objects.requireNonNull(status, "status");
+        this.isArchived = status.equals(ActiveStatus.INACTIVE);
     }
 }

@@ -12,7 +12,10 @@ public record ProgressTopicView(
     public static ProgressTopicView of(ProgressTopic progressTopic) {
 
         List<ProgressSubTopicView> subTopicViews =
-                progressTopic.getSubTopics().stream().map(ProgressSubTopicView::of).toList();
+                progressTopic.getSubTopics().stream()
+                        .filter(it -> !it.isArchived())
+                        .map(ProgressSubTopicView::of)
+                        .toList();
 
         return new ProgressTopicView(
                 progressTopic.getId(),

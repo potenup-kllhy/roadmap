@@ -2,7 +2,9 @@ package com.kllhy.roadmap.travel.domain.model;
 
 import com.kllhy.roadmap.common.exception.DomainException;
 import com.kllhy.roadmap.common.model.AggregateRoot;
+import com.kllhy.roadmap.roadmap.domain.event.enums.ActiveStatus;
 import com.kllhy.roadmap.travel.domain.exception.TravelErrorCode;
+import com.kllhy.roadmap.travel.domain.model.command.ProgressSubTopicCommand;
 import com.kllhy.roadmap.travel.domain.model.command.ProgressTopicCommand;
 import com.kllhy.roadmap.travel.domain.model.command.TravelCommand;
 import com.kllhy.roadmap.travel.domain.model.enums.ProgressStatus;
@@ -64,7 +66,11 @@ public class Travel extends AggregateRoot {
         return List.copyOf(topics);
     }
 
-    private void addTopics(List<ProgressTopicCommand> commands) {
+    public void addSubTopics(Long topicId, List<ProgressSubTopicCommand> commands) {
+        getTopicOrThrow(topicId).addSubTopics(commands);
+    }
+
+    public void addTopics(List<ProgressTopicCommand> commands) {
         updateValid();
         if (commands == null || commands.isEmpty())
             throw new DomainException(TravelErrorCode.TRAVEL_TOPICS_INVALID);
@@ -90,6 +96,20 @@ public class Travel extends AggregateRoot {
         topic.markSubTopic(subTopicId, status);
     }
 
+    public void activate(ActiveStatus status) {
+        this.isArchived = status.equals(ActiveStatus.INACTIVE);
+    }
+
+    public void activateTopic(Long topicId, ActiveStatus status) {
+        ProgressTopic topic = getTopicOrThrow(topicId);
+        topic.activate(status);
+    }
+
+    public void activateSubTopic(Long topicId, Long subTopicId, ActiveStatus status) {
+        ProgressTopic topic = getTopicOrThrow(topicId);
+        topic.getSubTopicOrThrow(subTopicId).activate(status);
+    }
+
     private void updateValid() {
         if (isArchived) throw new DomainException(TravelErrorCode.TRAVEL_NOT_FOUND);
     }
@@ -103,7 +123,7 @@ public class Travel extends AggregateRoot {
         topics.add(topic);
     }
 
-    private ProgressTopic getTopicOrThrow(Long topicId) {
+    public ProgressTopic getTopicOrThrow(Long topicId) {
         return topics.stream()
                 .filter(t -> t.getTopicId().equals(topicId))
                 .findFirst()

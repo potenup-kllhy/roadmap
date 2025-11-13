@@ -34,7 +34,7 @@ public class TravelUpdateService {
         return travel;
     }
 
-    public void validUser(UserView user, Travel travel) {
+    private void validUser(UserView user, Travel travel) {
         if (!user.status().equals(AccountStatus.ACTIVE)) {
             throw new DomainException(TravelErrorCode.TRAVEL_USER_NOT_ACTIVE);
         }
