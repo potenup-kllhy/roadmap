@@ -52,7 +52,7 @@ class RoadMapCreateTest {
         // when & then
         assertThatThrownBy(() -> RoadMap.create(creationRoadMap))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("creationTopics 가 blank 임");
+                .hasMessageContaining("RoadMap.validateTopics: topics 가 blank 임");
     }
 
     @Test
