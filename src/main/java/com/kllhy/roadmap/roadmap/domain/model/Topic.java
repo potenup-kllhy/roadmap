@@ -3,6 +3,7 @@ package com.kllhy.roadmap.roadmap.domain.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.kllhy.roadmap.common.model.IdAuditEntity;
 import com.kllhy.roadmap.roadmap.domain.model.creation_spec.CreationSubTopic;
+import com.kllhy.roadmap.roadmap.domain.event.listener.TopicEntityListener;
 import com.kllhy.roadmap.roadmap.domain.model.creation_spec.CreationTopic;
 import com.kllhy.roadmap.roadmap.domain.model.enums.ImportanceLevel;
 import com.kllhy.roadmap.roadmap.domain.model.update_spec.UpdateResourceTopic;
@@ -18,6 +19,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "topic")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@EntityListeners(TopicEntityListener.class)
 public class Topic extends IdAuditEntity {
 
     @Column(name = "uuid", nullable = false, unique = true)
@@ -55,6 +57,7 @@ public class Topic extends IdAuditEntity {
     @JsonIgnore
     @ManyToOne(optional = false)
     @JoinColumn(name = "road_map_id", nullable = false)
+    @Getter
     private RoadMap roadMap;
 
     @OneToMany(
@@ -111,25 +114,11 @@ public class Topic extends IdAuditEntity {
                         .map(ResourceTopic::create)
                         .sorted(Comparator.comparing(ResourceTopic::getOrder))
                         .toList();
-
-        for (int i = 0; i < createdResourceTopics.size(); i++) {
-            if (createdResourceTopics.get(i).getOrder() != (i + 1)) {
-                throw new IllegalArgumentException(
-                        "Topic.create: ResourceTopic 리스트 요소의 order 는 1부터 size 까지 1씩 증가해야 합니다.");
-            }
-        }
+        validateResources(createdResourceTopics);
 
         List<SubTopic> createdSubTopics =
                 creationSpec.creationSubTopics().stream().map(SubTopic::create).toList();
-
-        Set<String> titleSet = new HashSet<>();
-        for (SubTopic subTopic : createdSubTopics) {
-            titleSet.add(subTopic.getTitle());
-        }
-        if (titleSet.size() != createdSubTopics.size()) {
-            throw new IllegalArgumentException(
-                    "Topic.create: Topic 에 속한 SubTopic 의 title 은 고유해야 합니다.");
-        }
+        validateSubTopics(createdSubTopics);
 
         Topic created =
                 new Topic(
