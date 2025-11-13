@@ -201,6 +201,19 @@ public class SubTopic extends IdAuditEntity {
         }
     }
 
+    boolean isCloneable() {
+        return !(isDraft || isDeleted);
+    }
+
+    public CreationSubTopic cloneAsIs() {
+        return new CreationSubTopic(
+                this.title,
+                this.content,
+                this.importanceLevel,
+                this.isDraft,
+                this.resources.stream().map(ResourceSubTopic::cloneAsIs).toList());
+    }
+
     void setTopic(Topic topic) {
         this.topic = Objects.requireNonNull(topic, "SubTopic.setTopic: 파라미터 topic 이 null 입니다");
     }

@@ -7,4 +7,8 @@ public interface RoadMapRepository {
     Optional<RoadMap> findById(long id);
 
     boolean existsById(long id);
+
+    long save(RoadMap roadMap);
+
+    RoadMap findByIdWithAssociations(long id);
 }
