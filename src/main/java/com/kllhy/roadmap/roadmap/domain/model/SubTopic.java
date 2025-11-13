@@ -2,6 +2,7 @@ package com.kllhy.roadmap.roadmap.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.kllhy.roadmap.common.model.IdAuditEntity;
+import com.kllhy.roadmap.roadmap.domain.event.listener.SubTopicEntityListener;
 import com.kllhy.roadmap.roadmap.domain.model.creation_spec.CreationSubTopic;
 import com.kllhy.roadmap.roadmap.domain.model.enums.ImportanceLevel;
 import com.kllhy.roadmap.roadmap.domain.model.update_spec.UpdateResourceSubTopic;
@@ -17,6 +18,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "sub_topic")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@EntityListeners(SubTopicEntityListener.class)
 public class SubTopic extends IdAuditEntity {
 
     @Column(name = "uuid", nullable = false, unique = true)
@@ -49,6 +51,7 @@ public class SubTopic extends IdAuditEntity {
     @JsonIgnore
     @ManyToOne(optional = false)
     @JoinColumn(name = "topic_id", nullable = false)
+    @Getter
     private Topic topic;
 
     @OneToMany(
