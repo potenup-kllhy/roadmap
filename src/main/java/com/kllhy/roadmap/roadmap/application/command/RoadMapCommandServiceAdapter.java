@@ -21,7 +21,8 @@ public class RoadMapCommandServiceAdapter implements RoadMapCommandService {
         RoadMap roadMap =
                 roadMapRepository
                         .findById(roadMapId)
-                        .orElseThrow(() -> new DomainException(RoadMapIErrorCode.ROAD_MAP_BAD_REQUEST));
+                        .orElseThrow(
+                                () -> new DomainException(RoadMapIErrorCode.ROAD_MAP_BAD_REQUEST));
         roadMap.update(updateRoadMap);
     }
 }

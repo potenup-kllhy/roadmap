@@ -1,19 +1,18 @@
 package com.kllhy.roadmap.roadmap.domain.model;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.kllhy.roadmap.roadmap.domain.model.creation_spec.*;
 import com.kllhy.roadmap.roadmap.domain.model.enums.ImportanceLevel;
 import com.kllhy.roadmap.roadmap.domain.model.enums.ResourceType;
 import com.kllhy.roadmap.roadmap.domain.model.update_spec.*;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-
 import java.lang.reflect.Field;
 import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 public class RoadMapUpdateTest {
 
@@ -174,8 +173,7 @@ public class RoadMapUpdateTest {
                                                                         "서브 리소스",
                                                                         1,
                                                                         ResourceType.POST,
-                                                                        "https://sub.example.com"))))
-                                )));
+                                                                        "https://sub.example.com")))))));
 
         return RoadMap.create(creationSpec);
     }
