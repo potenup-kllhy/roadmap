@@ -3,38 +3,39 @@ package com.kllhy.roadmap.roadmap.domain.event;
 import com.kllhy.roadmap.common.event.BaseDomainEvent;
 import com.kllhy.roadmap.roadmap.domain.event.enums.ActiveStatus;
 import com.kllhy.roadmap.roadmap.domain.event.enums.EventType;
+import java.util.UUID;
 
 public class SubTopicEventOccurred extends BaseDomainEvent {
 
-    private final Long roadMapId;
-    private final Long topicId;
-    private final Long subTopicId;
+    private final UUID roadMapUUID;
+    private final UUID topicUUID;
+    private final UUID subTopicUUID;
     private final EventType eventType;
     private final ActiveStatus activeStatus;
 
     public SubTopicEventOccurred(
-            Long roadMapId,
-            Long topicId,
-            Long subTopicId,
+            UUID roadMapUUID,
+            UUID topicUUID,
+            UUID subTopicUUID,
             EventType eventType,
             ActiveStatus activeStatus) {
-        this.roadMapId = roadMapId;
-        this.topicId = topicId;
-        this.subTopicId = subTopicId;
+        this.roadMapUUID = roadMapUUID;
+        this.topicUUID = topicUUID;
+        this.subTopicUUID = subTopicUUID;
         this.eventType = eventType;
         this.activeStatus = activeStatus;
     }
 
-    public Long roadMapId() {
-        return roadMapId;
+    public UUID roadMapUUID() {
+        return roadMapUUID;
     }
 
-    public Long topicId() {
-        return topicId;
+    public UUID topicUUID() {
+        return topicUUID;
     }
 
-    public Long subTopicId() {
-        return subTopicId;
+    public UUID subTopicUUID() {
+        return subTopicUUID;
     }
 
     public EventType eventType() {

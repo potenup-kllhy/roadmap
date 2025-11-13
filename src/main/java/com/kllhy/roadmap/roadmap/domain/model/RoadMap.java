@@ -1,6 +1,11 @@
 package com.kllhy.roadmap.roadmap.domain.model;
 
 import com.kllhy.roadmap.common.model.AggregateRoot;
+import com.kllhy.roadmap.roadmap.domain.event.RoadMapEventOccurred;
+import com.kllhy.roadmap.roadmap.domain.event.SubTopicEventOccurred;
+import com.kllhy.roadmap.roadmap.domain.event.TopicEventOccurred;
+import com.kllhy.roadmap.roadmap.domain.event.enums.ActiveStatus;
+import com.kllhy.roadmap.roadmap.domain.event.enums.EventType;
 import com.kllhy.roadmap.roadmap.domain.model.creation_spec.CreationRoadMap;
 import com.kllhy.roadmap.roadmap.domain.model.update_spec.UpdateRoadMap;
 import com.kllhy.roadmap.roadmap.domain.model.update_spec.UpdateTopic;
@@ -16,6 +21,10 @@ import lombok.NoArgsConstructor;
 @Table(name = "road_map")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class RoadMap extends AggregateRoot {
+
+    @Column(name = "uuid", nullable = false, unique = true)
+    @Getter
+    private UUID uuid;
 
     @Column(name = "title", nullable = false)
     @Getter
@@ -48,11 +57,13 @@ public class RoadMap extends AggregateRoot {
     private List<Topic> topics = new ArrayList<>();
 
     private RoadMap(
+            UUID uuid,
             String title,
             String description,
             boolean isDraft,
             Long categoryId,
             List<Topic> topics) {
+        this.uuid = uuid;
         this.title = title;
         this.description = description;
         this.isDraft = isDraft;
@@ -80,6 +91,7 @@ public class RoadMap extends AggregateRoot {
 
         RoadMap created =
                 new RoadMap(
+                        UUID.randomUUID(),
                         title,
                         description,
                         creationSpec.isDraft(),
@@ -89,7 +101,45 @@ public class RoadMap extends AggregateRoot {
         // 양방향 연결
         created.topics.forEach(topic -> topic.setRoadMap(created));
 
+        // RoadMap Event
+        addCreateOrUpdateEvents(created);
+
         return created;
+    }
+
+    private static void addCreateOrUpdateEvents(RoadMap created) {
+        ActiveStatus roadMapActiveStatus =
+                created.isDraft ? ActiveStatus.INACTIVE : ActiveStatus.ACTIVE;
+        EventType roadMapEventType =
+                created.getId() == null ? EventType.CREATED : EventType.UPDATED;
+        created.addDomainEvent(
+                new RoadMapEventOccurred(created.uuid, roadMapEventType, roadMapActiveStatus));
+
+        for (Topic topic : created.topics) {
+            // Topic Event
+            ActiveStatus topicActiveStatus =
+                    topic.isDraft() ? ActiveStatus.INACTIVE : ActiveStatus.ACTIVE;
+            EventType topicEventType =
+                    topic.getId() == null ? EventType.CREATED : EventType.UPDATED;
+            created.addDomainEvent(
+                    new TopicEventOccurred(
+                            created.uuid, topic.getUuid(), topicEventType, topicActiveStatus));
+
+            // SubTopic Event
+            for (SubTopic subTopic : topic.getSubTopics()) {
+                ActiveStatus subTopicActiveStatus =
+                        subTopic.getIsDraft() ? ActiveStatus.INACTIVE : ActiveStatus.ACTIVE;
+                EventType subTopicEventType =
+                        subTopic.getId() == null ? EventType.CREATED : EventType.UPDATED;
+                created.addDomainEvent(
+                        new SubTopicEventOccurred(
+                                created.uuid,
+                                topic.getUuid(),
+                                subTopic.getUuid(),
+                                EventType.CREATED,
+                                ActiveStatus.ACTIVE));
+            }
+        }
     }
 
     public void update(UpdateRoadMap updateSpec) {
