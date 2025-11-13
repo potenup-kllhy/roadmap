@@ -1,6 +1,11 @@
 package com.kllhy.roadmap.roadmap.domain.model;
 
 import com.kllhy.roadmap.common.model.AggregateRoot;
+import com.kllhy.roadmap.roadmap.domain.event.RoadMapEventOccurred;
+import com.kllhy.roadmap.roadmap.domain.event.SubTopicEventOccurred;
+import com.kllhy.roadmap.roadmap.domain.event.TopicEventOccurred;
+import com.kllhy.roadmap.roadmap.domain.event.enums.ActiveStatus;
+import com.kllhy.roadmap.roadmap.domain.event.enums.EventType;
 import com.kllhy.roadmap.roadmap.domain.model.creation_spec.CreationRoadMap;
 import com.kllhy.roadmap.roadmap.domain.model.update_spec.UpdateRoadMap;
 import com.kllhy.roadmap.roadmap.domain.model.update_spec.UpdateTopic;
@@ -96,7 +101,33 @@ public class RoadMap extends AggregateRoot {
         // 양방향 연결
         created.topics.forEach(topic -> topic.setRoadMap(created));
 
+        // RoadMap Event
+        addCreateOrUpdateEvents(created);
+
         return created;
+    }
+
+    private static void addCreateOrUpdateEvents(RoadMap created) {
+        ActiveStatus roadMapActiveStatus = created.isDraft ? ActiveStatus.INACTIVE : ActiveStatus.ACTIVE;
+        EventType roadMapEventType = created.getId() == null ? EventType.CREATED : EventType.UPDATED;
+        created.addDomainEvent(new RoadMapEventOccurred(
+                created.uuid, roadMapEventType, roadMapActiveStatus));
+
+        for (Topic topic : created.topics) {
+            // Topic Event
+            ActiveStatus topicActiveStatus = topic.isDraft() ? ActiveStatus.INACTIVE : ActiveStatus.ACTIVE;
+            EventType topicEventType = topic.getId() == null ? EventType.CREATED : EventType.UPDATED;
+            created.addDomainEvent(new TopicEventOccurred(
+                    created.uuid, topic.getUuid(), topicEventType, topicActiveStatus));
+
+            // SubTopic Event
+            for (SubTopic subTopic : topic.getSubTopics()) {
+                ActiveStatus subTopicActiveStatus = subTopic.getIsDraft() ? ActiveStatus.INACTIVE : ActiveStatus.ACTIVE;
+                EventType subTopicEventType = subTopic.getId() == null ? EventType.CREATED : EventType.UPDATED;
+                created.addDomainEvent(new SubTopicEventOccurred(
+                        created.uuid, topic.getUuid(), subTopic.getUuid(), EventType.CREATED, ActiveStatus.ACTIVE));
+            }
+        }
     }
 
     public void update(UpdateRoadMap updateSpec) {
@@ -120,23 +151,21 @@ public class RoadMap extends AggregateRoot {
                         .filter(topic -> topic.getId() != null)
                         .collect(Collectors.toMap(Topic::getId, topic -> topic));
 
-        List<Topic> sortedUpdatedTopics =
-                updateSpec.updateTopics().stream()
-                        .sorted(Comparator.comparing(UpdateTopic::order))
-                        .map(
-                                spec -> {
-                                    if (spec.id() != null) {
-                                        Topic existing = remainingTopics.remove(spec.id());
-                                        if (existing == null) {
-                                            throw new IllegalArgumentException(
-                                                    "RoadMap.update: 존재하지 않는 Topic id 입니다.");
-                                        }
-                                        existing.update(spec);
-                                        return existing;
-                                    }
-                                    return Topic.create(spec);
-                                })
-                        .toList();
+        List<Topic> sortedUpdatedTopics = updateSpec.updateTopics().stream()
+                .sorted(Comparator.comparing(UpdateTopic::order))
+                .map(spec -> {
+                        if (spec.id() != null) {
+                            Topic existing = remainingTopics.remove(spec.id());
+                            if (existing == null) {
+                                throw new IllegalArgumentException(
+                                        "RoadMap.update: 존재하지 않는 Topic id 입니다.");
+                            }
+                            existing.update(spec);
+                            return existing;
+                        }
+                        return Topic.create(spec);
+                })
+                .toList();
 
         validateTopics(sortedUpdatedTopics);
         topics = sortedUpdatedTopics;
