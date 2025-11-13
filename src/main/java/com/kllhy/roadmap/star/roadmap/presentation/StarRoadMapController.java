@@ -26,16 +26,18 @@ public class StarRoadMapController {
 
     @PostMapping
     public ResponseEntity<Void> createStarRoadMap(@RequestBody CreateStarRoadMapRequest request) {
-        CreateStarRoadMapCommand command = new CreateStarRoadMapCommand(
-                request.userId(), request.roadmapId(), request.value());
+        CreateStarRoadMapCommand command =
+                new CreateStarRoadMapCommand(
+                        request.userId(), request.roadmapId(), request.value());
         Long starRoadMapId = starRoadMapCommandService.create(command);
         return ResponseEntity.created(URI.create("/api-v1/star-roadmaps/" + starRoadMapId)).build();
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> updateStarRoadMap(@PathVariable Long id,
-                                                  @RequestBody UpdateStarRoadMapRequest request) {
-        UpdateStarRoadMapCommand command = new UpdateStarRoadMapCommand(request.userId(), id, request.value());
+    public ResponseEntity<Void> updateStarRoadMap(
+            @PathVariable Long id, @RequestBody UpdateStarRoadMapRequest request) {
+        UpdateStarRoadMapCommand command =
+                new UpdateStarRoadMapCommand(request.userId(), id, request.value());
         starRoadMapCommandService.update(command);
         return ResponseEntity.ok().build();
     }

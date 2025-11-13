@@ -28,8 +28,7 @@ class StarRoadMapTest {
                 () -> assertNotNull(starRoadMap),
                 () -> assertEquals(command.userId(), starRoadMap.getUserId()),
                 () -> assertEquals(command.roadmapId(), starRoadMap.getRoadMapId()),
-                () -> assertEquals(command.value(), starRoadMap.getValue())
-        );
+                () -> assertEquals(command.value(), starRoadMap.getValue()));
     }
 
     @ParameterizedTest

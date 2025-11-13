@@ -22,7 +22,8 @@ public class StarRoadMapCreationService {
     private final StarRoadMapRepository starRoadMapRepository;
 
     public StarRoadMap create(CreateStarRoadMapCommand command) {
-        if (starRoadMapRepository.existsByUserIdAndRoadmapId(command.userId(), command.roadmapId())) {
+        if (starRoadMapRepository.existsByUserIdAndRoadmapId(
+                command.userId(), command.roadmapId())) {
             throw new DomainException(StarRoadMapErrorCode.STAR_ROAD_MAP_ALREADY_EXISTS);
         }
 

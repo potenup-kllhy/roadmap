@@ -27,8 +27,13 @@ public class StarRoadMapCommandServiceAdapter implements StarRoadMapCommandServi
 
     @Override
     public void update(UpdateStarRoadMapCommand command) {
-        StarRoadMap starRoadMap = starRoadMapRepository.findById(command.starRoadMapId())
-                .orElseThrow(() -> new DomainException(StarRoadMapErrorCode.STAR_ROAD_MAP_NOT_FOUND));
+        StarRoadMap starRoadMap =
+                starRoadMapRepository
+                        .findById(command.starRoadMapId())
+                        .orElseThrow(
+                                () ->
+                                        new DomainException(
+                                                StarRoadMapErrorCode.STAR_ROAD_MAP_NOT_FOUND));
 
         if (!starRoadMap.getUserId().equals(command.userId())) {
             throw new DomainException(StarRoadMapErrorCode.STAR_ROAD_MAP_NOT_AUTHORIZED);

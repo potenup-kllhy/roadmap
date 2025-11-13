@@ -5,12 +5,19 @@ import com.kllhy.roadmap.common.exception.IErrorCode;
 
 public enum StarRoadMapErrorCode implements IErrorCode {
     STAR_ROAD_MAP_INVALID_VALUE(
-            DomainHttpStatus.BAD_REQUEST, "SRM-001", "Star RoadMap value is invalid. (range: 0 ~ 5)"),
+            DomainHttpStatus.BAD_REQUEST,
+            "SRM-001",
+            "Star RoadMap value is invalid. (range: 0 ~ 5)"),
     STAR_ROAD_MAP_NOT_FOUND(DomainHttpStatus.NOT_FOUND, "SRM-002", "Star RoadMap not found."),
-    STAR_ROAD_MAP_NOT_AUTHORIZED(DomainHttpStatus.FORBIDDEN, "SRM-003", "Not authorized to access this Star RoadMap."),
-    STAR_ROAD_MAP_ALREADY_EXISTS(DomainHttpStatus.CONFLICT, "SRM-004", "Star RoadMap already exists."),
-    STAR_ROAD_MAP_USER_NOT_ACTIVE(DomainHttpStatus.NOT_FOUND, "SRM-005", "User account is not active."),
-    STAR_ROAD_MAP_ROADMAP_INVALID(DomainHttpStatus.NOT_FOUND, "SRM-006",
+    STAR_ROAD_MAP_NOT_AUTHORIZED(
+            DomainHttpStatus.FORBIDDEN, "SRM-003", "Not authorized to access this Star RoadMap."),
+    STAR_ROAD_MAP_ALREADY_EXISTS(
+            DomainHttpStatus.CONFLICT, "SRM-004", "Star RoadMap already exists."),
+    STAR_ROAD_MAP_USER_NOT_ACTIVE(
+            DomainHttpStatus.NOT_FOUND, "SRM-005", "User account is not active."),
+    STAR_ROAD_MAP_ROADMAP_INVALID(
+            DomainHttpStatus.NOT_FOUND,
+            "SRM-006",
             "RoadMap is invalid for starring (must be draft and not deleted).");
 
     private final DomainHttpStatus httpStatus;

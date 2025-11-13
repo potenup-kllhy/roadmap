@@ -28,14 +28,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class StarRoadMapCommandServiceAdapterTest {
 
-    @InjectMocks
-    private StarRoadMapCommandServiceAdapter starRoadMapCommandServiceAdapter;
+    @InjectMocks private StarRoadMapCommandServiceAdapter starRoadMapCommandServiceAdapter;
 
-    @Mock
-    private StarRoadMapRepository starRoadMapRepository;
+    @Mock private StarRoadMapRepository starRoadMapRepository;
 
-    @Mock
-    private StarRoadMapCreationService starRoadMapCreationService;
+    @Mock private StarRoadMapCreationService starRoadMapCreationService;
 
     @Test
     @DisplayName("생성 메서드 호출 시 로직을 정상적으로 오케스트레이션한다.")
@@ -65,7 +62,8 @@ class StarRoadMapCommandServiceAdapterTest {
         UpdateStarRoadMapCommand command = new UpdateStarRoadMapCommand(1L, 99L, 4);
         StarRoadMap mockStarRoadMap = mock(StarRoadMap.class);
 
-        when(starRoadMapRepository.findById(command.starRoadMapId())).thenReturn(Optional.of(mockStarRoadMap));
+        when(starRoadMapRepository.findById(command.starRoadMapId()))
+                .thenReturn(Optional.of(mockStarRoadMap));
         when(mockStarRoadMap.getUserId()).thenReturn(command.userId());
 
         // when
@@ -82,12 +80,15 @@ class StarRoadMapCommandServiceAdapterTest {
         UpdateStarRoadMapCommand command = new UpdateStarRoadMapCommand(1L, 99L, 4);
         StarRoadMap mockStarRoadMap = mock(StarRoadMap.class);
 
-        when(starRoadMapRepository.findById(command.starRoadMapId())).thenReturn(Optional.of(mockStarRoadMap));
+        when(starRoadMapRepository.findById(command.starRoadMapId()))
+                .thenReturn(Optional.of(mockStarRoadMap));
         when(mockStarRoadMap.getUserId()).thenReturn(2L);
 
         // when & then
-        DomainException exception = assertThrows(DomainException.class,
-                () -> starRoadMapCommandServiceAdapter.update(command));
+        DomainException exception =
+                assertThrows(
+                        DomainException.class,
+                        () -> starRoadMapCommandServiceAdapter.update(command));
         assertEquals(StarRoadMapErrorCode.STAR_ROAD_MAP_NOT_AUTHORIZED, exception.getErrorCode());
         verify(mockStarRoadMap, never()).update(anyInt());
     }
