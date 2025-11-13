@@ -5,7 +5,11 @@ import com.kllhy.roadmap.common.model.AggregateRoot;
 import com.kllhy.roadmap.user.domain.enums.AccountStatus;
 import com.kllhy.roadmap.user.event.UserAccountStatusUpdated;
 import com.kllhy.roadmap.user.exception.UserErrorCode;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.Table;
 import java.time.Instant;
 import java.util.Objects;
 import lombok.AccessLevel;
@@ -14,7 +18,7 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "users")
+@Table(name = "user")
 public class User extends AggregateRoot {
 
     @Getter

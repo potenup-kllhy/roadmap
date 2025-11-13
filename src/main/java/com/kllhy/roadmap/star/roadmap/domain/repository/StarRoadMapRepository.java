@@ -13,8 +13,6 @@ public interface StarRoadMapRepository {
 
     List<StarRoadMap> findByRoadmapId(Long roadmapId);
 
-    Optional<StarRoadMap> findByUserIdAndRoadmapId(Long userId, Long roadmapId);
-
     void deleteByUserIdAndRoadmapId(Long userId, Long roadmapId);
 
     void deleteAllByUserId(Long userId);
