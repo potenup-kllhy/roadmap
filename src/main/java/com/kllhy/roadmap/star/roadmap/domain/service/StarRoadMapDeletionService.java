@@ -3,22 +3,22 @@ package com.kllhy.roadmap.star.roadmap.domain.service;
 import com.kllhy.roadmap.common.annotation.DomainService;
 import com.kllhy.roadmap.common.exception.DomainException;
 import com.kllhy.roadmap.star.roadmap.domain.exception.StarRoadMapErrorCode;
-import com.kllhy.roadmap.star.roadmap.domain.model.StarRoadMap;
-import com.kllhy.roadmap.star.roadmap.domain.model.command.CreateStarRoadMapCommand;
+import com.kllhy.roadmap.star.roadmap.domain.model.command.DeleteStarRoadMapCommand;
 import com.kllhy.roadmap.star.roadmap.domain.repository.StarRoadMapRepository;
 import lombok.RequiredArgsConstructor;
 
 @DomainService
 @RequiredArgsConstructor
-public class StarRoadMapCreationService {
+public class StarRoadMapDeletionService {
 
     private final StarRoadMapRepository starRoadMapRepository;
 
-    public StarRoadMap create(CreateStarRoadMapCommand command) {
-        if (starRoadMapRepository.existsByUserIdAndRoadmapId(
+    public void deleteByUserIdAndRoadmapId(
+            DeleteStarRoadMapCommand command) {
+        if (!starRoadMapRepository.existsByUserIdAndRoadmapId(
                 command.userId(), command.roadmapId())) {
-            throw new DomainException(StarRoadMapErrorCode.STAR_ROAD_MAP_ALREADY_EXISTS);
+            throw new DomainException(StarRoadMapErrorCode.STAR_ROAD_MAP_NOT_FOUND);
         }
-        return StarRoadMap.create(command);
+        starRoadMapRepository.deleteByUserIdAndRoadmapId(command.userId(), command.roadmapId());
     }
 }

@@ -13,15 +13,13 @@ public interface StarRoadMapRepository {
 
     List<StarRoadMap> findByRoadmapId(Long roadmapId);
 
-    List<StarRoadMap> findAll();
+    Optional<StarRoadMap> findByUserIdAndRoadmapId(Long userId, Long roadmapId);
 
-    void deleteById(Long id);
+    void deleteByUserIdAndRoadmapId(Long userId, Long roadmapId);
 
     void deleteAllByUserId(Long userId);
 
     void deleteAllByRoadmapId(Long roadmapId);
-
-    void deleteByUserIdAndRoadmapId(Long userId, Long roadmapId);
 
     boolean existsByUserIdAndRoadmapId(Long userId, Long roadmapId);
 }
