@@ -30,6 +30,7 @@ public class RoadMapJpaRepositoryAdapter implements RoadMapRepository {
         return roadMapJpaRepository.existsById(id);
     }
 
+    @Override
     public Optional<RoadMap> findByIdWithAssociations(long id) {
         return roadMapJpaRepository.findByIdWithAssociations(id);
     }

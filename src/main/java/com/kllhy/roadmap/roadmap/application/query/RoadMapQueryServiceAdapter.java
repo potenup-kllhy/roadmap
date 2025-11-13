@@ -29,4 +29,12 @@ public class RoadMapQueryServiceAdapter implements RoadMapQueryService {
     public boolean existsById(Long id) {
         return roadMapRepository.existsById(id);
     }
+
+    @Override
+    public RoadMapView findByIdWithAssociations(long id) {
+        RoadMap roadMap = roadMapRepository.findByIdWithAssociations(id)
+                .orElseThrow(() -> new DomainException(RoadMapIErrorCode.ROAD_MAP_BAD_REQUEST));
+
+        return RoadMapViewMapper.toView(roadMap);
+    }
 }

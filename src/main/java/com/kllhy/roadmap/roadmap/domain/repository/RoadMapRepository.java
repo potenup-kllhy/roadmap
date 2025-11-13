@@ -9,4 +9,6 @@ public interface RoadMapRepository {
     boolean existsById(long id);
 
     long save(RoadMap roadMap);
+
+    Optional<RoadMap> findByIdWithAssociations(long id);
 }

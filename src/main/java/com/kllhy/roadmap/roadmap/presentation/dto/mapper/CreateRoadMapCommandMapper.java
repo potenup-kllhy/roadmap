@@ -12,7 +12,6 @@ public class CreateRoadMapCommandMapper {
                 request.description(),
                 request.isDraft(),
                 request.categoryId(),
-                request.userId(),
                 Optional.ofNullable(request.topics()).orElseGet(Collections::emptyList).stream()
                         .filter(Objects::nonNull)
                         .map(CreateRoadMapCommandMapper::toCreateTopicCommand)

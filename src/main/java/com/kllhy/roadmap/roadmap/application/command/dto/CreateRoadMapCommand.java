@@ -8,5 +8,4 @@ public record CreateRoadMapCommand(
         String description,
         boolean isDraft,
         long categoryId,
-        long userId,
         List<CreateTopicCommand> topics) {}

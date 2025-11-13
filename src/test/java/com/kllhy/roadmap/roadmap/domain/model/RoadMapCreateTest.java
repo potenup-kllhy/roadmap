@@ -10,7 +10,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
 
-class RoadMapDomainTest {
+class RoadMapCreateTest {
     @Test
     @DisplayName("로드맵 생성에 성공한다")
     void create_success() {
