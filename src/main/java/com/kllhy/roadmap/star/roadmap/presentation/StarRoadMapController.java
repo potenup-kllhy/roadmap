@@ -31,7 +31,8 @@ public class StarRoadMapController {
     private final StarRoadMapQueryService starRoadMapQueryService;
 
     @PostMapping
-    public ResponseEntity<Void> createStarRoadMap(@RequestBody @Valid CreateStarRoadMapRequest request) {
+    public ResponseEntity<Void> createStarRoadMap(
+            @RequestBody @Valid CreateStarRoadMapRequest request) {
         Long starRoadMapId =
                 starRoadMapCommandService.create(
                         request.userId(), request.roadmapId(), request.value());
