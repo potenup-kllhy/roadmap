@@ -108,24 +108,36 @@ public class RoadMap extends AggregateRoot {
     }
 
     private static void addCreateOrUpdateEvents(RoadMap created) {
-        ActiveStatus roadMapActiveStatus = created.isDraft ? ActiveStatus.INACTIVE : ActiveStatus.ACTIVE;
-        EventType roadMapEventType = created.getId() == null ? EventType.CREATED : EventType.UPDATED;
-        created.addDomainEvent(new RoadMapEventOccurred(
-                created.uuid, roadMapEventType, roadMapActiveStatus));
+        ActiveStatus roadMapActiveStatus =
+                created.isDraft ? ActiveStatus.INACTIVE : ActiveStatus.ACTIVE;
+        EventType roadMapEventType =
+                created.getId() == null ? EventType.CREATED : EventType.UPDATED;
+        created.addDomainEvent(
+                new RoadMapEventOccurred(created.uuid, roadMapEventType, roadMapActiveStatus));
 
         for (Topic topic : created.topics) {
             // Topic Event
-            ActiveStatus topicActiveStatus = topic.isDraft() ? ActiveStatus.INACTIVE : ActiveStatus.ACTIVE;
-            EventType topicEventType = topic.getId() == null ? EventType.CREATED : EventType.UPDATED;
-            created.addDomainEvent(new TopicEventOccurred(
-                    created.uuid, topic.getUuid(), topicEventType, topicActiveStatus));
+            ActiveStatus topicActiveStatus =
+                    topic.isDraft() ? ActiveStatus.INACTIVE : ActiveStatus.ACTIVE;
+            EventType topicEventType =
+                    topic.getId() == null ? EventType.CREATED : EventType.UPDATED;
+            created.addDomainEvent(
+                    new TopicEventOccurred(
+                            created.uuid, topic.getUuid(), topicEventType, topicActiveStatus));
 
             // SubTopic Event
             for (SubTopic subTopic : topic.getSubTopics()) {
-                ActiveStatus subTopicActiveStatus = subTopic.getIsDraft() ? ActiveStatus.INACTIVE : ActiveStatus.ACTIVE;
-                EventType subTopicEventType = subTopic.getId() == null ? EventType.CREATED : EventType.UPDATED;
-                created.addDomainEvent(new SubTopicEventOccurred(
-                        created.uuid, topic.getUuid(), subTopic.getUuid(), EventType.CREATED, ActiveStatus.ACTIVE));
+                ActiveStatus subTopicActiveStatus =
+                        subTopic.getIsDraft() ? ActiveStatus.INACTIVE : ActiveStatus.ACTIVE;
+                EventType subTopicEventType =
+                        subTopic.getId() == null ? EventType.CREATED : EventType.UPDATED;
+                created.addDomainEvent(
+                        new SubTopicEventOccurred(
+                                created.uuid,
+                                topic.getUuid(),
+                                subTopic.getUuid(),
+                                EventType.CREATED,
+                                ActiveStatus.ACTIVE));
             }
         }
     }
@@ -151,21 +163,23 @@ public class RoadMap extends AggregateRoot {
                         .filter(topic -> topic.getId() != null)
                         .collect(Collectors.toMap(Topic::getId, topic -> topic));
 
-        List<Topic> sortedUpdatedTopics = updateSpec.updateTopics().stream()
-                .sorted(Comparator.comparing(UpdateTopic::order))
-                .map(spec -> {
-                        if (spec.id() != null) {
-                            Topic existing = remainingTopics.remove(spec.id());
-                            if (existing == null) {
-                                throw new IllegalArgumentException(
-                                        "RoadMap.update: 존재하지 않는 Topic id 입니다.");
-                            }
-                            existing.update(spec);
-                            return existing;
-                        }
-                        return Topic.create(spec);
-                })
-                .toList();
+        List<Topic> sortedUpdatedTopics =
+                updateSpec.updateTopics().stream()
+                        .sorted(Comparator.comparing(UpdateTopic::order))
+                        .map(
+                                spec -> {
+                                    if (spec.id() != null) {
+                                        Topic existing = remainingTopics.remove(spec.id());
+                                        if (existing == null) {
+                                            throw new IllegalArgumentException(
+                                                    "RoadMap.update: 존재하지 않는 Topic id 입니다.");
+                                        }
+                                        existing.update(spec);
+                                        return existing;
+                                    }
+                                    return Topic.create(spec);
+                                })
+                        .toList();
 
         validateTopics(sortedUpdatedTopics);
         topics = sortedUpdatedTopics;

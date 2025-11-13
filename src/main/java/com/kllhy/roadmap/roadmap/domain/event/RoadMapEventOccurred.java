@@ -3,7 +3,6 @@ package com.kllhy.roadmap.roadmap.domain.event;
 import com.kllhy.roadmap.common.event.BaseDomainEvent;
 import com.kllhy.roadmap.roadmap.domain.event.enums.ActiveStatus;
 import com.kllhy.roadmap.roadmap.domain.event.enums.EventType;
-
 import java.util.UUID;
 
 public class RoadMapEventOccurred extends BaseDomainEvent {
