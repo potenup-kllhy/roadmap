@@ -1,3 +1,6 @@
 package com.kllhy.roadmap.star.roadmap.presentation.request;
 
-public record DeleteStarRoadMapRequest(Long userId, Long roadmapId) {}
+import jakarta.validation.constraints.NotNull;
+
+public record DeleteStarRoadMapRequest(@NotNull Long userId, @NotNull Long roadmapId) {
+}

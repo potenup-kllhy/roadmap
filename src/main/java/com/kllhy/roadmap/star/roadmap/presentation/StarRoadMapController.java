@@ -7,6 +7,7 @@ import com.kllhy.roadmap.star.roadmap.presentation.exception.ErrorResponse;
 import com.kllhy.roadmap.star.roadmap.presentation.request.CreateStarRoadMapRequest;
 import com.kllhy.roadmap.star.roadmap.presentation.request.DeleteStarRoadMapRequest;
 import com.kllhy.roadmap.star.roadmap.presentation.request.UpdateStarRoadMapRequest;
+import jakarta.validation.Valid;
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -30,7 +31,7 @@ public class StarRoadMapController {
     private final StarRoadMapQueryService starRoadMapQueryService;
 
     @PostMapping
-    public ResponseEntity<Void> createStarRoadMap(@RequestBody CreateStarRoadMapRequest request) {
+    public ResponseEntity<Void> createStarRoadMap(@RequestBody @Valid CreateStarRoadMapRequest request) {
         Long starRoadMapId =
                 starRoadMapCommandService.create(
                         request.userId(), request.roadmapId(), request.value());
@@ -64,14 +65,14 @@ public class StarRoadMapController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Void> updateStarRoadMap(
-            @PathVariable Long id, @RequestBody UpdateStarRoadMapRequest request) {
+            @PathVariable Long id, @RequestBody @Valid UpdateStarRoadMapRequest request) {
         starRoadMapCommandService.update(id, request.userId(), request.value());
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping
     public ResponseEntity<Void> deleteStarRoadMapByUserAndRoadmap(
-            @RequestBody DeleteStarRoadMapRequest request) {
+            @RequestBody @Valid DeleteStarRoadMapRequest request) {
         starRoadMapCommandService.deleteByUserIdAndRoadmapId(request.userId(), request.roadmapId());
         return ResponseEntity.noContent().build();
     }

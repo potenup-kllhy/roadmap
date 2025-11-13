@@ -1,3 +1,10 @@
 package com.kllhy.roadmap.star.roadmap.presentation.request;
 
-public record UpdateStarRoadMapRequest(Long userId, int value) {}
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
+
+public record UpdateStarRoadMapRequest(
+        @NotNull Long userId,
+        @NotNull @PositiveOrZero int value
+) {
+}
