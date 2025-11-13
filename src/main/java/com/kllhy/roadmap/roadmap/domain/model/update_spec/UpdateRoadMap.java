@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Objects;
 
 public record UpdateRoadMap(
-        // To Do: id?
+        Long id,
         String title,
         String description,
         boolean isDraft,
