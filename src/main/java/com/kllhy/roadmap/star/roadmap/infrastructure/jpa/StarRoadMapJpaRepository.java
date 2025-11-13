@@ -2,6 +2,7 @@ package com.kllhy.roadmap.star.roadmap.infrastructure.jpa;
 
 import com.kllhy.roadmap.star.roadmap.domain.model.StarRoadMap;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface StarRoadMapJpaRepository extends JpaRepository<StarRoadMap, Long> {
@@ -10,11 +11,13 @@ public interface StarRoadMapJpaRepository extends JpaRepository<StarRoadMap, Lon
 
     List<StarRoadMap> findStarRoadMapByRoadMapId(Long roadmapId);
 
+    Optional<StarRoadMap> findByUserIdAndRoadMapId(Long userId, Long roadMapId);
+
+    void deleteByUserIdAndRoadMapId(Long userId, Long roadmapId);
+
     void deleteStarRoadMapsByUserId(Long userId);
 
     void deleteStarRoadMapsByRoadMapId(Long roadmapId);
-
-    void deleteByUserIdAndRoadMapId(Long userId, Long roadmapId);
 
     boolean existsByUserIdAndRoadMapId(Long userId, Long roadmapId);
 }
