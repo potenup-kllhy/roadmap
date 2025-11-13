@@ -2,6 +2,7 @@ package com.kllhy.roadmap.roadmap.domain.model;
 
 import com.kllhy.roadmap.common.model.AggregateRoot;
 import com.kllhy.roadmap.roadmap.domain.model.creation_spec.CreationRoadMap;
+import com.kllhy.roadmap.roadmap.domain.model.creation_spec.CreationTopic;
 import com.kllhy.roadmap.roadmap.domain.model.update_spec.UpdateRoadMap;
 import com.kllhy.roadmap.roadmap.domain.model.update_spec.UpdateTopic;
 import jakarta.persistence.*;
@@ -223,7 +224,7 @@ public class RoadMap extends AggregateRoot {
         }
     }
 
-    public RoadMap cloneAsIs() {
+    public RoadMap cloneAsIs(long userId) {
         if (isDraft || isDeleted) {
             throw new DomainException(RoadMapIErrorCode.ROAD_MAP_CLONE_NOT_ALLOWED);
         }
@@ -238,7 +239,7 @@ public class RoadMap extends AggregateRoot {
         }
 
         CreationRoadMap clonedRoadMap =
-                new CreationRoadMap(title, description, isDraft, categoryId, topics);
+                new CreationRoadMap(title, description, isDraft, categoryId, userId, topics);
         return RoadMap.create(clonedRoadMap);
     }
 

@@ -3,6 +3,7 @@ package com.kllhy.roadmap.roadmap.presentation;
 import com.kllhy.roadmap.common.response.ApiResponse;
 import com.kllhy.roadmap.common.response.SuccessCode;
 import com.kllhy.roadmap.roadmap.application.command.RoadMapCommandService;
+import com.kllhy.roadmap.roadmap.presentation.dto.RoadMapCloneRequest;
 import com.kllhy.roadmap.roadmap.presentation.dto.RoadMapCreateRequest;
 import com.kllhy.roadmap.roadmap.presentation.dto.mapper.CreateRoadMapCommandMapper;
 import jakarta.validation.Valid;
@@ -25,11 +26,13 @@ public class RoadMapController {
         return ApiResponse.of(SuccessCode.SUCCESS, new RoadMapCreateResponse(id));
     }
 
+    record RoadMapCreateResponse(long id) {}
+
     @PostMapping("/{id}/clone")
-    public ResponseEntity<?> cloneRoadMap(@PathVariable("id") long id) {
-        long cloneRoadMapId = roadMapCommandService.cloneRoadMap(id);
+    public ResponseEntity<?> cloneRoadMap(
+            @PathVariable("id") long id, @RequestBody @Valid RoadMapCloneRequest request) {
+        long cloneRoadMapId =
+                roadMapCommandService.cloneRoadMap(id, request.userId(), request.categoryId());
         return ApiResponse.of(SuccessCode.SUCCESS, new RoadMapCreateResponse(cloneRoadMapId));
     }
-
-    record RoadMapCreateResponse(long id) {}
 }

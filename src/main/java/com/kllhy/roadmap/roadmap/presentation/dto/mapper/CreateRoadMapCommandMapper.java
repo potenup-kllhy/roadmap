@@ -7,6 +7,7 @@ import java.util.*;
 public class CreateRoadMapCommandMapper {
     public static CreateRoadMapCommand mapCreateRoadMapCommand(RoadMapCreateRequest request) {
         return new CreateRoadMapCommand(
+                request.userId(),
                 request.title(),
                 request.description(),
                 request.isDraft(),
