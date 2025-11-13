@@ -6,4 +6,6 @@ public interface RoadMapQueryService {
     RoadMapView findById(Long id);
 
     boolean existsById(Long id);
+
+    RoadMapView findByIdWithAssociations(long id);
 }

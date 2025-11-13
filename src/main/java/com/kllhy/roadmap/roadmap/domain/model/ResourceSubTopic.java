@@ -43,7 +43,6 @@ public class ResourceSubTopic extends IdEntity {
         this.order = order;
         this.resourceType = resourceType;
         this.link = link;
-
         this.subTopic = null;
     }
 
@@ -105,5 +104,9 @@ public class ResourceSubTopic extends IdEntity {
         this.subTopic =
                 Objects.requireNonNull(
                         subTopic, "ResourceSubTopic.setSubTopic: 파라미터 subTopic 이 null 입니다");
+    }
+
+    public CreationResourceSubTopic cloneAsIs() {
+        return new CreationResourceSubTopic(name, order, resourceType, link);
     }
 }

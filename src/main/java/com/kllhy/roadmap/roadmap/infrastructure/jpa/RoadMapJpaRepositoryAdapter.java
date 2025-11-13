@@ -1,5 +1,7 @@
 package com.kllhy.roadmap.roadmap.infrastructure.jpa;
 
+import com.kllhy.roadmap.common.exception.DomainException;
+import com.kllhy.roadmap.roadmap.domain.exception.RoadMapIErrorCode;
 import com.kllhy.roadmap.roadmap.domain.model.RoadMap;
 import com.kllhy.roadmap.roadmap.domain.repository.RoadMapRepository;
 import java.util.Optional;
@@ -10,11 +12,17 @@ import org.springframework.stereotype.Repository;
 @RequiredArgsConstructor
 public class RoadMapJpaRepositoryAdapter implements RoadMapRepository {
     private final RoadMapJpaRepository roadMapJpaRepository;
+    private final TopicJpaRepository topicJpaRepository;
+    private final SubTopicJpaRepository subTopicJpaRepository;
 
     @Override
     public Optional<RoadMap> findById(long id) {
-        // TODO: 현재 LAZY 전략으로 전체 조회가 불가능한데, 추후 한번에 전체 조회 가능하도록 변경해 놓겠습니다
         return roadMapJpaRepository.findById(id);
+    }
+
+    @Override
+    public long save(RoadMap roadMap) {
+        return roadMapJpaRepository.save(roadMap).getId();
     }
 
     @Override
@@ -22,7 +30,17 @@ public class RoadMapJpaRepositoryAdapter implements RoadMapRepository {
         return roadMapJpaRepository.existsById(id);
     }
 
-    public Optional<RoadMap> findByIdWithAssociations(long id) {
-        return roadMapJpaRepository.findByIdWithAssociations(id);
+    @Override
+    public RoadMap findByIdWithAssociations(long id) {
+        RoadMap roadMap =
+                roadMapJpaRepository
+                        .findWithTopics(id)
+                        .orElseThrow(
+                                () -> new DomainException(RoadMapIErrorCode.ROAD_MAP_NOT_FOUND));
+
+        topicJpaRepository.findAllWithResourcesByRoadMapId(id);
+        topicJpaRepository.findAllWithSubTopicsByRoadMapId(id);
+        subTopicJpaRepository.findAllWithResourceSubTopicsByRoadMapId(id);
+        return roadMap;
     }
 }
