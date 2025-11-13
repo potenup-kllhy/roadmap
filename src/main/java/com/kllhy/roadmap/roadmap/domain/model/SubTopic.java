@@ -62,11 +62,9 @@ public class SubTopic extends IdAuditEntity {
     @OrderBy("order ASC")
     private List<ResourceSubTopic> resources = new ArrayList<>();
 
-    @Transient
-    private boolean isUpdatedEventAvailable = false;
+    @Transient private boolean isUpdatedEventAvailable = false;
 
-    @Transient
-    private boolean isDeletedEventAvailable = false;
+    @Transient private boolean isDeletedEventAvailable = false;
 
     private SubTopic(
             UUID uuid,
@@ -182,19 +180,21 @@ public class SubTopic extends IdAuditEntity {
                         .filter(resource -> resource.getId() != null)
                         .collect(Collectors.toMap(ResourceSubTopic::getId, resource -> resource));
 
-        updateSpec.updateResourceSubTopics()
-                .forEach(spec -> {
-                        if (spec.id() != null) {
-                            ResourceSubTopic existingResource =
-                                    remainingResources.remove(spec.id());
-                            if (existingResource == null) {
-                                throw new IllegalArgumentException(
-                                        "SubTopic.update: 존재하지 않는 ResourceSubTopic id 입니다.");
+        updateSpec
+                .updateResourceSubTopics()
+                .forEach(
+                        spec -> {
+                            if (spec.id() != null) {
+                                ResourceSubTopic existingResource =
+                                        remainingResources.remove(spec.id());
+                                if (existingResource == null) {
+                                    throw new IllegalArgumentException(
+                                            "SubTopic.update: 존재하지 않는 ResourceSubTopic id 입니다.");
+                                }
+                                existingResource.update(spec);
                             }
-                            existingResource.update(spec);
-                        }
-                        resources.add(ResourceSubTopic.create(spec));
-                });
+                            resources.add(ResourceSubTopic.create(spec));
+                        });
 
         resources.removeAll(remainingResources.values());
         resources.sort(Comparator.comparing(ResourceSubTopic::getOrder));

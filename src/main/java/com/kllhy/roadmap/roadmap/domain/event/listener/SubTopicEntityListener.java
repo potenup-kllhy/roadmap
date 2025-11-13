@@ -10,13 +10,13 @@ public class SubTopicEntityListener {
 
     @PostPersist
     public void onPostPersist(SubTopic subTopic) {
-        SubTopicEventOccurred event = new SubTopicEventOccurred(
-                subTopic.getTopic().getRoadMap().getId(),
-                subTopic.getTopic().getId(),
-                subTopic.getId(),
-                EventType.CREATED,
-                subTopic.getIsDraft() ? ActiveStatus.INACTIVE : ActiveStatus.ACTIVE
-        );
+        SubTopicEventOccurred event =
+                new SubTopicEventOccurred(
+                        subTopic.getTopic().getRoadMap().getId(),
+                        subTopic.getTopic().getId(),
+                        subTopic.getId(),
+                        EventType.CREATED,
+                        subTopic.getIsDraft() ? ActiveStatus.INACTIVE : ActiveStatus.ACTIVE);
 
         SpringDomainEventPublisher.publish(event);
     }

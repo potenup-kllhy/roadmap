@@ -10,12 +10,12 @@ public class TopicEntityListener {
 
     @PostPersist
     public void onPostPersist(Topic topic) {
-        TopicEventOccurred event = new TopicEventOccurred(
-                topic.getRoadMap().getId(),
-                topic.getId(),
-                EventType.CREATED,
-                topic.isDraft() ? ActiveStatus.INACTIVE : ActiveStatus.ACTIVE
-        );
+        TopicEventOccurred event =
+                new TopicEventOccurred(
+                        topic.getRoadMap().getId(),
+                        topic.getId(),
+                        EventType.CREATED,
+                        topic.isDraft() ? ActiveStatus.INACTIVE : ActiveStatus.ACTIVE);
 
         SpringDomainEventPublisher.publish(event);
     }

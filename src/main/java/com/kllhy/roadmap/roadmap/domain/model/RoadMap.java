@@ -2,18 +2,16 @@ package com.kllhy.roadmap.roadmap.domain.model;
 
 import com.kllhy.roadmap.common.exception.DomainException;
 import com.kllhy.roadmap.common.model.AggregateRoot;
-import com.kllhy.roadmap.roadmap.domain.event.listener.RoadMapEntityListener;
 import com.kllhy.roadmap.roadmap.domain.event.RoadMapEventOccurred;
 import com.kllhy.roadmap.roadmap.domain.event.SubTopicEventOccurred;
 import com.kllhy.roadmap.roadmap.domain.event.TopicEventOccurred;
 import com.kllhy.roadmap.roadmap.domain.event.enums.ActiveStatus;
 import com.kllhy.roadmap.roadmap.domain.event.enums.EventType;
+import com.kllhy.roadmap.roadmap.domain.event.listener.RoadMapEntityListener;
 import com.kllhy.roadmap.roadmap.domain.exception.RoadMapIErrorCode;
 import com.kllhy.roadmap.roadmap.domain.model.creation_spec.CreationRoadMap;
 import com.kllhy.roadmap.roadmap.domain.model.creation_spec.CreationTopic;
 import com.kllhy.roadmap.roadmap.domain.model.update_spec.UpdateRoadMap;
-import com.kllhy.roadmap.roadmap.domain.model.update_spec.UpdateSubTopic;
-import com.kllhy.roadmap.roadmap.domain.model.update_spec.UpdateTopic;
 import jakarta.persistence.*;
 import java.sql.Timestamp;
 import java.time.Instant;
@@ -56,10 +54,7 @@ public class RoadMap extends AggregateRoot {
     @Getter
     private Long categoryId;
 
-    @OneToMany(
-            mappedBy = "roadMap",
-            cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "roadMap", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Topic> topics = new ArrayList<>();
 
     private RoadMap(
@@ -134,18 +129,20 @@ public class RoadMap extends AggregateRoot {
                         .filter(topic -> topic.getId() != null)
                         .collect(Collectors.toMap(Topic::getId, topic -> topic));
 
-        updateSpec.updateTopics()
-                .forEach(spec -> {
-                        if (spec.id() != null) {
-                            Topic existingTopic = wouldBeRemovedTopic.remove(spec.id());
-                            if (existingTopic == null) {
-                                throw new IllegalArgumentException(
-                                        "RoadMap.update: 존재하지 않는 Topic id 입니다.");
+        updateSpec
+                .updateTopics()
+                .forEach(
+                        spec -> {
+                            if (spec.id() != null) {
+                                Topic existingTopic = wouldBeRemovedTopic.remove(spec.id());
+                                if (existingTopic == null) {
+                                    throw new IllegalArgumentException(
+                                            "RoadMap.update: 존재하지 않는 Topic id 입니다.");
+                                }
+                                existingTopic.update(spec);
                             }
-                            existingTopic.update(spec);
-                        }
-                        topics.add(Topic.create(spec));
-                });
+                            topics.add(Topic.create(spec));
+                        });
 
         topics.forEach(Topic::softDelete);
         topics.sort(Comparator.comparing(Topic::getOrder));
@@ -157,15 +154,23 @@ public class RoadMap extends AggregateRoot {
 
     private void triggerTopicEvent(Topic topic) {
         if (topic.isDeletedEventAvailable()) {
-            addDomainEvent(new TopicEventOccurred(id, topic.getId(), EventType.DELETED,
-                    topic.isDraft() ? ActiveStatus.INACTIVE : ActiveStatus.ACTIVE));
+            addDomainEvent(
+                    new TopicEventOccurred(
+                            id,
+                            topic.getId(),
+                            EventType.DELETED,
+                            topic.isDraft() ? ActiveStatus.INACTIVE : ActiveStatus.ACTIVE));
 
             return;
         }
 
         if (topic.isUpdatedEventAvailable()) {
-            addDomainEvent(new TopicEventOccurred(id, topic.getId(), EventType.UPDATED,
-                    topic.isDraft() ? ActiveStatus.INACTIVE : ActiveStatus.ACTIVE));
+            addDomainEvent(
+                    new TopicEventOccurred(
+                            id,
+                            topic.getId(),
+                            EventType.UPDATED,
+                            topic.isDraft() ? ActiveStatus.INACTIVE : ActiveStatus.ACTIVE));
         }
 
         for (SubTopic subTopic : topic.getSubTopics()) {
@@ -183,18 +188,21 @@ public class RoadMap extends AggregateRoot {
         if (subTopic.isDeletedEventAvailable()) {
             eventType = EventType.DELETED;
         }
-        addDomainEvent(new SubTopicEventOccurred(
-                id,
-                subTopic.getTopic().getId(),
-                subTopic.getId(),
-                eventType,
-                subTopic.getIsDraft() ? ActiveStatus.INACTIVE : ActiveStatus.ACTIVE)
-        );
+        addDomainEvent(
+                new SubTopicEventOccurred(
+                        id,
+                        subTopic.getTopic().getId(),
+                        subTopic.getId(),
+                        eventType,
+                        subTopic.getIsDraft() ? ActiveStatus.INACTIVE : ActiveStatus.ACTIVE));
     }
 
     private void roadMapUpdated() {
-        addDomainEvent(new RoadMapEventOccurred(id, EventType.UPDATED,
-                isDraft ? ActiveStatus.INACTIVE : ActiveStatus.ACTIVE));
+        addDomainEvent(
+                new RoadMapEventOccurred(
+                        id,
+                        EventType.UPDATED,
+                        isDraft ? ActiveStatus.INACTIVE : ActiveStatus.ACTIVE));
 
         for (Topic topic : topics) {
             triggerTopicEvent(topic);
@@ -202,11 +210,11 @@ public class RoadMap extends AggregateRoot {
     }
 
     private void roadMapDeleted() {
-        addDomainEvent(new RoadMapEventOccurred(
-                id,
-                EventType.DELETED,
-                isDraft ? ActiveStatus.INACTIVE : ActiveStatus.ACTIVE
-        ));
+        addDomainEvent(
+                new RoadMapEventOccurred(
+                        id,
+                        EventType.DELETED,
+                        isDraft ? ActiveStatus.INACTIVE : ActiveStatus.ACTIVE));
     }
 
     private static void validateTitle(String title) {

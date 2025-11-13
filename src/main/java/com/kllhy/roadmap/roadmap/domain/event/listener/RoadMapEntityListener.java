@@ -10,11 +10,11 @@ public class RoadMapEntityListener {
 
     @PostPersist
     public void onPostPersist(RoadMap roadMap) {
-        RoadMapEventOccurred event = new RoadMapEventOccurred(
-                roadMap.getId(),
-                EventType.CREATED,
-                roadMap.isDraft() ? ActiveStatus.INACTIVE : ActiveStatus.ACTIVE
-        );
+        RoadMapEventOccurred event =
+                new RoadMapEventOccurred(
+                        roadMap.getId(),
+                        EventType.CREATED,
+                        roadMap.isDraft() ? ActiveStatus.INACTIVE : ActiveStatus.ACTIVE);
 
         SpringDomainEventPublisher.publish(event);
     }

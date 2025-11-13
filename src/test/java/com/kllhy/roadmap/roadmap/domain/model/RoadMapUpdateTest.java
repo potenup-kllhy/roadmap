@@ -1,20 +1,20 @@
-//package com.kllhy.roadmap.roadmap.domain.model;
+// package com.kllhy.roadmap.roadmap.domain.model;
 //
-//import static org.assertj.core.api.Assertions.assertThat;
-//import static org.assertj.core.api.Assertions.assertThatThrownBy;
+// import static org.assertj.core.api.Assertions.assertThat;
+// import static org.assertj.core.api.Assertions.assertThatThrownBy;
 //
-//import com.fasterxml.jackson.databind.ObjectMapper;
-//import com.fasterxml.jackson.databind.SerializationFeature;
-//import com.kllhy.roadmap.roadmap.domain.model.creation_spec.*;
-//import com.kllhy.roadmap.roadmap.domain.model.enums.ImportanceLevel;
-//import com.kllhy.roadmap.roadmap.domain.model.enums.ResourceType;
-//import com.kllhy.roadmap.roadmap.domain.model.update_spec.*;
-//import java.lang.reflect.Field;
-//import java.util.List;
-//import org.junit.jupiter.api.DisplayName;
-//import org.junit.jupiter.api.Test;
+// import com.fasterxml.jackson.databind.ObjectMapper;
+// import com.fasterxml.jackson.databind.SerializationFeature;
+// import com.kllhy.roadmap.roadmap.domain.model.creation_spec.*;
+// import com.kllhy.roadmap.roadmap.domain.model.enums.ImportanceLevel;
+// import com.kllhy.roadmap.roadmap.domain.model.enums.ResourceType;
+// import com.kllhy.roadmap.roadmap.domain.model.update_spec.*;
+// import java.lang.reflect.Field;
+// import java.util.List;
+// import org.junit.jupiter.api.DisplayName;
+// import org.junit.jupiter.api.Test;
 //
-//public class RoadMapUpdateTest {
+// public class RoadMapUpdateTest {
 //
 //    @Test
 //    @DisplayName("로드맵 업데이트 시 기존 토픽과 리소스를 비교하여 동기화한다")
@@ -71,7 +71,8 @@
 //                                                                        "서브 리소스 수정",
 //                                                                        1,
 //                                                                        ResourceType.OFFICIAL,
-//                                                                        "https://sub.example"))))),
+//
+// "https://sub.example"))))),
 //                                new UpdateTopic(
 //                                        null,
 //                                        "토픽 2",
@@ -169,7 +170,8 @@
 //                                                                        "서브 리소스",
 //                                                                        1,
 //                                                                        ResourceType.POST,
-//                                                                        "https://sub.example.com")))))));
+//
+// "https://sub.example.com")))))));
 //
 //        return RoadMap.create(creationSpec);
 //    }
@@ -191,4 +193,4 @@
 //        }
 //        throw new NoSuchFieldException("id");
 //    }
-//}
+// }
