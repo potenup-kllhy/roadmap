@@ -1,4 +1,4 @@
-package com.kllhy.roadmap.roadmap.infrastructure;
+package com.kllhy.roadmap.roadmap.infrastructure.jpa;
 
 import com.kllhy.roadmap.roadmap.domain.model.RoadMap;
 import com.kllhy.roadmap.roadmap.domain.repository.RoadMapRepository;
@@ -20,5 +20,9 @@ public class RoadMapJpaRepositoryAdapter implements RoadMapRepository {
     @Override
     public boolean existsById(long id) {
         return roadMapJpaRepository.existsById(id);
+    }
+
+    public Optional<RoadMap> findByIdWithAssociations(long id) {
+        return roadMapJpaRepository.findByIdWithAssociations(id);
     }
 }
