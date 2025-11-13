@@ -23,11 +23,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class StarRoadMapQueryServiceAdapterTest {
 
-    @InjectMocks
-    private StarRoadMapQueryServiceAdapter starRoadMapQueryServiceAdapter;
+    @InjectMocks private StarRoadMapQueryServiceAdapter starRoadMapQueryServiceAdapter;
 
-    @Mock
-    private StarRoadMapRepository starRoadMapRepository;
+    @Mock private StarRoadMapRepository starRoadMapRepository;
 
     @Test
     @DisplayName("ID로 별점 조회 시, 존재하는 경우 StarRoadMapView를 반환한다.")
@@ -48,8 +46,7 @@ class StarRoadMapQueryServiceAdapterTest {
         assertAll(
                 () -> assertEquals(10L, result.userId()),
                 () -> assertEquals(100L, result.roadMapId()),
-                () -> assertEquals(5, result.value())
-        );
+                () -> assertEquals(5, result.value()));
     }
 
     @Test
@@ -60,10 +57,10 @@ class StarRoadMapQueryServiceAdapterTest {
         when(starRoadMapRepository.findById(starId)).thenReturn(Optional.empty());
 
         // when & then
-        DomainException exception = assertThrows(
-                DomainException.class,
-                () -> starRoadMapQueryServiceAdapter.getById(starId)
-        );
+        DomainException exception =
+                assertThrows(
+                        DomainException.class,
+                        () -> starRoadMapQueryServiceAdapter.getById(starId));
         assertEquals(StarRoadMapErrorCode.STAR_ROAD_MAP_NOT_FOUND, exception.getErrorCode());
     }
 

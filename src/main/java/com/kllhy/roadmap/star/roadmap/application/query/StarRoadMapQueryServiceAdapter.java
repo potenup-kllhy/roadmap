@@ -10,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -23,30 +22,22 @@ public class StarRoadMapQueryServiceAdapter implements StarRoadMapQueryService {
         return starRoadMapRepository
                 .findById(starRoadMapId)
                 .map(this::toView)
-                .orElseThrow(() -> new DomainException(StarRoadMapErrorCode.STAR_ROAD_MAP_NOT_FOUND));
+                .orElseThrow(
+                        () -> new DomainException(StarRoadMapErrorCode.STAR_ROAD_MAP_NOT_FOUND));
     }
 
     @Override
     public List<StarRoadMapView> getAllStarByUserId(Long userId) {
-        return starRoadMapRepository.findByUserId(userId)
-                .stream()
-                .map(this::toView)
-                .toList();
+        return starRoadMapRepository.findByUserId(userId).stream().map(this::toView).toList();
     }
 
     @Override
     public List<StarRoadMapView> getAllStarByRoadMapId(Long roadMapId) {
-        return starRoadMapRepository.findByRoadmapId(roadMapId)
-                .stream()
-                .map(this::toView)
-                .toList();
+        return starRoadMapRepository.findByRoadmapId(roadMapId).stream().map(this::toView).toList();
     }
 
     private StarRoadMapView toView(StarRoadMap starRoadMap) {
         return new StarRoadMapView(
-                starRoadMap.getUserId(),
-                starRoadMap.getRoadMapId(),
-                starRoadMap.getValue()
-        );
+                starRoadMap.getUserId(), starRoadMap.getRoadMapId(), starRoadMap.getValue());
     }
 }

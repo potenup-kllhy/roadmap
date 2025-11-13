@@ -46,8 +46,7 @@ public class StarRoadMapController {
     @GetMapping
     public ResponseEntity<?> getStarRoadMaps(
             @RequestParam(required = false) Long userId,
-            @RequestParam(required = false) Long roadmapId
-    ) {
+            @RequestParam(required = false) Long roadmapId) {
         if (userId != null) {
             var starRoadMapViews = starRoadMapQueryService.getAllStarByUserId(userId);
             return ResponseEntity.ok(starRoadMapViews);
@@ -57,10 +56,11 @@ public class StarRoadMapController {
             return ResponseEntity.ok(starRoadMapViews);
         }
 
-        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST, "Either userId or roadmapId must be provided.");
+        ErrorResponse errorResponse =
+                new ErrorResponse(
+                        HttpStatus.BAD_REQUEST, "Either userId or roadmapId must be provided.");
         return ResponseEntity.badRequest().body(errorResponse);
     }
-
 
     @PutMapping("/{id}")
     public ResponseEntity<Void> updateStarRoadMap(
