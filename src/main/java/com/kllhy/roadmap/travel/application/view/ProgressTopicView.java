@@ -8,7 +8,7 @@ public record ProgressTopicView(
         Long progressTopicId,
         Long topicId,
         ProgressStatus status,
-        List<ProgressSubTopicView> progressSubTopicViews) {
+        List<ProgressSubTopicView> progressSubTopics) {
     public static ProgressTopicView of(ProgressTopic progressTopic) {
 
         List<ProgressSubTopicView> subTopicViews =
