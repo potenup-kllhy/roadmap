@@ -30,12 +30,13 @@ public class TravelServiceAdapter implements TravelService {
     private final TravelUpdateService travelUpdateService;
 
     @Override
-    public void create(Long userId, Long roadmapId) {
+    public Long create(Long userId, Long roadmapId) {
         UserView user = userService.getByUser(userId);
         RoadMapView roadmap = roadMapQueryService.findById(roadmapId);
 
         Travel travel = travelCreationService.create(user, roadmap);
         travelRepository.save(travel);
+        return travel.getId();
     }
 
     @Override
