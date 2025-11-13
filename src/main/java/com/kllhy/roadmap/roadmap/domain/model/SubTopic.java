@@ -20,6 +20,7 @@ import lombok.NoArgsConstructor;
 public class SubTopic extends IdAuditEntity {
 
     @Column(name = "uuid", nullable = false, unique = true)
+    @Getter
     private UUID uuid;
 
     @Column(nullable = false)

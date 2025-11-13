@@ -18,6 +18,7 @@ import lombok.NoArgsConstructor;
 public class RoadMap extends AggregateRoot {
 
     @Column(name = "uuid", nullable = false, unique = true)
+    @Getter
     private UUID uuid;
 
     @Column(name = "title", nullable = false)
