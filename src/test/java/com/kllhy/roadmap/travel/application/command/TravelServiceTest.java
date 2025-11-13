@@ -1,17 +1,19 @@
-package com.kllhy.roadmap.travel.application;
+package com.kllhy.roadmap.travel.application.command;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import com.kllhy.roadmap.roadmap.application.query.RoadMapQueryService;
 import com.kllhy.roadmap.roadmap.application.query.dto.RoadMapView;
 import com.kllhy.roadmap.roadmap.application.query.dto.SubTopicView;
 import com.kllhy.roadmap.roadmap.application.query.dto.TopicView;
+import com.kllhy.roadmap.roadmap.domain.event.enums.ActiveStatus;
 import com.kllhy.roadmap.roadmap.domain.model.enums.ImportanceLevel;
-import com.kllhy.roadmap.travel.application.command.TravelServiceAdapter;
+import com.kllhy.roadmap.travel.application.service.command.TravelServiceAdapter;
 import com.kllhy.roadmap.travel.application.view.TravelView;
+import com.kllhy.roadmap.travel.domain.model.ProgressSubTopic;
+import com.kllhy.roadmap.travel.domain.model.ProgressTopic;
 import com.kllhy.roadmap.travel.domain.model.Travel;
 import com.kllhy.roadmap.travel.domain.model.command.ProgressSubTopicCommand;
 import com.kllhy.roadmap.travel.domain.model.command.ProgressTopicCommand;
@@ -26,6 +28,8 @@ import com.kllhy.roadmap.travel.presentation.request.TravelUpdateRequest;
 import com.kllhy.roadmap.user.domain.enums.AccountStatus;
 import com.kllhy.roadmap.user.service.UserService;
 import com.kllhy.roadmap.user.service.view.UserView;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.IntStream;
@@ -108,6 +112,36 @@ class TravelServiceTest {
                                                         .toList()))
                         .toList();
         return Travel.create(new TravelCommand(user.id(), rm.id(), topicCmds));
+    }
+
+    private static Travel makeTravel(
+            long userId, long roadmapId, List<ProgressTopicCommand> topics) {
+        return Travel.create(new TravelCommand(userId, roadmapId, topics));
+    }
+
+    private static ProgressTopicCommand topicOnly(long topicId) {
+        // subtopic 없이 topic만
+        return new ProgressTopicCommand(topicId, List.of());
+    }
+
+    private static ProgressTopicCommand topicWithSubs(long topicId, long... subIds) {
+        var subs = Arrays.stream(subIds).mapToObj(ProgressSubTopicCommand::new).toList();
+        return new ProgressTopicCommand(topicId, subs);
+    }
+
+    private static ProgressTopic findTopic(Travel t, long topicId) {
+        return t.getTopics().stream()
+                .filter(tp -> tp.getTopicId().equals(topicId))
+                .findFirst()
+                .orElseThrow();
+    }
+
+    private static ProgressSubTopic findSub(Travel t, long topicId, long subId) {
+        var topic = findTopic(t, topicId);
+        return topic.getSubTopics().stream()
+                .filter(st -> st.getSubTopicId().equals(subId))
+                .findFirst()
+                .orElseThrow();
     }
 
     @Test
@@ -220,5 +254,120 @@ class TravelServiceTest {
                         .findFirst()
                         .orElseThrow();
         assertThat(sub12.status()).isEqualTo(ProgressStatus.IN_PROGRESS);
+    }
+
+    @Test
+    @DisplayName("syncArchivedOnRoadmap: 같은 로드맵의 모든 Travel이 활성/비활성 반영")
+    void syncArchivedOnRoadmap() {
+        long roadmapId = 100L;
+
+        var t1 = makeTravel(1L, roadmapId, List.of(topicOnly(10L)));
+        var t2 = makeTravel(2L, roadmapId, List.of(topicOnly(20L)));
+        when(travelRepository.findAllByRoadMapId(roadmapId)).thenReturn(List.of(t1, t2));
+
+        service.syncArchivedOnRoadmap(roadmapId, ActiveStatus.INACTIVE);
+
+        assertThat(t1.isArchived()).isTrue();
+        assertThat(t2.isArchived()).isTrue();
+
+        // 다시 활성화
+        service.syncArchivedOnRoadmap(roadmapId, ActiveStatus.ACTIVE);
+        assertThat(t1.isArchived()).isFalse();
+        assertThat(t2.isArchived()).isFalse();
+
+        verify(travelRepository, times(2)).findAllByRoadMapId(roadmapId);
+    }
+
+    @Test
+    @DisplayName("syncArchivedOnTopic: 해당 topicId 가진 모든 Travel의 해당 토픽만 활성/비활성 반영")
+    void syncArchivedOnTopic() {
+        long topicId = 10L;
+
+        var t = makeTravel(1L, 200L, List.of(topicOnly(10L), topicOnly(20L)));
+        when(travelRepository.findAllByTopicId(topicId)).thenReturn(List.of(t));
+
+        // 비활성화
+        service.syncArchivedOnTopic(topicId, ActiveStatus.INACTIVE);
+        assertThat(findTopic(t, 10L).isArchived()).isTrue();
+        assertThat(findTopic(t, 20L).isArchived()).isFalse(); // 다른 토픽 영향 없음
+
+        // 활성화
+        service.syncArchivedOnTopic(topicId, ActiveStatus.ACTIVE);
+        assertThat(findTopic(t, 10L).isArchived()).isFalse();
+
+        verify(travelRepository, times(2)).findAllByTopicId(topicId);
+    }
+
+    @Test
+    @DisplayName("syncCreateOnTopic: 해당 topicId가 있는 모든 Travel에 topic 생성 위임")
+    void syncCreateOnTopic() {
+        long topicId = 99L;
+
+        var t1 = makeTravel(1L, 300L, List.of(topicOnly(10L)));
+        var t2 = makeTravel(2L, 300L, List.of(topicOnly(20L)));
+        when(travelRepository.findAllByTopicId(topicId)).thenReturn(List.of(t1, t2));
+
+        service.syncCreateOnTopic(topicId);
+
+        verify(travelCreationService).createTopic(List.of(t1, t2), topicId);
+    }
+
+    @Test
+    @DisplayName(
+            "syncArchivedOnSubTopic: subTopicId가 속한 모든 Travel에서 해당 (topicId, subTopicId)만 활성/비활성")
+    void syncArchivedOnSubTopic() {
+        long topicId = 10L;
+        long subId = 101L;
+
+        var t1 =
+                makeTravel(
+                        1L,
+                        400L,
+                        List.of(topicWithSubs(10L, 100L, 101L, 102L), topicWithSubs(20L, 201L)));
+        var t2 =
+                makeTravel(
+                        2L,
+                        400L,
+                        List.of(
+                                topicWithSubs(10L, 101L), // 같은 subId 포함
+                                topicWithSubs(30L, 301L)));
+
+        // findTravelIdsBySubTopicIds → findByIdIn 체인 스텁
+        when(travelRepository.findTravelIdsBySubTopicIds(List.of(subId)))
+                .thenReturn(List.of(1L, 2L)); // 어떤 값이든 상관없음(테스트용)
+        when(travelRepository.findByIdIn(any(Collection.class))).thenReturn(List.of(t1, t2));
+
+        // 비활성화
+        service.syncArchivedOnSubTopic(topicId, subId, ActiveStatus.INACTIVE);
+
+        assertThat(findSub(t1, 10L, 101L).isArchived()).isTrue();
+        assertThat(findSub(t1, 10L, 100L).isArchived()).isFalse(); // 다른 sub는 영향 X
+        assertThat(findSub(t2, 10L, 101L).isArchived()).isTrue();
+
+        // 활성화
+        service.syncArchivedOnSubTopic(topicId, subId, ActiveStatus.ACTIVE);
+        assertThat(findSub(t1, 10L, 101L).isArchived()).isFalse();
+        assertThat(findSub(t2, 10L, 101L).isArchived()).isFalse();
+
+        verify(travelRepository, times(2)).findTravelIdsBySubTopicIds(List.of(subId));
+        verify(travelRepository, times(2)).findByIdIn(any(Collection.class));
+    }
+
+    @Test
+    @DisplayName("syncCreateOnSubTopic: subTopicId가 속한 모든 Travel에 subTopic 생성 위임")
+    void syncCreateOnSubTopic() {
+        long topicId = 10L;
+        long subId = 555L;
+
+        var t1 = makeTravel(1L, 500L, List.of(topicOnly(10L)));
+        var t2 = makeTravel(2L, 500L, List.of(topicOnly(10L), topicOnly(20L)));
+
+        when(travelRepository.findTravelIdsBySubTopicIds(List.of(subId)))
+                .thenReturn(List.of(11L, 22L));
+        when(travelRepository.findByIdIn(List.of(11L, 22L))).thenReturn(List.of(t1, t2));
+
+        service.syncCreateOnSubTopic(topicId, subId);
+
+        verify(travelCreationService).createSubTopic(List.of(t1, t2), topicId, subId);
     }
 }
