@@ -1,6 +1,8 @@
 package com.kllhy.roadmap.travel.domain.repository;
 
 import com.kllhy.roadmap.travel.domain.model.Travel;
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,4 +20,12 @@ public interface TravelRepository {
     Travel save(Travel travel);
 
     boolean existTravelById(Long id);
+
+    List<Travel> findAllByRoadMapId(Long roadmapId);
+
+    List<Travel> findAllByTopicId(Long topicId);
+
+    List<Long> findTravelIdsBySubTopicIds(Collection<Long> ids);
+
+    List<Travel> findByIdIn(Collection<Long> ids);
 }

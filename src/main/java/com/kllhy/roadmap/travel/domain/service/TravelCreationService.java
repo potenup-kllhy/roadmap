@@ -42,4 +42,14 @@ public class TravelCreationService {
 
         return Travel.create(travelCommand);
     }
+
+    public void createTopic(List<Travel> travels, Long topicId) {
+        var topicCommand = ProgressTopicCommand.ofTopicOnly(topicId);
+        travels.forEach(travel -> travel.addTopics(List.of(topicCommand)));
+    }
+
+    public void createSubTopic(List<Travel> travels, Long topicId, Long subTopicId) {
+        var subTopicCommand = new ProgressSubTopicCommand(subTopicId);
+        travels.forEach(travel -> travel.addSubTopics(topicId, List.of(subTopicCommand)));
+    }
 }
