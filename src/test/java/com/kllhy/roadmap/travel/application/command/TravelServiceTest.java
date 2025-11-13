@@ -2,7 +2,9 @@ package com.kllhy.roadmap.travel.application.command;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import com.kllhy.roadmap.roadmap.application.query.RoadMapQueryService;
 import com.kllhy.roadmap.roadmap.application.query.dto.RoadMapView;
@@ -249,7 +251,7 @@ class TravelServiceTest {
                         .findFirst()
                         .orElseThrow();
         var sub12 =
-                topic10.progressSubTopicViews().stream()
+                topic10.progressSubTopics().stream()
                         .filter(sv -> sv.subTopicId().equals(12L))
                         .findFirst()
                         .orElseThrow();

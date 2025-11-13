@@ -26,17 +26,12 @@ public class StarRoadMapRepositoryAdapter implements StarRoadMapRepository {
 
     @Override
     public List<StarRoadMap> findByUserId(Long userId) {
-        return starRoadMapJpaRepository.findStarRoadMapByUserId(userId);
+        return starRoadMapJpaRepository.findByUserId(userId);
     }
 
     @Override
     public List<StarRoadMap> findByRoadmapId(Long roadmapId) {
-        return starRoadMapJpaRepository.findStarRoadMapByRoadMapId(roadmapId);
-    }
-
-    @Override
-    public Optional<StarRoadMap> findByUserIdAndRoadmapId(Long userId, Long roadmapId) {
-        return starRoadMapJpaRepository.findByUserIdAndRoadMapId(userId, roadmapId);
+        return starRoadMapJpaRepository.findByRoadMapId(roadmapId);
     }
 
     @Override

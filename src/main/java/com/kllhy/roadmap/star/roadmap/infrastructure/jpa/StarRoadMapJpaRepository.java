@@ -2,16 +2,12 @@ package com.kllhy.roadmap.star.roadmap.infrastructure.jpa;
 
 import com.kllhy.roadmap.star.roadmap.domain.model.StarRoadMap;
 import java.util.List;
-import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface StarRoadMapJpaRepository extends JpaRepository<StarRoadMap, Long> {
+    List<StarRoadMap> findByUserId(Long userId);
 
-    List<StarRoadMap> findStarRoadMapByUserId(Long userId);
-
-    List<StarRoadMap> findStarRoadMapByRoadMapId(Long roadmapId);
-
-    Optional<StarRoadMap> findByUserIdAndRoadMapId(Long userId, Long roadMapId);
+    List<StarRoadMap> findByRoadMapId(Long roadmapId);
 
     void deleteByUserIdAndRoadMapId(Long userId, Long roadmapId);
 
