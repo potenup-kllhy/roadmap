@@ -1,5 +1,7 @@
 package com.kllhy.roadmap.roadmap.infrastructure.jpa;
 
+import com.kllhy.roadmap.common.exception.DomainException;
+import com.kllhy.roadmap.roadmap.domain.exception.RoadMapIErrorCode;
 import com.kllhy.roadmap.roadmap.domain.model.RoadMap;
 import com.kllhy.roadmap.roadmap.domain.repository.RoadMapRepository;
 import java.util.Optional;
@@ -34,7 +36,7 @@ public class RoadMapJpaRepositoryAdapter implements RoadMapRepository {
                 roadMapJpaRepository
                         .findWithTopics(id)
                         .orElseThrow(
-                                () -> new IllegalArgumentException("RoadMap not found: " + id));
+                                () -> new DomainException(RoadMapIErrorCode.ROAD_MAP_NOT_FOUND));
 
         topicJpaRepository.findAllWithResourcesByRoadMapId(id);
         topicJpaRepository.findAllWithSubTopicsByRoadMapId(id);
