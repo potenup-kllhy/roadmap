@@ -239,16 +239,7 @@ public class Topic extends IdAuditEntity {
                                 existingResource.update(spec);
                             }
 
-                            ResourceTopic a = ResourceTopic.create(spec);
-                            try {
-                                ObjectMapper objectMapper = new ObjectMapper();
-                                objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
-                                String prettyJson = objectMapper.writeValueAsString(a);
-                                System.out.println(prettyJson);
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                            resources.add(a);
+                            resources.add(ResourceTopic.create(spec));
                         });
 
         resources.removeAll(remainingResources.values());
