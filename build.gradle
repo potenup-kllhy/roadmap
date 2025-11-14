@@ -74,4 +74,12 @@ tasks.named('asciidoctor') {
     inputs.dir snippetsDir
     dependsOn test
     sourceDir 'src/main/asciidoc'
+    attributes 'snippets': snippetsDir
+}
+
+tasks.named('bootJar') {
+    dependsOn tasks.named('asciidoctor')
+    from (tasks.named('asciidoctor').get().outputDir) {
+        into 'static/docs'
+    }
 }
