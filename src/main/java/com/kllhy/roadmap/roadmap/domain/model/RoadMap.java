@@ -75,6 +75,7 @@ public class RoadMap extends AggregateRoot {
     }
 
     public static RoadMap create(CreationRoadMap creationSpec) {
+        Objects.requireNonNull(creationSpec, "RoadMap.create: createSpec 이 null 입니다.");
 
         String title = creationSpec.title();
         validateTitle(title);
@@ -144,7 +145,7 @@ public class RoadMap extends AggregateRoot {
                             topics.add(Topic.create(spec));
                         });
 
-        topics.forEach(Topic::softDelete);
+        wouldBeRemovedTopic.values().forEach(Topic::softDelete);
         topics.sort(Comparator.comparing(Topic::getOrder));
         validateTopics(topics);
 
