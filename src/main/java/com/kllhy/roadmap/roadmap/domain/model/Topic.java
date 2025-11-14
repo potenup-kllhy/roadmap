@@ -1,8 +1,6 @@
 package com.kllhy.roadmap.roadmap.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.kllhy.roadmap.common.model.IdAuditEntity;
 import com.kllhy.roadmap.roadmap.domain.event.listener.TopicEntityListener;
 import com.kllhy.roadmap.roadmap.domain.model.creation_spec.CreationSubTopic;
@@ -239,16 +237,7 @@ public class Topic extends IdAuditEntity {
                                 existingResource.update(spec);
                             }
 
-                            ResourceTopic a = ResourceTopic.create(spec);
-                            try {
-                                ObjectMapper objectMapper = new ObjectMapper();
-                                objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
-                                String prettyJson = objectMapper.writeValueAsString(a);
-                                System.out.println(prettyJson);
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                            resources.add(a);
+                            resources.add(ResourceTopic.create(spec));
                         });
 
         resources.removeAll(remainingResources.values());
@@ -281,7 +270,7 @@ public class Topic extends IdAuditEntity {
                             subTopics.add(SubTopic.create(spec));
                         });
 
-        subTopics.forEach(SubTopic::softDelete);
+        wouldBeRemovedSubTopics.values().forEach(SubTopic::softDelete);
         validateSubTopicTitleUniqueness(subTopics);
 
         // 역방향 연결
