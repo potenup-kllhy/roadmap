@@ -281,7 +281,7 @@ public class Topic extends IdAuditEntity {
                             subTopics.add(SubTopic.create(spec));
                         });
 
-        subTopics.forEach(SubTopic::softDelete);
+        wouldBeRemovedSubTopics.values().forEach(SubTopic::softDelete);
         validateSubTopicTitleUniqueness(subTopics);
 
         // 역방향 연결
