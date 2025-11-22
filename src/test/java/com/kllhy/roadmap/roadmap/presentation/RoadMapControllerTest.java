@@ -60,7 +60,7 @@ class RoadMapControllerTest extends RestDocsSupport {
 
         // when & then
         mockMvc.perform(
-                        post("/api-v1/roadmap")
+                        post("/api-v1/roadmaps")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
@@ -83,7 +83,7 @@ class RoadMapControllerTest extends RestDocsSupport {
 
         // when & then
         mockMvc.perform(
-                        post("/api-v1/roadmap/{id}/clone", originalRoadMapId)
+                        post("/api-v1/roadmaps/{id}/clone", originalRoadMapId)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
@@ -101,7 +101,7 @@ class RoadMapControllerTest extends RestDocsSupport {
 
         // when & then
         mockMvc.perform(
-                        get("/api-v1/roadmap/{id}", roadMapId)
+                        get("/api-v1/roadmaps/{id}", roadMapId)
                                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(print())
