@@ -1,7 +1,7 @@
 package com.kllhy.roadmap.star.roadmap.application.command;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
@@ -13,6 +13,7 @@ import com.kllhy.roadmap.common.exception.DomainException;
 import com.kllhy.roadmap.roadmap.application.query.RoadMapQueryService;
 import com.kllhy.roadmap.roadmap.application.query.dto.RoadMapView;
 import com.kllhy.roadmap.roadmap.application.query.dto.TopicView;
+import com.kllhy.roadmap.star.roadmap.domain.exception.StarRoadMapErrorCode;
 import com.kllhy.roadmap.star.roadmap.domain.model.StarRoadMap;
 import com.kllhy.roadmap.star.roadmap.domain.model.command.CreateStarRoadMapCommand;
 import com.kllhy.roadmap.star.roadmap.domain.model.command.DeleteStarRoadMapCommand;
@@ -145,9 +146,11 @@ class StarRoadMapCommandServiceAdapterTest {
         when(starRoadMapRepository.findById(starRoadmapId)).thenReturn(Optional.empty());
 
         // when & then
-        assertThrows(
-                DomainException.class,
-                () -> starRoadMapCommandServiceAdapter.update(starRoadmapId, userId, value));
+        assertThatThrownBy(
+                        () -> starRoadMapCommandServiceAdapter.update(starRoadmapId, userId, value))
+                .isInstanceOf(DomainException.class)
+                .hasMessage(StarRoadMapErrorCode.STAR_ROAD_MAP_NOT_FOUND.getMessage());
+
         verify(starRoadMapUpdateService, times(0)).update(any(), any());
     }
 

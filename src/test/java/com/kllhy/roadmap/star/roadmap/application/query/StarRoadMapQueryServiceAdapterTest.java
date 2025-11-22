@@ -1,8 +1,8 @@
 package com.kllhy.roadmap.star.roadmap.application.query;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -57,11 +57,9 @@ class StarRoadMapQueryServiceAdapterTest {
         when(starRoadMapRepository.findById(starId)).thenReturn(Optional.empty());
 
         // when & then
-        DomainException exception =
-                assertThrows(
-                        DomainException.class,
-                        () -> starRoadMapQueryServiceAdapter.getById(starId));
-        assertEquals(StarRoadMapErrorCode.STAR_ROAD_MAP_NOT_FOUND, exception.getErrorCode());
+        assertThatThrownBy(() -> starRoadMapQueryServiceAdapter.getById(starId))
+                .isInstanceOf(DomainException.class)
+                .hasMessageContaining(StarRoadMapErrorCode.STAR_ROAD_MAP_NOT_FOUND.getMessage());
     }
 
     @Test

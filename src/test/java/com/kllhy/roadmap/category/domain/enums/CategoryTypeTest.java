@@ -1,7 +1,7 @@
 package com.kllhy.roadmap.category.domain.enums;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.kllhy.roadmap.category.domain.exception.CategoryErrorCode;
 import com.kllhy.roadmap.common.exception.DomainException;
@@ -40,9 +40,9 @@ class CategoryTypeTest {
         // given
         String invalidInput = "INVALID_TYPE";
 
-        // when & then
-        DomainException exception =
-                assertThrows(DomainException.class, () -> CategoryType.from(invalidInput));
-        assertEquals(CategoryErrorCode.CATEGORY_TYPE_INVALID, exception.getErrorCode());
+        // when // then
+        assertThatThrownBy(() -> CategoryType.from(invalidInput))
+                .isInstanceOf(DomainException.class)
+                .hasMessageContaining(CategoryErrorCode.CATEGORY_TYPE_INVALID.getMessage());
     }
 }

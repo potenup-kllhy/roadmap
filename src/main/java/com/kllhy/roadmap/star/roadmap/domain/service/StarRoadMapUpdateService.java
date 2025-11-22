@@ -12,7 +12,7 @@ import lombok.RequiredArgsConstructor;
 public class StarRoadMapUpdateService {
 
     public void update(StarRoadMap star, UpdateStarRoadMapCommand command) {
-        if (!star.getUserId().equals(command.userId())) {
+        if (!star.isOwner(command.userId())) {
             throw new DomainException(StarRoadMapErrorCode.STAR_ROAD_MAP_NOT_AUTHORIZED);
         }
         star.update(command.newValue());

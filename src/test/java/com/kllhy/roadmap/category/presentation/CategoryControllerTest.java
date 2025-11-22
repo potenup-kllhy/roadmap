@@ -28,9 +28,7 @@ class CategoryControllerTest extends RestDocsSupport {
     void getCategories() throws Exception {
         // given
         List<CategoryView> response =
-                List.of(
-                        new CategoryView(1L, "백엔드", "BACKEND"),
-                        new CategoryView(2L, "프론트엔드", "FRONTEND"));
+                List.of(new CategoryView(1L, "SKILL", "자바"), new CategoryView(2L, "ROLE", "백엔드"));
         given(categoryQueryService.getAllCategoriesOrdered()).willReturn(response);
 
         // when & then

@@ -54,6 +54,10 @@ public class StarRoadMap extends AggregateRoot {
         this.value = newValue;
     }
 
+    public boolean isOwner(Long userId) {
+        return this.userId.equals(userId);
+    }
+
     private static void validateStarValue(int value) {
         if (value < 0 || value > 5) {
             throw new DomainException(StarRoadMapErrorCode.STAR_ROAD_MAP_INVALID_VALUE);
