@@ -20,6 +20,7 @@ configurations {
     compileOnly {
         extendsFrom annotationProcessor
     }
+    asciidoctorExtensions
 }
 
 repositories {
@@ -39,6 +40,7 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
+    asciidoctorExtensions 'org.springframework.restdocs:spring-restdocs-asciidoctor'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     testRuntimeOnly 'com.h2database:h2'
     testImplementation("io.github.hakky54:logcaptor:2.12.1")
@@ -71,6 +73,7 @@ tasks.named('test') {
 }
 
 tasks.named('asciidoctor') {
+    configurations 'asciidoctorExtensions'
     inputs.dir snippetsDir
     dependsOn test
     sourceDir 'src/main/asciidoc'
